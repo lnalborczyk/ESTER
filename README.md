@@ -1,4 +1,5 @@
-# itER: computing iterative evidence ratio for observed samples or simulated one
+itER: computing iterative evidence ratio for observed samples or simulated one
+===
 
 `itER` is an R package...
 
@@ -8,6 +9,6 @@ blablabla
 
 # Installation
 
-Once all that is taken care of, install `itER` from GitHub:
+* Development version from Github:
 
-`devtools::install_github("lnalborczyk/itER")`
+`library("devtools"); devtools::install_github("lnalborczyk/itER", dependencies = TRUE)`
