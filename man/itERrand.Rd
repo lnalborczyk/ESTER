@@ -18,4 +18,11 @@ itERrand(data, mod1, mod2, samplecol, order_nb, nmin = 10)
 \description{
 Iterative evience ratios (ER) of original sample and random rearrangments
 }
+\examples{
+library(lme4)
+data <- sleepstudy
+mod1 <- lm(Reaction ~ 1, data)
+mod2 <- lm(Reaction ~ Days, data)
+iER(dat, mod1, mod2, "Subject", 10)
+}
 

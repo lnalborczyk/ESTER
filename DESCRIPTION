@@ -3,10 +3,11 @@ Type: Package
 Title: Computes "iterative" Evidence Ratios (ER)
 Version: 0.1
 Date: 2016-09-28
-Authors@R: person("Ladislas", "Nalborczyk", email = "ladislas.nalborczyk@gmail.com", role = c("aut", "cre"))
+Authors@R: as.person(c("Ladislas Nalborczyk <ladislas.nalborczyk@gmail.com> [aut, cre]", "Brice Beffara <brice.beffara@gmail.com> [aut]"))
+URL: https://github.com/lnalborczyk/itER
 BugReports: https://github.com/lnalborczyk/itER/issues
 Description: Functions allowing to compute iterative AIC-based evidence ratios
-License: MIT
+License: MIT + file LICENSE
 LazyData: TRUE
 RoxygenNote: 5.0.1
 Imports: lme4, AICcmodavg, plyr
