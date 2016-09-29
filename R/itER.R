@@ -13,10 +13,6 @@
 
 itER <- function(data, mod1, mod2, samplecol, nmin) {
 
-        if (!require("lme4")){install.packages("lme4")}
-
-        if (!require("AICcmodavg")){install.packages("AICcmodavg")}
-
         if(!class(mod1)==class(mod2)){
 
                 stop("Error: mod1 and mod2 have to be of the same class")
