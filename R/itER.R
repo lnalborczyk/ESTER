@@ -83,7 +83,7 @@ itER <- function(mod1, mod2, samplecol, nmin, data) {
 
         }
 
-        ER <- data.frame(ER[c(2,1)]) # reordering columns
+        ER <- data.frame(ER[c(2,1)])
         colnames(ER) <- c("ppt","ER")
 
         ER$ER <- log(ER$ER)

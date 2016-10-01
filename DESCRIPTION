@@ -11,4 +11,3 @@ RoxygenNote: 5.0.1
 Imports: AICcmodavg, lme4, plyr, Rmisc
 URL: https://github.com/lnalborczyk/itER
 BugReports: https://github.com/lnalborczyk/itER/issues
-Encoding: UTF-8
