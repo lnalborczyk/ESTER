@@ -1,12 +1,13 @@
 Package: itER
 Type: Package
-Title: Computes "iterative" Evidence Ratios (ER)
+Title: Computes iterative evidence ratios
 Version: 0.1
 Date: 2016-09-28
 Authors@R: as.person(c("Ladislas Nalborczyk <ladislas.nalborczyk@gmail.com> [aut, cre]", "Brice Beffara <brice.beffara@gmail.com> [aut]"))
 URL: https://github.com/lnalborczyk/itER
 BugReports: https://github.com/lnalborczyk/itER/issues
-Description: Functions allowing to compute iterative AIC-based evidence ratios
+Description: Functions allowing to compute iterative aic based evidence ratios.
+Encoding: UTF-8
 License: MIT + file LICENSE
 LazyData: TRUE
 RoxygenNote: 5.0.1

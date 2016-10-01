@@ -24,5 +24,6 @@ data <- sleepstudy
 mod1 <- lm(Reaction ~ 1, data)
 mod2 <- lm(Reaction ~ Days, data)
 iER(dat, mod1, mod2, "Subject", 10)
+
 }
 

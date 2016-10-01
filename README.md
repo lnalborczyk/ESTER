@@ -11,4 +11,7 @@ blablabla
 
 * Development version from Github:
 
-`library("devtools"); devtools::install_github("lnalborczyk/itER", dependencies = TRUE)`
+```
+library(devtools)
+devtools::install_github("lnalborczyk/itER", dependencies = TRUE)
+```

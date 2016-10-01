@@ -4,12 +4,20 @@
 #' @param mod2 should be a mathematical model, of class "lm" or "lmerMod" (of the same class of mod1)
 #' @param nmin is the minimum sample size to which start to compute iterative evidence ratios (ER)
 #' @param samplecol should be the name of the participant/subject column of your dataframe, as a character vector
+#'
+#' @importFrom lme4 lmer
+#' @importFrom lme4 glmer
+#' @importFrom plyr count
+#' @importFrom AICcmodavg aictab
+#'
 #' @examples
 #' library(lme4)
 #' data <- sleepstudy
 #' mod1 <- lm(Reaction ~ 1, data)
 #' mod2 <- lm(Reaction ~ Days, data)
 #' iER(dat, mod1, mod2, "Subject", 10)
+#'
+#' @export
 
 itER <- function(data, mod1, mod2, samplecol, nmin) {
 

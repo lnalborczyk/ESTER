@@ -4,12 +4,20 @@
 #' @param mod2 should be a mathematical model, of class "lm" or "lmerMod" (of the same class of mod1)
 #' @param nmin is the minimum sample size to which start to compute iterative evidence ratios (ER)
 #' @param samplecol should be the name of the participant/subject column of your dataframe, as a character vector
+#'
+#' @importFrom lme4 lmer
+#' @importFrom lme4 glmer
+#' @importFrom plyr count
+#' @importFrom AICcmodavg aictab
+#'
 #' @examples
 #' library(lme4)
 #' data <- sleepstudy
 #' mod1 <- lm(Reaction ~ 1, data)
 #' mod2 <- lm(Reaction ~ Days, data)
 #' iER(dat, mod1, mod2, "Subject", 10)
+#'
+#' @export
 
 itERrand <- function(data, mod1, mod2, samplecol, order_nb, nmin = 10) {
 
@@ -38,10 +46,8 @@ itERrand <- function(data, mod1, mod2, samplecol, order_nb, nmin = 10) {
 
         }
 
-        list = ls(pattern = "data*") # list all "data" files
-        list = list[-which((lapply(list, nchar)<5))] # remove data1 and keep new "bootstrapped" data (e.g., "data1", "data2", ...)
-
-        # pair function "groups" data by ppt values
+        list = ls(pattern = "data*")
+        list = list[-which((lapply(list, nchar)<5))]
 
         pair <- function(data){
 
@@ -61,7 +67,7 @@ itERrand <- function(data, mod1, mod2, samplecol, order_nb, nmin = 10) {
 
         randER <- function(data) {
 
-                endrow <- as.numeric(nrow(data)) # check the row number of the last subject
+                endrow <- as.numeric(nrow(data))
 
                 for (i in seq(nmin, endrow, nobs) ) {
 
@@ -90,16 +96,16 @@ itERrand <- function(data, mod1, mod2, samplecol, order_nb, nmin = 10) {
 
 
                         tabtab <- aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
-                        tempER <- data.frame(cbind(tabtab$AICcWt[tabtab$Modnames=="mod2"] / tabtab$AICcWt[tabtab$Modnames=="mod1"], data$ppt[i] ) )
+                        tempER <- data.frame(cbind(tabtab$AICcWt[tabtab$Modnames=="mod2"] /
+                                        tabtab$AICcWt[tabtab$Modnames=="mod1"], data$ppt[i] ) )
 
-                        # if the merged dataset doesn't exist, create it, else, rbind it
                         if (!exists("ER")) ER <- tempER else ER <- rbind(ER,tempER)
 
                         rm(tempER)
 
                         }
 
-                ER <- data.frame(ER[c(2,1)]) # reordering columns
+                ER <- data.frame(ER[c(2,1)])
                 colnames(ER) <- c("ppt","ER")
 
                 ER$ER <- log(ER$ER)
@@ -108,15 +114,11 @@ itERrand <- function(data, mod1, mod2, samplecol, order_nb, nmin = 10) {
 
                 }
 
-        # applying randER to each "bootstrapped" dataframe
-
         for(i in 1:order_nb){
 
                 assign(paste0("ER", i), randER(get(paste0("data", i))) )
 
         }
-
-        # cbind ERi of each dataframe
 
         for(i in (order_nb-order_nb+2):order_nb){
 
@@ -130,11 +132,8 @@ itERrand <- function(data, mod1, mod2, samplecol, order_nb, nmin = 10) {
 
         }
 
-        agg_ER <- data.frame(as.matrix(aggregate(ER ~ ppt, ER, CI))) # summarising ERi
+        agg_ER <- data.frame(as.matrix(aggregate(ER ~ ppt, ER, CI)))
 
         return(agg_ER)
 
 }
-
-#ER <- itERrand(data = data, mod1 = mod1, mod2 = mod2, samplecol = "Subject", order_nb = 10, nmin = 2)
-
