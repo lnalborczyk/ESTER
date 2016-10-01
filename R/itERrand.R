@@ -1,32 +1,33 @@
-#' Iterative evience ratios (ER) of original sample and random rearrangments
+#' Iterative evidence ratios of original sample and random rearrangments.
 #'
-#' @param mod1 should be a mathematical model, of class "lm" or "lmerMod"
-#' @param mod2 should be a mathematical model, of class "lm" or "lmerMod" (of the same class of mod1)
-#' @param nmin is the minimum sample size to which start to compute iterative evidence ratios (ER)
-#' @param samplecol should be the name of the participant/subject column of your dataframe, as a character vector
+#' \code{itERrand} computes evidence ratios (ER) as a function of sample size,
+#' for a given data set and for N random rearrangments of this dataset.
 #'
-#' @importFrom lme4 lmer
-#' @importFrom lme4 glmer
-#' @importFrom plyr count
+#' @inheritParams itER
+#' @param order_nb Number of random rearrangments to evaluate.
+#'
+#' @importFrom stats aggregate family formula lm
 #' @importFrom AICcmodavg aictab
+#' @importFrom lme4 lmer glmer
+#' @importFrom Rmisc CI
 #'
 #' @examples
 #' library(lme4)
 #' data <- sleepstudy
 #' mod1 <- lm(Reaction ~ 1, data)
 #' mod2 <- lm(Reaction ~ Days, data)
-#' iER(dat, mod1, mod2, "Subject", 10)
+#' itERrand(mod1, mod2, "Subject", 10, 10, data)
 #'
-#' @export
+#' @export itERrand
 
-itERrand <- function(data, mod1, mod2, samplecol, order_nb, nmin = 10) {
+itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, data) {
 
         if(!class(mod1)==class(mod2)){stop("Error: mod1 and mod2 have to be of the same class")}
 
         order_nb <- order_nb + 1
         data1 <- data.frame(data)
 
-        count <- count(data1[, samplecol], 1) # count frequencies
+        count <- plyr::count(data1[, samplecol], 1) # count frequencies
         nobs <- as.numeric(max(count$freq)) # count number of observations by subject
         a <- as.vector(count$x[count$freq < nobs]) # identify subjects with less than n observations
 

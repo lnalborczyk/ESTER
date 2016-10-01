@@ -1,25 +1,27 @@
-#' Iterative evience ratios (ER)
+#' Iterative evidence ratios.
 #'
-#' @param mod1 should be a mathematical model, of class "lm" or "lmerMod"
-#' @param mod2 should be a mathematical model, of class "lm" or "lmerMod" (of the same class of mod1)
-#' @param nmin is the minimum sample size to which start to compute iterative evidence ratios (ER)
-#' @param samplecol should be the name of the participant/subject column of your dataframe, as a character vector
+#' \code{itER} computes evidence ratios (ER) as a function of sample size, for a given data set.
 #'
-#' @importFrom lme4 lmer
-#' @importFrom lme4 glmer
-#' @importFrom plyr count
+#' @param mod1 A mathematical model, of class "lm" or "lmerMod".
+#' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
+#' @param nmin Minimum sample size from which start to compute iterative evidence ratios (ER).
+#' @param samplecol Name of the subject/observation column of your dataframe, as a character vector.
+#' @param data An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from the model specification (mod1 and mod2).
+#'
+#' @importFrom stats aggregate family formula lm
 #' @importFrom AICcmodavg aictab
+#' @importFrom lme4 lmer glmer
 #'
 #' @examples
 #' library(lme4)
 #' data <- sleepstudy
 #' mod1 <- lm(Reaction ~ 1, data)
 #' mod2 <- lm(Reaction ~ Days, data)
-#' iER(dat, mod1, mod2, "Subject", 10)
+#' itER(mod1, mod2, "Subject", 10, data)
 #'
-#' @export
+#' @export itER
 
-itER <- function(data, mod1, mod2, samplecol, nmin) {
+itER <- function(mod1, mod2, samplecol, nmin, data) {
 
         if(!class(mod1)==class(mod2)){
 
@@ -29,7 +31,7 @@ itER <- function(data, mod1, mod2, samplecol, nmin) {
 
         data <- data.frame(data)
 
-        count <- count(data[, samplecol], 1) # count frequencies
+        count <- plyr::count(data[, samplecol], 1) # count frequencies
         nobs <- max(count$freq) # count number of observations by subject
         a <- as.vector(count$x[count$freq < nobs]) # identify subjects with less than n observations
 

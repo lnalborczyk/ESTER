@@ -1,14 +1,14 @@
 Package: itER
-Type: Package
-Title: Computes iterative evidence ratios
-Version: 0.1
+Version: 0.0.0.9000
+Title: Computes Iterative Evidence Ratios
 Date: 2016-09-28
-Authors@R: as.person(c("Ladislas Nalborczyk <ladislas.nalborczyk@gmail.com> [aut, cre]", "Brice Beffara <brice.beffara@gmail.com> [aut]"))
+Authors@R: person("Ladislas", "Nalborczyk", email = "ladislas.nalborczyk@gmail.com", role = c("aut", "cre") )
+Description: Functions allowing to compute iterative AIC-based evidence ratios, as a function of sample size.
+        Calculations could be based on observed data as well as a simulated or bootstrapepd data.
+License: MIT + file LICENSE
+LazyData: yes
+RoxygenNote: 5.0.1
+Imports: AICcmodavg, lme4, plyr, Rmisc
 URL: https://github.com/lnalborczyk/itER
 BugReports: https://github.com/lnalborczyk/itER/issues
-Description: Functions allowing to compute iterative aic based evidence ratios.
 Encoding: UTF-8
-License: MIT + file LICENSE
-LazyData: TRUE
-RoxygenNote: 5.0.1
-Imports: lme4, AICcmodavg, plyr
