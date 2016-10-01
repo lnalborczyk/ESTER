@@ -13,5 +13,5 @@ blablabla
 
 ```
 library(devtools)
-devtools::install_github("lnalborczyk/itER", dependencies = TRUE)
+devtools::install_github("lnalborczyk/itER")
 ```
