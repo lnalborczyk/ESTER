@@ -11,6 +11,8 @@
 #' @importFrom stats aggregate family formula lm
 #' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
+#' @importFrom utils tail
+#' @importFrom graphics grid plot text
 #'
 #' @examples
 #' library(lme4)
@@ -88,6 +90,18 @@ itER <- function(mod1, mod2, samplecol, nmin, data) {
 
         ER$ER <- log(ER$ER)
 
+        class(ER) <- c("itER", "data.frame")
+
         return(ER)
+
+}
+
+#' @S3method plot itER
+plot.itER <- function(x, ...) {
+
+        plot(x$ppt, exp(x$ER), type = "l", xlab = expression(Sample~ ~size),
+                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), bty = "n", log = "y")
+        grid (0, NULL, lty = 3)
+        text(max(x$ppt), tail((exp(x$ER)), 1) * 1.1, as.character(round(tail(exp(x$ER), 1), 2)))
 
 }

@@ -135,6 +135,8 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, data) {
 
         agg_ER <- data.frame(as.matrix(aggregate(ER ~ ppt, ER, CI)))
 
+        class(agg_ER) <- c("itERrand", "data.frame")
+
         return(agg_ER)
 
 }
