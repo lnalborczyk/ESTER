@@ -5,7 +5,7 @@ Date: 2016-09-28
 Authors@R: person("Ladislas", "Nalborczyk", email = "ladislas.nalborczyk@gmail.com", role = c("aut", "cre") )
 Description: Functions allowing to compute iterative AIC-based evidence ratios, as a function of sample size.
         Calculations could be based on observed data as well as a simulated or bootstrapepd data.
-License: GPL-3
+License: MIT + file LICENSE
 LazyData: yes
 RoxygenNote: 5.0.1
 Imports: AICcmodavg, lme4, plyr, Rmisc
