@@ -13,6 +13,7 @@
 #' @importFrom lme4 lmer glmer
 #' @importFrom utils tail
 #' @importFrom graphics grid plot text
+#' @importFrom utils setTxtProgressBar txtProgressBar
 #'
 #' @examples
 #' library(lme4)
@@ -58,11 +59,15 @@ itER <- function(mod1, mod2, samplecol, nmin) {
                 for (i in 1:length(a) ) {
                         data <- data[!data[, samplecol]==as.numeric(a[i]), ]
                 }
+
+                warning("Different numbers of observation by subject. Subjects with less than max(nobs) have been removed.")
         }
 
         startrow <- min(which(as.numeric(as.character(data$ppt))==nmin)) # check the row number of the nmin
         # endrow <- max(which(as.numeric(as.character(data$ppt))==max(as.numeric(as.character(data[,samplecol])))))
         endrow <- length(data[,samplecol]) # check the row number of the last subject
+
+        pb = txtProgressBar(min = 0, max = endrow, initial = 0, style = 3)
 
         for (i in seq(startrow, endrow, nobs) ) {
 
@@ -95,6 +100,8 @@ itER <- function(mod1, mod2, samplecol, nmin) {
                 if (!exists("ER")) ER <- tempER else ER <- rbind(ER,tempER)
 
                 rm(tempER)
+
+                setTxtProgressBar(pb,i)
 
         }
 

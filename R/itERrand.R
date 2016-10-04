@@ -5,6 +5,7 @@
 #'
 #' @inheritParams itER
 #' @param order_nb Number of random rearrangments to evaluate.
+#' @param replace If TRUE, corresponds to bootstrap with replacement.
 #' @param data Data.
 #'
 #' @importFrom stats aggregate family formula lm
@@ -17,11 +18,11 @@
 #' data <- sleepstudy
 #' mod1 <- lm(Reaction ~ 1, data)
 #' mod2 <- lm(Reaction ~ Days, data)
-#' itERrand(mod1, mod2, "Subject", 10, 10, data)
+#' itERrand(mod1, mod2, "Subject", 10, 10, replace = FALSE, data)
 #'
 #' @export itERrand
 
-itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, data) {
+itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE, data) {
 
         if(!class(mod1)==class(mod2)){stop("Error: mod1 and mod2 have to be of the same class")}
 
@@ -44,7 +45,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, data) {
 
         for(i in (order_nb-order_nb+2):order_nb){
 
-                assign(paste0("data", i), data1[sample(nrow(data1)),])
+                assign(paste0("data", i), data1[sample(nrow(data1), replace = replace),])
 
         }
 
@@ -97,7 +98,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, data) {
                         }
 
 
-                        tabtab <- aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
+                        tabtab <- AICcmodavg::aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
                         tempER <- data.frame(cbind(tabtab$AICcWt[tabtab$Modnames=="mod2"] /
                                         tabtab$AICcWt[tabtab$Modnames=="mod1"], data$ppt[i] ) )
 
@@ -116,9 +117,13 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, data) {
 
         }
 
+        pb = txtProgressBar(min = 0, max = order_nb, initial = 0, style = 3)
+
         for(i in 1:order_nb){
 
                 assign(paste0("ER", i), randER(get(paste0("data", i))) )
+
+                setTxtProgressBar(pb,i)
 
         }
 

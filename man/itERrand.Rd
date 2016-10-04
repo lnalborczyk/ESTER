@@ -4,7 +4,7 @@
 \alias{itERrand}
 \title{Iterative evidence ratios of original sample and random rearrangments.}
 \usage{
-itERrand(mod1, mod2, samplecol, order_nb, nmin = 10, data)
+itERrand(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE, data)
 }
 \arguments{
 \item{mod1}{A mathematical model, of class "lm" or "lmerMod".}
@@ -18,6 +18,8 @@ itERrand(mod1, mod2, samplecol, order_nb, nmin = 10, data)
 
 \item{nmin}{Minimum sample size from which start to compute iterative evidence ratios (ER).}
 
+\item{replace}{If TRUE, corresponds to bootstrap with replacement.}
+
 \item{data}{Data.}
 }
 \description{
@@ -29,7 +31,7 @@ library(lme4)
 data <- sleepstudy
 mod1 <- lm(Reaction ~ 1, data)
 mod2 <- lm(Reaction ~ Days, data)
-itERrand(mod1, mod2, "Subject", 10, 10, data)
+itERrand(mod1, mod2, "Subject", 10, 10, replace = FALSE, data)
 
 }
 
