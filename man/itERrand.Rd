@@ -11,13 +11,14 @@ itERrand(mod1, mod2, samplecol, order_nb, nmin = 10, data)
 
 \item{mod2}{A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).}
 
-\item{samplecol}{Name of the subject/observation column of your dataframe, as a character vector.}
+\item{samplecol}{Name of the subject/observation column of your dataframe, as a character vector.
+"samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls.}
 
 \item{order_nb}{Number of random rearrangments to evaluate.}
 
 \item{nmin}{Minimum sample size from which start to compute iterative evidence ratios (ER).}
 
-\item{data}{An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from the model specification (mod1 and mod2).}
+\item{data}{Data.}
 }
 \description{
 \code{itERrand} computes evidence ratios (ER) as a function of sample size,

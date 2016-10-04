@@ -5,6 +5,7 @@
 #'
 #' @inheritParams itER
 #' @param order_nb Number of random rearrangments to evaluate.
+#' @param data Data.
 #'
 #' @importFrom stats aggregate family formula lm
 #' @importFrom AICcmodavg aictab
@@ -79,21 +80,21 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, data) {
                                 mod1 <- lmer(formula(mod1), REML = FALSE, family = family(mod1)$family, DF)
                                 mod2 <- lmer(formula(mod2), REML = FALSE, family = family(mod2)$family, DF)
 
-                                }
+                        }
 
                         if((class(mod1) == "lmerMod")){
 
                                 mod1 <- lmer(formula(mod1), REML = FALSE, DF)
                                 mod2 <- lmer(formula(mod2), REML = FALSE, DF)
 
-                                }
+                        }
 
                         if((class(mod1) == "lm")){
 
                                 mod1 <- lm(formula(mod1), DF)
                                 mod2 <- lm(formula(mod2), DF)
 
-                                }
+                        }
 
 
                         tabtab <- aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
@@ -104,7 +105,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, data) {
 
                         rm(tempER)
 
-                        }
+                }
 
                 ER <- data.frame(ER[c(2,1)])
                 colnames(ER) <- c("ppt","ER")
@@ -113,7 +114,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, data) {
 
                 return(ER)
 
-                }
+        }
 
         for(i in 1:order_nb){
 

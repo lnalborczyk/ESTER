@@ -6,7 +6,7 @@
 #' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
 #' @param nmin Minimum sample size from which start to compute iterative evidence ratios (ER).
 #' @param samplecol Name of the subject/observation column of your dataframe, as a character vector.
-#' @param data An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from the model specification (mod1 and mod2).
+#' "samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls.
 #'
 #' @importFrom stats aggregate family formula lm
 #' @importFrom AICcmodavg aictab
@@ -19,19 +19,32 @@
 #' data <- sleepstudy
 #' mod1 <- lm(Reaction ~ 1, data)
 #' mod2 <- lm(Reaction ~ Days, data)
-#' itER(mod1, mod2, "Subject", 10, data)
+#' itER(mod1, mod2, samplecol = "Subject", nmin = 10)
 #'
 #' @export itER
 
-itER <- function(mod1, mod2, samplecol, nmin, data) {
+itER <- function(mod1, mod2, samplecol, nmin) {
 
         if(!class(mod1)==class(mod2)){
 
                 stop("Error: mod1 and mod2 have to be of the same class")
 
-                }
+        }
 
-        data <- data.frame(data)
+        if((class(mod1) == "glmerMod")){
+
+                data <- data.frame(eval(mod1@call$data))
+        }
+
+        if((class(mod1) == "lmerMod")){
+
+                data <- data.frame(eval(mod1@call$data))
+        }
+
+        if((class(mod1) == "lm")){
+
+                data <- data.frame(eval(mod1$call[["data"]]))
+        }
 
         count <- plyr::count(data[, samplecol], 1) # count frequencies
         nobs <- max(count$freq) # count number of observations by subject
@@ -58,8 +71,8 @@ itER <- function(mod1, mod2, samplecol, nmin, data) {
 
                 if((class(mod1) == "glmerMod")){
 
-                        mod1 <- lmer(formula(mod1), REML = FALSE, family = family(mod1)$family, DF)
-                        mod2 <- lmer(formula(mod2), REML = FALSE, family = family(mod2)$family, DF)
+                        mod1 <- glmer(formula(mod1), family = family(mod1)$family, DF)
+                        mod2 <- glmer(formula(mod2), family = family(mod2)$family, DF)
                 }
 
                 if((class(mod1) == "lmerMod")){
@@ -74,7 +87,7 @@ itER <- function(mod1, mod2, samplecol, nmin, data) {
                         mod2 <- lm(formula(mod2), DF)
                 }
 
-                tabtab <- aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
+                tabtab <- AICcmodavg::aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
                 tempER <- data.frame(cbind(tabtab$AICcWt[tabtab$Modnames=="mod2"] /
                                 tabtab$AICcWt[tabtab$Modnames=="mod1"], data$ppt[i] ) )
 
@@ -88,8 +101,6 @@ itER <- function(mod1, mod2, samplecol, nmin, data) {
         ER <- data.frame(ER[c(2,1)])
         colnames(ER) <- c("ppt","ER")
 
-        ER$ER <- log(ER$ER)
-
         class(ER) <- c("itER", "data.frame")
 
         return(ER)
@@ -99,9 +110,9 @@ itER <- function(mod1, mod2, samplecol, nmin, data) {
 #' @S3method plot itER
 plot.itER <- function(x, ...) {
 
-        plot(x$ppt, exp(x$ER), type = "l", xlab = expression(Sample~ ~size),
+        plot(x$ppt, x$ER, type = "l", xlab = expression(Sample~ ~size),
                 ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), bty = "n", log = "y")
         grid (0, NULL, lty = 3)
-        text(max(x$ppt), tail((exp(x$ER)), 1) * 1.1, as.character(round(tail(exp(x$ER), 1), 2)))
+        text(max(x$ppt), tail((x$ER), 1) * 1.1, as.character(round(tail(x$ER, 1), 2)))
 
 }

@@ -4,18 +4,17 @@
 \alias{itER}
 \title{Iterative evidence ratios.}
 \usage{
-itER(mod1, mod2, samplecol, nmin, data)
+itER(mod1, mod2, samplecol, nmin)
 }
 \arguments{
 \item{mod1}{A mathematical model, of class "lm" or "lmerMod".}
 
 \item{mod2}{A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).}
 
-\item{samplecol}{Name of the subject/observation column of your dataframe, as a character vector.}
+\item{samplecol}{Name of the subject/observation column of your dataframe, as a character vector.
+"samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls.}
 
 \item{nmin}{Minimum sample size from which start to compute iterative evidence ratios (ER).}
-
-\item{data}{An optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from the model specification (mod1 and mod2).}
 }
 \description{
 \code{itER} computes evidence ratios (ER) as a function of sample size, for a given data set.
@@ -25,7 +24,7 @@ library(lme4)
 data <- sleepstudy
 mod1 <- lm(Reaction ~ 1, data)
 mod2 <- lm(Reaction ~ Days, data)
-itER(mod1, mod2, "Subject", 10, data)
+itER(mod1, mod2, samplecol = "Subject", nmin = 10)
 
 }
 
