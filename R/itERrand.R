@@ -8,10 +8,11 @@
 #' @param replace If TRUE, corresponds to bootstrap with replacement.
 #' @param data Data.
 #'
-#' @importFrom stats aggregate family formula lm
+#' @importFrom stats aggregate family formula lm loess
 #' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
 #' @importFrom Rmisc CI
+#' @importFrom graphics lines
 #'
 #' @examples
 #' library(lme4)
@@ -26,8 +27,9 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
         if(!class(mod1)==class(mod2)){stop("Error: mod1 and mod2 have to be of the same class")}
 
-        order_nb <- order_nb + 1
         data1 <- data.frame(data)
+
+        order_nb <- order_nb + 1
 
         count <- plyr::count(data1[, samplecol], 1) # count frequencies
         nobs <- as.numeric(max(count$freq)) # count number of observations by subject
@@ -111,8 +113,6 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
                 ER <- data.frame(ER[c(2,1)])
                 colnames(ER) <- c("ppt","ER")
 
-                ER$ER <- log(ER$ER)
-
                 return(ER)
 
         }
@@ -127,7 +127,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
         }
 
-        for(i in (order_nb-order_nb+2):order_nb){
+        for(i in 1:order_nb){
 
                 ERi <- rep(paste0(paste0("ER", i)), nrow(get(paste0("ER", i))))
 
@@ -141,8 +141,35 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
         agg_ER <- data.frame(as.matrix(aggregate(ER ~ ppt, ER, CI)))
 
+        class(ER) <- c("itER", "data.frame")
         class(agg_ER) <- c("itERrand", "data.frame")
 
-        return(agg_ER)
+        return_list <- list("ER" = ER, "agg_ER" = agg_ER)
+        class(return_list) <- c("ERlist", "list")
+
+        return(return_list)
 
 }
+
+#' @S3method plot ERlist
+plot.ERlist <- function(x, ...) {
+
+        plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l", lwd = 1.5, xlab = expression(Sample~ ~size),
+                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), bty = "n", log = "y")
+
+        grid (0, NULL, lty = 3)
+
+        for(i in 2:nlevels(x$ER$ERi)){
+
+                lines(loess( x$ER$ER[x$ER$ERi==as.character(paste0("ER", i))] ~ x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ), lwd = 0.8, col = "grey" )
+
+        }
+
+        text(max(x$ER$ppt[x$ER$ERi=="ER1"]), tail((x$ER$ER[x$ER$ERi=="ER1"]), 1) * 1.1,
+                as.character(round(tail(x$ER$ER[x$ER$ERi=="ER1"], 1), 2)))
+
+        lines(loess(x$agg_ER$ER.lower ~ x$agg_ER$ppt), lty = 1, lwd = 1.5, col = "steelblue")
+        lines(loess(x$agg_ER$ER.upper ~ x$agg_ER$ppt), lty = 1, lwd = 1.5, col = "steelblue")
+
+}
+
