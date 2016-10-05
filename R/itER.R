@@ -32,19 +32,14 @@ itER <- function(mod1, mod2, samplecol, nmin) {
 
         }
 
-        if((class(mod1) == "glmerMod")){
-
-                data <- data.frame(eval(mod1@call$data))
-        }
-
-        if((class(mod1) == "lmerMod")){
-
-                data <- data.frame(eval(mod1@call$data))
-        }
-
-        if((class(mod1) == "lm")){
+        if(class(mod1) == "lm"){
 
                 data <- data.frame(eval(mod1$call[["data"]]))
+        }
+
+        if(class(mod1) == "glmerMod" | class(mod1) == "lmerMod"){
+
+                data <- data.frame(eval(mod1@call$data))
         }
 
         count <- plyr::count(data[, samplecol], 1) # count frequencies
