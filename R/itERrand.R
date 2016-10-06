@@ -6,7 +6,6 @@
 #' @inheritParams itER
 #' @param order_nb Number of random rearrangments to evaluate.
 #' @param replace If TRUE, corresponds to bootstrap with replacement.
-#' @param data Data.
 #'
 #' @importFrom stats aggregate family formula lm loess
 #' @importFrom AICcmodavg aictab
@@ -19,15 +18,27 @@
 #' data <- sleepstudy
 #' mod1 <- lm(Reaction ~ 1, data)
 #' mod2 <- lm(Reaction ~ Days, data)
-#' itERrand(mod1, mod2, "Subject", 10, 10, replace = FALSE, data)
+#' itERrand(mod1, mod2, samplecol = "Subject", order_nb = 10, nmin = 10, replace = FALSE)
 #'
 #' @export itERrand
 
-itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE, data) {
+itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE) {
 
         if(!class(mod1)==class(mod2)){stop("Error: mod1 and mod2 have to be of the same class")}
 
-        data1 <- data.frame(data)
+        if(class(mod1) == "lm"){
+
+                data1 <- data.frame(eval(mod1$call[["data"]]))
+        }
+
+        if(class(mod1) == "lmerMod" | class(mod1) == "glmerMod"){
+
+                data1 <- data.frame(eval(mod1@call$data))
+
+        }
+
+        #data1 <- data.frame(data)
+        #rm(data)
 
         order_nb <- order_nb + 1
 
@@ -41,7 +52,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
                 # if needed, remove subjects with less than n observations (nobs)
                 for (i in 1:length(a) ) {
-                        data <- data[!data[,samplecol]==as.numeric(a[i]),]
+                        data1 <- data1[!data1[,samplecol]==as.numeric(a[i]),]
                 }
         }
 
@@ -52,7 +63,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
         }
 
         list = ls(pattern = "data*")
-        list = list[-which((lapply(list, nchar)<5))]
+        #list = list[-which((lapply(list, nchar)<5))]
 
         pair <- function(data){
 
