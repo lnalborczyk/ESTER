@@ -80,15 +80,15 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
                         if((class(mod1) == "glmerMod")){
 
-                                mod1 <- lmer(formula(mod1), REML = FALSE, family = family(mod1)$family, DF)
-                                mod2 <- lmer(formula(mod2), REML = FALSE, family = family(mod2)$family, DF)
+                                mod1 <- lme4::lmer(formula(mod1), family = family(mod1)$family, DF)
+                                mod2 <- lme4::lmer(formula(mod2), family = family(mod2)$family, DF)
 
                         }
 
                         if((class(mod1) == "lmerMod")){
 
-                                mod1 <- lmer(formula(mod1), REML = FALSE, DF)
-                                mod2 <- lmer(formula(mod2), REML = FALSE, DF)
+                                mod1 <- lme4::lmer(formula(mod1), REML = FALSE, DF)
+                                mod2 <- lme4::lmer(formula(mod2), REML = FALSE, DF)
 
                         }
 
@@ -139,7 +139,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
         }
 
-        agg_ER <- data.frame(as.matrix(aggregate(ER ~ ppt, ER, CI)))
+        agg_ER <- data.frame(as.matrix(aggregate(ER ~ ppt, ER, Rmisc::CI)))
 
         class(ER) <- c("itER", "data.frame")
         class(agg_ER) <- c("itERrand", "data.frame")
