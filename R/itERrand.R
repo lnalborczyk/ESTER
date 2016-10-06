@@ -167,15 +167,19 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 #' @S3method plot ERlist
 plot.ERlist <- function(x, ...) {
 
-        plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l", lwd = 1.5, xlab = expression(Sample~ ~size),
-                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), bty = "n", log = "y")
+        ylim <- c(min(x$ER$ER), max(x$ER$ER) ) * 1.1
 
-        grid (0, NULL, lty = 3)
+        plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l",
+                lwd = 1.5, xlab = expression(Sample~ ~size),
+                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
+                bty = "n", log = "y", ylim = ylim,
+                panel.first = grid(0, NULL, lty = 3) )
 
         for(i in 2:nlevels(x$ER$ERi)){
 
                 lines(loess( x$ER$ER[x$ER$ERi==as.character(paste0("ER", i))] ~
-                                x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ), lwd = 0.8, col = "grey" )
+                                x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ),
+                        lwd = 0.8, col = "grey" )
 
         }
 

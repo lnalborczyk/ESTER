@@ -113,8 +113,9 @@ itER <- function(mod1, mod2, samplecol, nmin) {
 plot.itER <- function(x, ...) {
 
         plot(x$ppt, x$ER, type = "l", xlab = expression(Sample~ ~size),
-                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), bty = "n", log = "y")
-        grid (0, NULL, lty = 3)
+                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), bty = "n",
+                log = "y", panel.first = grid (0, NULL, lty = 3))
+
         text(max(x$ppt), tail((x$ER), 1) * 1.1, as.character(round(tail(x$ER, 1), 2)))
 
 }
