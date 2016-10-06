@@ -76,13 +76,13 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
         }
 
-        nmin <- nmin * nobs
+        startrow <- nmin * nobs
 
         randER <- function(data) {
 
                 endrow <- as.numeric(nrow(data))
 
-                for (i in seq(nmin, endrow, nobs) ) {
+                for (i in seq(startrow, endrow, nobs) ) {
 
                         DF <- data[1:i,]
 
@@ -110,7 +110,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
                         tabtab <- AICcmodavg::aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
                         tempER <- data.frame(cbind(tabtab$AICcWt[tabtab$Modnames=="mod2"] /
-                                        tabtab$AICcWt[tabtab$Modnames=="mod1"], data$ppt[i] ) )
+                                        tabtab$AICcWt[tabtab$Modnames=="mod1"]) )
 
                         if (!exists("ER")) ER <- tempER else ER <- rbind(ER,tempER)
 
@@ -118,6 +118,11 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
                 }
 
+                if(class(data1[,samplecol])=="factor") nbppt <- as.numeric(length(levels(data1[,samplecol])))
+                if(class(data1[,samplecol])=="integer") nbppt <- as.numeric(length(unique(data1[,samplecol])))
+                if(class(data1[,samplecol])=="numeric") nbppt <- as.numeric(length(unique(data1[,samplecol])))
+
+                ER <- data.frame(cbind(ER, seq(nmin, nbppt, 1) ) )
                 ER <- data.frame(ER[c(2,1)])
                 colnames(ER) <- c("ppt","ER")
 

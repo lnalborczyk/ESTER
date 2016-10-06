@@ -14,8 +14,6 @@ library(devtools)
 devtools::install_github("lnalborczyk/itER")
 ```
 
-**Note for bicebeffara, do not push code that has not passed the R CMD Check succesfully**
-
 ## How to use this package ?
 
 Read the additionnal [manual](https://cdn.rawgit.com/lnalborczyk/itER/master/vignettes/itER.html).
