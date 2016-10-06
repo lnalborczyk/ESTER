@@ -1,52 +1,26 @@
 ---
 title: "itER"
-author: "Ladislas Nalborczyk"
-date: 2016-10-02
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{itER}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+author: "Ladislas Nalborczyk & Brice Beffara"
+date: "6 October 2016"
+output: html_document
 ---
 
-# Introduction
+## Installation
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+The `itER` package is not on CRAN yet, but you can install the development version from Github:
 
-# Introduction and basics
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-# Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r, eval = FALSE}
+library(devtools)
+devtools::install_github("lnalborczyk/itER")
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+## Different questions
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+1. Does the ER computed on my observed sample reached a stable region ?
+2. How common is the observed evolution of this ER, considering random permutation and / or bootstrapped samples ?
+3. If an a priori ER threshold has been fixed, what to do when this threshold is fixed ? How to be *sure* that it is not due to random variation ?
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-# More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
-
-# Development
+## Development
 
 The *itER* package is also available in a development version at the GitHub development page: [https://github.com/lnalborczyk/itER](https://github.com/lnalborczyk/itER).
 
