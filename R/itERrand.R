@@ -37,9 +37,6 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
         }
 
-        #data1 <- data.frame(data)
-        #rm(data)
-
         order_nb <- order_nb + 1
 
         count <- plyr::count(data1[, samplecol], 1) # count frequencies
@@ -52,32 +49,32 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
                 # if needed, remove subjects with less than n observations (nobs)
                 for (i in 1:length(a) ) {
-                        data1 <- data1[!data1[,samplecol]==as.numeric(a[i]),]
+                        data1 <- data1[!data1[,samplecol]==as.numeric(a[i]), ]
                 }
         }
 
         for(i in (order_nb-order_nb+2):order_nb){
 
-                assign(paste0("data", i), data1[sample(nrow(data1), replace = replace),])
+                assign(paste0("data", i), data1[sample(nrow(data1), replace = replace), ])
 
         }
 
         list = ls(pattern = "data*")
-        #list = list[-which((lapply(list, nchar)<5))]
 
         pair <- function(data){
 
-                data <- data[order(factor(data$ppt, levels = unique(data$ppt))),]
+                data <- data[order(factor(data$ppt, levels = unique(data$ppt))), ]
                 return(data)
         }
 
+        #list <- list(lapply(ls(pattern="data*"), function(x) get(x)))
+        #rapply(list, pair, how = "replace")
+
         for(i in 1:length(list)){
 
-                assign(list[i], pair(get(list[i])))
+                assign(list[i], pair(get(list[i])) )
 
         }
-
-        # replace this loop by a lapply ? lapply(list, pair)
 
         nmin <- nmin * nobs
 
@@ -172,7 +169,8 @@ plot.ERlist <- function(x, ...) {
 
         for(i in 2:nlevels(x$ER$ERi)){
 
-                lines(loess( x$ER$ER[x$ER$ERi==as.character(paste0("ER", i))] ~ x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ), lwd = 0.8, col = "grey" )
+                lines(loess( x$ER$ER[x$ER$ERi==as.character(paste0("ER", i))] ~
+                                x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ), lwd = 0.8, col = "grey" )
 
         }
 
