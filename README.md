@@ -16,4 +16,4 @@ devtools::install_github("lnalborczyk/itER")
 
 **Note for bicebeffara, do not push code that has not passed the R CMD Check succesfully**
 
-Read the additionnal [manual](https://cdn.rawgit.com/lnalborczyk/itER/master/vignettes/itER.Rmd).
+Read the additionnal [manual](https://cdn.rawgit.com/lnalborczyk/itER/master/vignettes/itER.html).
