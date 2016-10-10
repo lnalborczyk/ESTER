@@ -10,7 +10,6 @@
 #' @importFrom stats aggregate family formula lm loess
 #' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
-#' @importFrom Rmisc CI
 #' @importFrom graphics lines
 #'
 #' @examples
@@ -152,7 +151,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
         }
 
-        agg_ER <- data.frame(as.matrix(aggregate(ER ~ ppt, ER, Rmisc::CI)))
+        agg_ER <- data.frame(as.matrix(aggregate(ER ~ ppt, ER, mean)))
 
         class(ER) <- c("itER", "data.frame")
         class(agg_ER) <- c("itERrand", "data.frame")
@@ -167,7 +166,7 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 #' @S3method plot ERlist
 plot.ERlist <- function(x, ...) {
 
-        ylim <- c(min(x$ER$ER), max(x$ER$ER) ) * 1.1
+        ylim <- c(min(x$ER$ER)/1.1, max(x$ER$ER)*1.1 )
 
         plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l",
                 lwd = 1.5, xlab = expression(Sample~ ~size),
@@ -183,11 +182,13 @@ plot.ERlist <- function(x, ...) {
 
         }
 
+        options( digits = 3 )
+
         text(max(x$ER$ppt[x$ER$ERi=="ER1"]), tail((x$ER$ER[x$ER$ERi=="ER1"]), 1) * 1.1,
                 as.character(round(tail(x$ER$ER[x$ER$ERi=="ER1"], 1), 2)))
 
-        lines(loess(x$agg_ER$ER.lower ~ x$agg_ER$ppt), lty = 1, lwd = 1.5, col = "steelblue")
-        lines(loess(x$agg_ER$ER.upper ~ x$agg_ER$ppt), lty = 1, lwd = 1.5, col = "steelblue")
+        #lines(loess(x$agg_ER$ER ~ x$agg_ER$ppt), lty = 1, lwd = 1.2, col = "steelblue")
+        #lines(loess(x$agg_ER$ER.upper ~ x$agg_ER$ppt), lty = 1, lwd = 1.2, col = "steelblue")
 
 }
 

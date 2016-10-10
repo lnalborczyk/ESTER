@@ -8,7 +8,7 @@ Description: Functions allowing to compute iterative AIC-based evidence ratios, 
 License: MIT + file LICENSE
 LazyData: yes
 RoxygenNote: 5.0.1
-Imports: AICcmodavg, lme4, plyr, Rmisc
+Imports: AICcmodavg, lme4, plyr
 URL: https://github.com/lnalborczyk/itER
 BugReports: https://github.com/lnalborczyk/itER/issues
 Suggests: knitr,
