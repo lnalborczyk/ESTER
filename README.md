@@ -17,5 +17,3 @@ devtools::install_github("lnalborczyk/itER")
 ## How to use this package ?
 
 Read the additionnal [manual](https://cdn.rawgit.com/lnalborczyk/itER/master/vignettes/itER.html).
-
-blablablabla
