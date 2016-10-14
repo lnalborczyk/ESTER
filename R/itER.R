@@ -67,24 +67,24 @@ itER <- function(mod1, mod2, samplecol, nmin) {
         for (i in seq(startrow, endrow, nobs) ) {
 
                 maxrow <- i - 1 + nobs
-                DF <- data[1:maxrow,]
+                #DF <- data[1:maxrow,] # create a dataframe for each nmin + 1 sample
 
                 if((class(mod1) == "glmerMod")){
 
-                        mod1 <- glmer(formula(mod1), family = family(mod1)$family, DF)
-                        mod2 <- glmer(formula(mod2), family = family(mod2)$family, DF)
+                        mod1 <- glmer(formula(mod1), family = family(mod1)$family, data[1:maxrow,])
+                        mod2 <- glmer(formula(mod2), family = family(mod2)$family, data[1:maxrow,])
                 }
 
                 if((class(mod1) == "lmerMod")){
 
-                        mod1 <- lmer(formula(mod1), REML = FALSE, DF)
-                        mod2 <- lmer(formula(mod2), REML = FALSE, DF)
+                        mod1 <- lmer(formula(mod1), REML = FALSE, data[1:maxrow,])
+                        mod2 <- lmer(formula(mod2), REML = FALSE, data[1:maxrow,])
                 }
 
                 if((class(mod1) == "lm")){
 
-                        mod1 <- lm(formula(mod1), DF)
-                        mod2 <- lm(formula(mod2), DF)
+                        mod1 <- lm(formula(mod1), data[1:maxrow,])
+                        mod2 <- lm(formula(mod2), data[1:maxrow,])
                 }
 
                 tabtab <- AICcmodavg::aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)

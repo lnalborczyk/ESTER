@@ -83,26 +83,26 @@ itERrand <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE
 
                 for (i in seq(startrow, endrow, nobs) ) {
 
-                        DF <- data[1:i,]
+                        #DF <- data[1:i,]
 
                         if((class(mod1) == "glmerMod")){
 
-                                mod1 <- lme4::lmer(formula(mod1), family = family(mod1)$family, DF)
-                                mod2 <- lme4::lmer(formula(mod2), family = family(mod2)$family, DF)
+                                mod1 <- lme4::lmer(formula(mod1), family = family(mod1)$family, data[1:i,])
+                                mod2 <- lme4::lmer(formula(mod2), family = family(mod2)$family, data[1:i,])
 
                         }
 
                         if((class(mod1) == "lmerMod")){
 
-                                mod1 <- lme4::lmer(formula(mod1), REML = FALSE, DF)
-                                mod2 <- lme4::lmer(formula(mod2), REML = FALSE, DF)
+                                mod1 <- lme4::lmer(formula(mod1), REML = FALSE, data[1:i,])
+                                mod2 <- lme4::lmer(formula(mod2), REML = FALSE, data[1:i,])
 
                         }
 
                         if((class(mod1) == "lm")){
 
-                                mod1 <- lm(formula(mod1), DF)
-                                mod2 <- lm(formula(mod2), DF)
+                                mod1 <- lm(formula(mod1), data[1:i,])
+                                mod2 <- lm(formula(mod2), data[1:i,])
 
                         }
 
