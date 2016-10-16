@@ -1,9 +1,9 @@
-itER: computing iterative evidence ratio
+ESTER: Efficient Sequential Testing with Evidence Ratios
 ===
 
-`itER` is an R package...
+`ESTER` is an R package...
 
-**Note, at this point `itER` is in active development and should be considered alpha. If you experience any problems, please open an issue on Github.**
+**Note, at this point `ESTER` is in active development and should be considered alpha. If you experience any problems, please open an issue on Github.**
 
 ## Installation
 
@@ -11,7 +11,7 @@ itER: computing iterative evidence ratio
 
 ```
 library(devtools)
-devtools::install_github("lnalborczyk/itER")
+devtools::install_github("lnalborczyk/ESTER")
 ```
 
 ## How to use this package ?

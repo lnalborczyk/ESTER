@@ -1,5 +1,5 @@
 ---
-title: "itER"
+title: "ESTER"
 author: "Ladislas Nalborczyk & Brice Beffara"
 date: "6 October 2016"
 output: html_document
@@ -7,11 +7,11 @@ output: html_document
 
 ## Installation
 
-The `itER` package is not on CRAN yet, but you can install the development version from Github:
+The `ESTER` package is not on CRAN yet, but you can install the development version from Github:
 
 ```{r, eval = FALSE}
 library(devtools)
-devtools::install_github("lnalborczyk/itER")
+devtools::install_github("lnalborczyk/ESTER")
 ```
 
 ## Different questions
@@ -22,5 +22,5 @@ devtools::install_github("lnalborczyk/itER")
 
 ## Development
 
-The *itER* package is also available in a development version at the GitHub development page: [https://github.com/lnalborczyk/itER](https://github.com/lnalborczyk/itER).
+The *ESTER* package is also available in a development version at the GitHub development page: [https://github.com/lnalborczyk/ESTER](https://github.com/lnalborczyk/ESTER).
 
