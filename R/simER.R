@@ -5,7 +5,6 @@
 #' @param cohensd Expected effect size.
 #' @param n Sample size.
 #' @param nmin Minimum sample size from which start to compute ER.
-#' @param nmax Maximum sample size to which stop to compute ER.
 #'
 #' @importFrom stats lm rnorm
 #' @importFrom AICcmodavg aictab
@@ -13,11 +12,11 @@
 #'
 #' @examples
 #' library(ESTER)
-#' simER(cohensd = 0.2, n = 100, nmin = 20, nmax = 1000)
+#' simER(cohensd = 0.2, n = 100, nmin = 20)
 #'
 #' @export simER
 
-simER <- function(cohensd = 0, n = 100, nmin = 20, nmax = 200) {
+simER <- function(cohensd = 0, n = 100, nmin = 20) {
 
         options(scipen = 999) # disable scientific notation for numbers
 
@@ -34,21 +33,22 @@ simER <- function(cohensd = 0, n = 100, nmin = 20, nmax = 200) {
         # initialise plot and stuffs
         ############################################
 
-        plot(1, type = "n", xlab = "sample size", ylab = "ER", xlim = c(0, nmax), log = "y",
+        plot(1, type = "n", xlab = "sample size", ylab = "ER", xlim = c(0, n), log = "y",
                 main = paste0("Cohen's d = ", cohensd, ", ", "n = ", n))
+
         abline(h = 1, lty = 3)
 
         ER_comp <- 0
 
-        pb <- txtProgressBar(min = 0, max = nmax, initial = 0, style = 3) # initialise progression bar
+        pb <- txtProgressBar(min = 0, max = n, initial = 0, style = 3) # initialise progression bar
 
-        for(i in nmin:nmax){
+        for(i in nmin:n){
 
                 model_1 <- lm(value ~ 1, data = df_pop[1:i,])
                 model_2 <- lm(value ~ group, data = df_pop[1:i,])
 
                 model_comp <- as.data.frame(aictab(list(model_1, model_2),
-                        modnames=c("model_1", "model_2"), sort = FALSE) )
+                        modnames = c("model_1", "model_2"), sort = FALSE) )
 
                 rownames(model_comp) <- c("model_1", "model_2")
 
