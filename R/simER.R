@@ -44,7 +44,7 @@ simER <- function(cohensd = 0, n = 100, nmin = 20) {
 
         for(i in nmin:n){
 
-                model_1 <- lm(value ~ 1, data = df_pop[1:i,])
+                model_1 <- lm(value ~ 0, data = df_pop[1:i,])
                 model_2 <- lm(value ~ group, data = df_pop[1:i,])
 
                 model_comp <- as.data.frame(aictab(list(model_1, model_2),
@@ -61,5 +61,7 @@ simER <- function(cohensd = 0, n = 100, nmin = 20) {
         }
 
         cat(paste("Final ER = ", round(ER_comp,4))) # print final ER
+
+        return(ER_comp)
 
         }
