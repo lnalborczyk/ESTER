@@ -1,10 +1,11 @@
-#' Sequential ER for independant two-groups comparisons, as a function of sample size and Cohen's d.
+#' Simulates a sequential ER for independant two-groups comparisons, as a function of sample size and Cohen's d.
 #'
 #' \code{simER} computes evidence ratios (ER) as a function of sample size and cohen's d
 #'
 #' @param cohensd Expected effect size.
 #' @param n Sample size.
 #' @param nmin Minimum sample size from which start to compute ER.
+#' @param plot If TRUE, produces a nice plot of the evolution of the ER.
 #'
 #' @importFrom stats lm rnorm
 #' @importFrom AICcmodavg aictab
@@ -12,11 +13,11 @@
 #'
 #' @examples
 #' library(ESTER)
-#' simER(cohensd = 0.2, n = 100, nmin = 20)
+#' ER <- simER(cohensd = 0.2, n = 100, nmin = 20, plot = TRUE)
 #'
 #' @export simER
 
-simER <- function(cohensd = 0, n = 100, nmin = 20) {
+simER <- function(cohensd = 0, n = 100, nmin = 20, plot = TRUE) {
 
         options(scipen = 999) # disable scientific notation for numbers
 
@@ -29,22 +30,13 @@ simER <- function(cohensd = 0, n = 100, nmin = 20) {
 
         df_pop <- df_pop[sample(nrow(df_pop), replace = FALSE), ]
 
-        ########################################################
-        # initialise plot and stuffs
-        ############################################
-
-        plot(1, type = "n", xlab = "sample size", ylab = "ER", xlim = c(0, n), log = "y",
-                main = paste0("Cohen's d = ", cohensd, ", ", "n = ", n))
-
-        abline(h = 1, lty = 3)
-
-        ER_comp <- 0
+        ER_comp <- numeric(nmin)
 
         pb <- txtProgressBar(min = 0, max = n, initial = 0, style = 3) # initialise progression bar
 
         for(i in nmin:n){
 
-                model_1 <- lm(value ~ 0, data = df_pop[1:i,])
+                model_1 <- lm(value ~ 1, data = df_pop[1:i,])
                 model_2 <- lm(value ~ group, data = df_pop[1:i,])
 
                 model_comp <- as.data.frame(aictab(list(model_1, model_2),
@@ -52,16 +44,23 @@ simER <- function(cohensd = 0, n = 100, nmin = 20) {
 
                 rownames(model_comp) <- c("model_1", "model_2")
 
-                ER_comp <- model_comp["model_2", "AICcWt"] / model_comp["model_1", "AICcWt"]
-
-                points(i, ER_comp, pch = 20)
+                ER_comp[i] <- model_comp["model_2", "AICcWt"] / model_comp["model_1", "AICcWt"]
 
                 setTxtProgressBar(pb,i)
 
         }
 
-        cat(paste("Final ER = ", round(ER_comp,4))) # print final ER
+        if(plot == TRUE){
 
-        return(ER_comp)
+                suppressWarnings(plot(ER_comp, type = "p", pch = 20, xlab = "sample size",
+                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), xlim = c(nmin, n),
+                main = paste0("Cohen's d = ", cohensd, ", ", "n = ", n), log = "y", bty = "l"))
+
+                abline(h = 1, lty = 3)
+        }
+
+        cat(paste("Final ER = ", round(tail(ER_comp,1),4)))
+
+        return(ER_comp[nmin:n])
 
         }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ERseq.R
 \name{ERseq}
 \alias{ERseq}
-\title{Iterative evidence ratios.}
+\title{Sequential evidence ratios.}
 \usage{
 ERseq(mod1, mod2, samplecol, nmin)
 }

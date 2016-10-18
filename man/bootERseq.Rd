@@ -2,7 +2,7 @@
 % Please edit documentation in R/bootERseq.R
 \name{bootERseq}
 \alias{bootERseq}
-\title{Iterative evidence ratios of original sample and random rearrangments.}
+\title{Sequential evidence ratios of original sample and random rearrangments.}
 \usage{
 bootERseq(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE)
 }

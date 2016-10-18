@@ -2,9 +2,9 @@
 % Please edit documentation in R/distER.R
 \name{distER}
 \alias{distER}
-\title{Sequential ER for independant two-groups comparisons, as a function of sample size and Cohen's d.}
+\title{Simulates experiments and sequential evidence ratios.}
 \usage{
-distER(cohensd = 0, n = 100, nmin = 20, nSims = 20)
+distER(cohensd = 0, n = 100, nmin = 20, nSims = 100)
 }
 \arguments{
 \item{cohensd}{Expected effect size.}
@@ -20,7 +20,7 @@ distER(cohensd = 0, n = 100, nmin = 20, nSims = 20)
 }
 \examples{
 library(ESTER)
-distER(cohensd = 0.2, n = 100, nmin = 20, nSims = 20)
+distER(cohensd = 0.4, n = 100, nmin = 20, nSims = 100)
 
 }
 

@@ -1,4 +1,4 @@
-#' Iterative evidence ratios of original sample and random rearrangments.
+#' Sequential evidence ratios of original sample and random rearrangments.
 #'
 #' \code{bootERseq} computes evidence ratios (ER) as a function of sample size,
 #' for a given data set and for N random rearrangments of this dataset.

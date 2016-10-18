@@ -1,4 +1,4 @@
-#' Iterative evidence ratios.
+#' Sequential evidence ratios.
 #'
 #' \code{ERseq} computes evidence ratios (ER) as a function of sample size, for a given data set.
 #'

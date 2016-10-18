@@ -2,9 +2,9 @@
 % Please edit documentation in R/simER.R
 \name{simER}
 \alias{simER}
-\title{Sequential ER for independant two-groups comparisons, as a function of sample size and Cohen's d.}
+\title{Simulates a sequential ER for independant two-groups comparisons, as a function of sample size and Cohen's d.}
 \usage{
-simER(cohensd = 0, n = 100, nmin = 20)
+simER(cohensd = 0, n = 100, nmin = 20, plot = TRUE)
 }
 \arguments{
 \item{cohensd}{Expected effect size.}
@@ -12,13 +12,15 @@ simER(cohensd = 0, n = 100, nmin = 20)
 \item{n}{Sample size.}
 
 \item{nmin}{Minimum sample size from which start to compute ER.}
+
+\item{plot}{If TRUE, produces a nice plot of the evolution of the ER.}
 }
 \description{
 \code{simER} computes evidence ratios (ER) as a function of sample size and cohen's d
 }
 \examples{
 library(ESTER)
-simER(cohensd = 0.2, n = 100, nmin = 20)
+ER <- simER(cohensd = 0.2, n = 100, nmin = 20, plot = TRUE)
 
 }
 
