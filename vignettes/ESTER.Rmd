@@ -1,5 +1,5 @@
 ---
-title: "ESTER"
+title: "Efficient Sequential Testing with Evidence Ratios"
 author: "Ladislas Nalborczyk"
 date: "20 October 2016"
 output: html_document
@@ -24,4 +24,3 @@ devtools::install_github("lnalborczyk/ESTER")
 ## Development
 
 The *ESTER* package is also available in a development version at the GitHub development page: [https://github.com/lnalborczyk/ESTER](https://github.com/lnalborczyk/ESTER).
-
