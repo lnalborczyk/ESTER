@@ -1,16 +1,15 @@
 Package: ESTER
 Title: Efficient Sequential Testing with Evidence Ratios
 Version: 0.0.0.9000
-Date: 2016-10-16
-Authors@R: as.person(c("Ladislas Nalborczyk <ladislas.nalborczyk@gmail.com> [aut, cre]", "Brice Beffara <brice.beffara@gmail.com> [aut]"))
-Description: Functions permitting to perform sequential testing with AIC-based evidence ratios, as well as error rates estimations.
-        Calculations could be based on observed data as well as a simulated or bootstrapepd data.
+Date: 2016-10-20
+Authors@R: as.person("Ladislas Nalborczyk <ladislas.nalborczyk@gmail.com> [aut, cre]")
+Description: Sequential testing with AICc-based evidence ratios, for observed data as well as simulated or bootstrapped data.
 License: MIT + file LICENSE
 LazyData: yes
 RoxygenNote: 5.0.1
 Imports: AICcmodavg, lme4, plyr
-URL: https://github.com/lnalborczyk/itER
-BugReports: https://github.com/lnalborczyk/itER/issues
+URL: https://github.com/lnalborczyk/ESTER
+BugReports: https://github.com/lnalborczyk/ESTER/issues
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr

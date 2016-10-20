@@ -16,4 +16,4 @@ devtools::install_github("lnalborczyk/ESTER")
 
 ## How to use this package ?
 
-Read the additionnal [manual](https://cdn.rawgit.com/lnalborczyk/itER/master/vignettes/itER.html).
+Read the additionnal [manual](https://rawgit.com/lnalborczyk/ESTER/master/vignettes/ESTER.html).
