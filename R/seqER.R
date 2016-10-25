@@ -1,6 +1,6 @@
 #' Sequential evidence ratios.
 #'
-#' \code{ERseq} computes evidence ratios (ER) as a function of sample size, for a given data set.
+#' \code{seqER} computes evidence ratios (ER) as a function of sample size, for a given data set.
 #'
 #' @param mod1 A mathematical model, of class "lm" or "lmerMod".
 #' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
@@ -20,11 +20,11 @@
 #' data <- sleepstudy
 #' mod1 <- lm(Reaction ~ 1, data)
 #' mod2 <- lm(Reaction ~ Days, data)
-#' ERseq(mod1, mod2, samplecol = "Subject", nmin = 10)
+#' seqER(mod1, mod2, samplecol = "Subject", nmin = 10)
 #'
-#' @export ERseq
+#' @export seqER
 
-ERseq <- function(mod1, mod2, samplecol, nmin) {
+seqER <- function(mod1, mod2, samplecol, nmin) {
 
         if(!class(mod1)==class(mod2)){
 
@@ -103,14 +103,14 @@ ERseq <- function(mod1, mod2, samplecol, nmin) {
         ER <- data.frame(ER[c(2,1)])
         colnames(ER) <- c("ppt","ER")
 
-        class(ER) <- c("ERseq", "data.frame")
+        class(ER) <- c("seqER", "data.frame")
 
         return(ER)
 
 }
 
-#' @S3method plot ERseq
-plot.ERseq <- function(x, ...) {
+#' @S3method plot seqER
+plot.seqER <- function(x, ...) {
 
         plot(x$ppt, x$ER, type = "l", xlab = expression(Sample~ ~size),
                 ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), bty = "n",

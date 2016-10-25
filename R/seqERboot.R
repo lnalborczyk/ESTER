@@ -1,9 +1,9 @@
 #' Sequential evidence ratios of original sample and random rearrangments.
 #'
-#' \code{bootERseq} computes evidence ratios (ER) as a function of sample size,
+#' \code{seqERboot} computes evidence ratios (ER) as a function of sample size,
 #' for a given data set and for N random rearrangments of this dataset.
 #'
-#' @inheritParams ERseq
+#' @inheritParams seqER
 #' @param order_nb Number of random rearrangments to evaluate.
 #' @param replace If TRUE, corresponds to bootstrap with replacement.
 #'
@@ -17,11 +17,11 @@
 #' data <- sleepstudy
 #' mod1 <- lm(Reaction ~ 1, data)
 #' mod2 <- lm(Reaction ~ Days, data)
-#' bootERseq(mod1, mod2, samplecol = "Subject", order_nb = 10, nmin = 10, replace = FALSE)
+#' seqERboot(mod1, mod2, samplecol = "Subject", order_nb = 10, nmin = 10, replace = FALSE)
 #'
-#' @export bootERseq
+#' @export seqERboot
 
-bootERseq <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE) {
+seqERboot <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE) {
 
         if(!class(mod1)==class(mod2)){stop("Error: mod1 and mod2 have to be of the same class")}
 

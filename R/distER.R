@@ -31,10 +31,14 @@ distER <- function(cohensd = 0, n = 100, nmin = 20, nSims = 100) {
 
         }
 
-        hist(ER, breaks = 100, border = FALSE, main = paste0("ER distribution with Cohen's d = ",
+        xlim = c(0, mean(ER) + IQR(ER)/2)
+
+        hist(ER, breaks = 1000, border = FALSE, main = paste0("ER distribution with Cohen's d = ",
                 cohensd, ", n = ", n, ", nSims = ", nSims),
                 xlab = expression(Evidence~ ~Ratio~ ~(ER[10])),
-                xlim = c(0, max(ER)), ylim = c(0, nSims), col = "steelblue")
+                xlim = xlim, ylim = c(0, nSims), col = "steelblue")
+
+        rug(ER, side = 3)
 
         text(median(ER), nSims/2, as.character(paste0("median = ", round(median(ER), 3))))
 
