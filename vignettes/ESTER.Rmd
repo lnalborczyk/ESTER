@@ -3,10 +3,6 @@ title: "Efficient Sequential Testing with Evidence Ratios"
 author: "Ladislas Nalborczyk"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Efficient Sequential Testing with Evidence Ratios}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
 ---
 
 This document demonstrates how to do sequential analyses for studies which use AICc-based Evidence Ratios (ER) as index of evidence.
