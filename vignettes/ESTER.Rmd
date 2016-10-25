@@ -1,9 +1,11 @@
 ---
 title: "Efficient Sequential Testing with Evidence Ratios"
 author: "Ladislas Nalborczyk"
-date: "20 October 2016"
+date: "`r Sys.Date()`"
 output: html_document
 ---
+
+This document demonstrates how to do sequential analyses for studies which use AICc-based Evidence Ratios (ER) as index of evidence.
 
 ## Installation
 
@@ -16,11 +18,37 @@ devtools::install_github("lnalborczyk/ESTER")
 
 ## Different questions
 
-1. Does the ER computed on my observed sample reached a stable region ?
-2. How common is the observed evolution of this ER, considering random permutation and / or bootstrapped samples ?
-3. If an a priori ER threshold has been fixed, what to do when this threshold is fixed ? How to be *sure* that it is not due to random variation ?
-4. Given an expected effect size, what ER evolution should I reasonnably expect ?
+1. Simulation. Given an expected effect size and sample size, what ER evolution should I reasonnably expect ?
+2. Observed data. Does the ER computed on my observed sample reached a stable region ? When stop to recruit participants ?
+
+## 1. Simulation
+
+```{r eval = FALSE}
+
+ER <- simER(cohensd = 0.4, n = 60, nmin = 20, plot = TRUE)
+
+```
+
+## 2. Observed data.
+
+```{r eval = FALSE}
+
+library(lme4)
+data <- sleepstudy
+mod1 <- lm(Reaction ~ 1, data)
+mod2 <- lm(Reaction ~ Days, data)
+seqERboot(mod1, mod2, samplecol = "S
+seqERboot(mod1, mod2, samplecol = "Subject", order_nb = 10, nmin = 10, replace = FALSE)
+
+```
 
 ## Development
 
 The *ESTER* package is also available in a development version at the GitHub development page: [https://github.com/lnalborczyk/ESTER](https://github.com/lnalborczyk/ESTER).
+
+```{r eval = FALSE, echo = FALSE}
+
+library(knitr)
+#pandoc('vignettes/ESTER.Rmd', format='html')
+
+```
