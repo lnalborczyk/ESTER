@@ -5,7 +5,7 @@
 #' @inheritParams simER
 #' @param nSims Number of experiments to simulate.
 #'
-#' @importFrom stats lm rnorm t.test median
+#' @importFrom stats lm rnorm t.test median IQR
 #' @importFrom AICcmodavg aictab
 #' @importFrom graphics abline points hist
 #'
@@ -37,8 +37,6 @@ distER <- function(cohensd = 0, n = 100, nmin = 20, nSims = 100) {
                 cohensd, ", n = ", n, ", nSims = ", nSims),
                 xlab = expression(Evidence~ ~Ratio~ ~(ER[10])),
                 xlim = xlim, ylim = c(0, nSims), col = "steelblue")
-
-        rug(ER, side = 3)
 
         text(median(ER), nSims/2, as.character(paste0("median = ", round(median(ER), 3))))
 
