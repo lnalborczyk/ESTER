@@ -5,7 +5,25 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 ---
 
-This document demonstrates how to do sequential analyses for studies which use AICc-based Evidence Ratios (ER) as index of evidence.
+This document demonstrates how to do sequential analyses using AICc-based evidence ratios.
+
+## (Information) Theoretical background
+
+...
+
+Akaike’s approach allowed model selection to be firmly based on a fundamental theory and allowed further theoretical work. When K is large relative to sample size n (which includes when n is small, for any K), there is a small-sample (second-order bias correction) version called AICc, $$AIC_c = -2log(\mathcal{L}(\hat{\theta}))+2K+\dfrac{2K(K+1)}{n-K-1}$$ (see Sugiura 1978; Hurvich and Tsai 1989, 1995), and this should be used unless n/K > about 40 for the model with the largest value of K.
+
+The individual AIC values are not interpretable as they contain arbitrary constants and are much affected by sample size. Here it is imperative to rescale AIC or AICc to $\Delta_{AICc}=AICc_{i}-AICc_{min}$ where $AIC_{min}$ is the minimum of the R different $AIC_{i}$ values (i.e., the minimum is at i = min). This transformation forces the best model to have $\Delta=0$, while the rest of the models have positive values.
+
+The simple transformation $exp(−\Delta_i/2)$, for $i = 1, 2, ..., R$, provides the likelihood of the model (Akaike, 1981) given the data: $\mathcal{L}(g_i|data)$. This is a likelihood function over the model set in the sense that $\mathcal{L}(\theta|data, g_i)$ is the likelihood over the parameter space (for model $g_i$) of the parameter $\theta$, given the data ($x$) and the model ($g_i$).
+
+It is convenient to normalize the model likelihoods such that they sum to 1 and treat them as probabilities; hence, we use $$w_{i}=\dfrac{exp(-\Delta_{i}/2)}{\sum_{r=1}^{R}exp(-\Delta_{r}/2)}.$$ The $w_i$, called Akaike weights, are useful as the “weight of evidence” in favor of model $g_i(·|\theta)$ as being the actual K-L best model in the set (in this context, a model, $g$, is considered a “parameter”). The ratios $w_i/w_j$ are identical to the original likelihood ratios, $\mathcal{L}(g_i|data)/\mathcal{L}(g_j|data)$, and so they are invariant to the model set, but the $w_i$ values depend on the full model set because they sum to 1.
+
+Evidence can be judged by the relative likelihood of model pairs as $\mathcal{L}(g_i|x)/\mathcal{L}(g_j|x)$ or, equivalently, the ratio of Akaike weights $w_i/w_j$. Such ratios are called **evidence ratios** and represend the evidnce about fitted models as to which is better in a Kullback-Leibler information sense.
+
+...
+
+Jeffreys (1948) provided some likelihood-based rules similar to these over 50 years ago. See Edwards (1992) and Royall (1997) for additional perspectives on the concept of evidence in a likelihood framework.
 
 ## Installation
 
@@ -25,8 +43,9 @@ devtools::install_github("lnalborczyk/ESTER")
 
 ## 1. Simulation
 
-```{r eval = FALSE}
+```{r eval =  FALSE}
 
+library(ESTER)
 ER <- simER(cohensd = 0.4, n = 60, nmin = 20, plot = TRUE)
 
 ```
@@ -42,6 +61,8 @@ mod2 <- lm(Reaction ~ Days, data)
 seqERboot(mod1, mod2, samplecol = "Subject", order_nb = 10, nmin = 10, replace = FALSE)
 
 ```
+
+`ESTER` take advantag of the `AICcmodavg` package...
 
 ## Development
 

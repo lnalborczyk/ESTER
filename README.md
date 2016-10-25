@@ -1,7 +1,7 @@
 ESTER: Efficient Sequential Testing with Evidence Ratios
 ===
 
-**Note, at this point `ESTER` is in active development and should be considered alpha. If you experience any problems, please open an issue on Github.**
+**Note, at this point `ESTER` is in active development and should be considered alpha. If you experience any problems, please open an issue.**
 
 ## Installation
 
