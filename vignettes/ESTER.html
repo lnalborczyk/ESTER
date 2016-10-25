@@ -1,7 +1,9 @@
 <p>This document demonstrates how to do sequential analyses for studies which use AICc-based Evidence Ratios (ER) as index of evidence.</p>
 <h2 id="installation">Installation</h2>
 <p>The <code>ESTER</code> package is not on CRAN yet, but you can install the development version from Github:</p>
-<p><code>{r, eval = FALSE} library(devtools) devtools::install_github(&quot;lnalborczyk/ESTER&quot;)</code></p>
+<p>```{r, eval = FALSE}</p>
+<p>library(devtools) devtools::install_github(&quot;lnalborczyk/ESTER&quot;)</p>
+<p>```</p>
 <h2 id="different-questions">Different questions</h2>
 <ol style="list-style-type: decimal">
 <li>Simulation. Given an expected effect size and sample size, what ER evolution should I reasonnably expect ?</li>
@@ -13,7 +15,10 @@
 <p>```</p>
 <h2 id="observed-data.">2. Observed data.</h2>
 <p>```{r eval = FALSE}</p>
-<p>library(lme4) data &lt;- sleepstudy mod1 &lt;- lm(Reaction ~ 1, data) mod2 &lt;- lm(Reaction ~ Days, data) seqERboot(mod1, mod2, samplecol = &quot;S seqERboot(mod1, mod2, samplecol = &quot;Subject&quot;, order_nb = 10, nmin = 10, replace = FALSE)</p>
+<p>library(lme4) data &lt;- sleepstudy mod1 &lt;- lm(Reaction ~ 1, data) mod2 &lt;- lm(Reaction ~ Days, data) seqERboot(mod1, mod2, samplecol = &quot;Subject&quot;, order_nb = 10, nmin = 10, replace = FALSE)</p>
 <p>```</p>
 <h2 id="development">Development</h2>
 <p>The <em>ESTER</em> package is also available in a development version at the GitHub development page: <a href="https://github.com/lnalborczyk/ESTER" class="uri">https://github.com/lnalborczyk/ESTER</a>.</p>
+<p>```{r eval = FALSE, echo = FALSE, results = &quot;hide&quot;}</p>
+<p>library(knitr) #pandoc('vignettes/ESTER.Rmd', format='html')</p>
+<p>```</p>

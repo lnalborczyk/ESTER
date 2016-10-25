@@ -2,7 +2,11 @@
 title: "Efficient Sequential Testing with Evidence Ratios"
 author: "Ladislas Nalborczyk"
 date: "`r Sys.Date()`"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Efficient Sequential Testing with Evidence Ratios}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 This document demonstrates how to do sequential analyses for studies which use AICc-based Evidence Ratios (ER) as index of evidence.
@@ -12,8 +16,10 @@ This document demonstrates how to do sequential analyses for studies which use A
 The `ESTER` package is not on CRAN yet, but you can install the development version from Github:
 
 ```{r, eval = FALSE}
+
 library(devtools)
 devtools::install_github("lnalborczyk/ESTER")
+
 ```
 
 ## Different questions
@@ -37,7 +43,6 @@ library(lme4)
 data <- sleepstudy
 mod1 <- lm(Reaction ~ 1, data)
 mod2 <- lm(Reaction ~ Days, data)
-seqERboot(mod1, mod2, samplecol = "S
 seqERboot(mod1, mod2, samplecol = "Subject", order_nb = 10, nmin = 10, replace = FALSE)
 
 ```
@@ -45,10 +50,3 @@ seqERboot(mod1, mod2, samplecol = "Subject", order_nb = 10, nmin = 10, replace =
 ## Development
 
 The *ESTER* package is also available in a development version at the GitHub development page: [https://github.com/lnalborczyk/ESTER](https://github.com/lnalborczyk/ESTER).
-
-```{r eval = FALSE, echo = FALSE}
-
-library(knitr)
-#pandoc('vignettes/ESTER.Rmd', format='html')
-
-```
