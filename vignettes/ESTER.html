@@ -12,7 +12,7 @@
 
 <meta name="author" content="Ladislas Nalborczyk" />
 
-<meta name="date" content="2016-10-25" />
+<meta name="date" content="2016-10-26" />
 
 <title>Efficient Sequential Testing with Evidence Ratios</title>
 
@@ -70,21 +70,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Efficient Sequential Testing with Evidence Ratios</h1>
 <h4 class="author"><em>Ladislas Nalborczyk</em></h4>
-<h4 class="date"><em>2016-10-25</em></h4>
+<h4 class="date"><em>2016-10-26</em></h4>
 
 
 
-<p>This document demonstrates how to do sequential analyses using AICc-based evidence ratios.</p>
 <div id="information-theoretical-background" class="section level2">
 <h2>(Information) Theoretical background</h2>
-<p>…</p>
-<p>Akaike’s approach allowed model selection to be firmly based on a fundamental theory and allowed further theoretical work. When K is large relative to sample size n (which includes when n is small, for any K), there is a small-sample (second-order bias correction) version called AICc, <span class="math display">\[AIC_c = -2log(\mathcal{L}(\hat{\theta}))+2K+\dfrac{2K(K+1)}{n-K-1}\]</span> (see Sugiura 1978; Hurvich and Tsai 1989, 1995), and this should be used unless n/K &gt; about 40 for the model with the largest value of K.</p>
-<p>The individual AIC values are not interpretable as they contain arbitrary constants and are much affected by sample size. Here it is imperative to rescale AIC or AICc to <span class="math inline">\(\Delta_{AICc}=AICc_{i}-AICc_{min}\)</span> where <span class="math inline">\(AIC_{min}\)</span> is the minimum of the R different <span class="math inline">\(AIC_{i}\)</span> values (i.e., the minimum is at i = min). This transformation forces the best model to have <span class="math inline">\(\Delta=0\)</span>, while the rest of the models have positive values.</p>
+<p><em>This brief introduction is greatly inspired by a paper by Burnham &amp; Anderson (2004): “Multimodel Inference, Understanding AIC and BIC in Model Selection”.</em></p>
+<p>Akaike’s approach allowed model selection to be firmly based on a fundamental theory and allowed further theoretical work. When <span class="math inline">\(K\)</span> is large relative to sample size n (which includes when <span class="math inline">\(n\)</span> is small, for any <span class="math inline">\(K\)</span>), there is a small-sample (second-order bias correction) version of the AIC, called AICc, <span class="math display">\[AIC_c = AIC+\dfrac{2K(K+1)}{n-K-1}\]</span> knowing that <span class="math display">\[AIC = -2log(\mathcal{L}(\hat{\theta}))+2K\]</span> where <span class="math inline">\(-2log(\mathcal{L}(\hat{\theta}))\)</span> is known as the <em>deviance</em> of a model (see Sugiura 1978; Hurvich and Tsai 1989, 1995). AICc should be used unless <span class="math inline">\(n/K\)</span> &gt; about 40 for the model with the largest value of <span class="math inline">\(K\)</span>.</p>
+<p>The individual AICc values are not interpretable as they contain arbitrary constants and are much affected by sample size. Here it is imperative to rescale AICc to <span class="math inline">\(\Delta_{AICc}=AICc_{i}-AICc_{min}\)</span> where <span class="math inline">\(AICc_{min}\)</span> is the minimum of the <span class="math inline">\(R\)</span> different <span class="math inline">\(AICc_{i}\)</span> values (i.e., the minimum is at <span class="math inline">\(i = min\)</span>). This transformation forces the best model to have <span class="math inline">\(\Delta=0\)</span>, while the rest of the models have positive values.</p>
 <p>The simple transformation <span class="math inline">\(exp(−\Delta_i/2)\)</span>, for <span class="math inline">\(i = 1, 2, ..., R\)</span>, provides the likelihood of the model (Akaike, 1981) given the data: <span class="math inline">\(\mathcal{L}(g_i|data)\)</span>. This is a likelihood function over the model set in the sense that <span class="math inline">\(\mathcal{L}(\theta|data, g_i)\)</span> is the likelihood over the parameter space (for model <span class="math inline">\(g_i\)</span>) of the parameter <span class="math inline">\(\theta\)</span>, given the data (<span class="math inline">\(x\)</span>) and the model (<span class="math inline">\(g_i\)</span>).</p>
-<p>It is convenient to normalize the model likelihoods such that they sum to 1 and treat them as probabilities; hence, we use <span class="math display">\[w_{i}=\dfrac{exp(-\Delta_{i}/2)}{\sum_{r=1}^{R}exp(-\Delta_{r}/2)}.\]</span> The <span class="math inline">\(w_i\)</span>, called Akaike weights, are useful as the “weight of evidence” in favor of model <span class="math inline">\(g_i(·|\theta)\)</span> as being the actual K-L best model in the set (in this context, a model, <span class="math inline">\(g\)</span>, is considered a “parameter”). The ratios <span class="math inline">\(w_i/w_j\)</span> are identical to the original likelihood ratios, <span class="math inline">\(\mathcal{L}(g_i|data)/\mathcal{L}(g_j|data)\)</span>, and so they are invariant to the model set, but the <span class="math inline">\(w_i\)</span> values depend on the full model set because they sum to 1.</p>
-<p>Evidence can be judged by the relative likelihood of model pairs as <span class="math inline">\(\mathcal{L}(g_i|x)/\mathcal{L}(g_j|x)\)</span> or, equivalently, the ratio of Akaike weights <span class="math inline">\(w_i/w_j\)</span>. Such ratios are called <strong>evidence ratios</strong> and represend the evidnce about fitted models as to which is better in a Kullback-Leibler information sense.</p>
-<p>…</p>
-<p>Jeffreys (1948) provided some likelihood-based rules similar to these over 50 years ago. See Edwards (1992) and Royall (1997) for additional perspectives on the concept of evidence in a likelihood framework.</p>
+<p>It is convenient to normalize the model likelihoods such that they sum to 1 and treat them as probabilities; hence, we use <span class="math display">\[w_{i}=\dfrac{exp(-\Delta_{i}/2)}{\sum_{r=1}^{R}exp(-\Delta_{r}/2)}.\]</span> The <span class="math inline">\(w_i\)</span>, called Akaike weights, are useful as the “weight of evidence” in favor of model <span class="math inline">\(g_i(·|\theta)\)</span> as being the actual Kullback-Leibler best model in the set. The ratios <span class="math inline">\(w_i/w_j\)</span> are identical to the original likelihood ratios, <span class="math inline">\(\mathcal{L}(g_i|data)/\mathcal{L}(g_j|data)\)</span>, and so they are invariant to the model set, but the <span class="math inline">\(w_i\)</span> values depend on the full model set because they sum to 1.</p>
+<p>Evidence can be judged by the relative likelihood of model pairs as <span class="math inline">\(\mathcal{L}(g_i|x)/\mathcal{L}(g_j|x)\)</span> or, equivalently, the ratio of Akaike weights <span class="math inline">\(w_i/w_j\)</span>. Such ratios are called <strong>evidence ratios</strong> and represend the evidence about fitted models as to which is better in a Kullback-Leibler information sense.</p>
 </div>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
@@ -95,8 +92,8 @@ devtools::<span class="kw">install_github</span>(<span class="st">&quot;lnalborc
 <div id="different-questions" class="section level2">
 <h2>Different questions</h2>
 <ol style="list-style-type: decimal">
-<li>Simulation. Given an expected effect size and sample size, what ER evolution should I reasonnably expect ?</li>
-<li>Observed data. Does the ER computed on my observed sample reached a stable region ? When stop to recruit participants ?</li>
+<li><strong>Simulation</strong>. Given an expected effect size and sample size, what ER evolution should I reasonnably expect ?</li>
+<li><strong>Observed data</strong>. Does the ER computed on my observed sample reached a stable region ? When stop to recruit participants ?</li>
 </ol>
 </div>
 <div id="simulation" class="section level2">
@@ -111,7 +108,7 @@ data &lt;-<span class="st"> </span>sleepstudy
 mod1 &lt;-<span class="st"> </span><span class="kw">lm</span>(Reaction ~<span class="st"> </span><span class="dv">1</span>, data)
 mod2 &lt;-<span class="st"> </span><span class="kw">lm</span>(Reaction ~<span class="st"> </span>Days, data)
 <span class="kw">seqERboot</span>(mod1, mod2, <span class="dt">samplecol =</span> <span class="st">&quot;Subject&quot;</span>, <span class="dt">order_nb =</span> <span class="dv">10</span>, <span class="dt">nmin =</span> <span class="dv">10</span>, <span class="dt">replace =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<p><code>ESTER</code> take advantag of the <code>AICcmodavg</code> package…</p>
+<p><code>ESTER</code> uses the <code>AICcmodavg</code> package (available on <a href="https://cran.r-project.org/web/packages/AICcmodavg/index.html">CRAN</a>; Mazerolle, 2016) to compute AIC, AICc and Akaike Weights.</p>
 </div>
 <div id="development" class="section level2">
 <h2>Development</h2>
