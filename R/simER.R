@@ -10,6 +10,7 @@
 #' @importFrom stats lm rnorm
 #' @importFrom AICcmodavg aictab
 #' @importFrom graphics abline points
+#' @importFrom magrittr %>%
 #'
 #' @examples
 #' library(ESTER)
@@ -26,13 +27,11 @@ simER <- function(cohensd = 0, n = 100, nmin = 20, plot = TRUE) {
 
         df_pop <- as.data.frame( rbind( y, x ) )
         colnames(df_pop) <- c("value", "group")
-        df_pop$value <- as.numeric(as.character(df_pop$value) )
+        df_pop$value <- df_pop$value %>% as.character %>% as.numeric
 
         df_pop <- df_pop[sample(nrow(df_pop), replace = FALSE), ]
 
-        ER_comp <- numeric(nmin)
-
-        pb <- txtProgressBar(min = 0, max = n, initial = 0, style = 3) # initialise progression bar
+        ER_comp <- as.numeric(nmin)
 
         for(i in nmin:n){
 
@@ -45,8 +44,6 @@ simER <- function(cohensd = 0, n = 100, nmin = 20, plot = TRUE) {
                 rownames(model_comp) <- c("model_1", "model_2")
 
                 ER_comp[i] <- model_comp["model_2", "AICcWt"] / model_comp["model_1", "AICcWt"]
-
-                setTxtProgressBar(pb,i)
 
         }
 

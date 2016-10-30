@@ -187,8 +187,5 @@ plot.ERlist <- function(x, ...) {
         text(max(x$ER$ppt[x$ER$ERi=="ER1"]), tail((x$ER$ER[x$ER$ERi=="ER1"]), 1) * 1.1,
                 as.character(round(tail(x$ER$ER[x$ER$ERi=="ER1"], 1), 2)))
 
-        #lines(loess(x$agg_ER$ER ~ x$agg_ER$ppt), lty = 1, lwd = 1.2, col = "steelblue")
-        #lines(loess(x$agg_ER$ER.upper ~ x$agg_ER$ppt), lty = 1, lwd = 1.2, col = "steelblue")
-
 }
 

@@ -7,7 +7,7 @@ Description: Sequential testing with AICc-based evidence ratios, for observed da
 License: MIT + file LICENSE
 LazyData: yes
 RoxygenNote: 5.0.1
-Imports: AICcmodavg, lme4, plyr
+Imports: AICcmodavg, lme4, plyr, magrittr
 URL: https://github.com/lnalborczyk/ESTER
 BugReports: https://github.com/lnalborczyk/ESTER/issues
 Suggests: knitr, rmarkdown

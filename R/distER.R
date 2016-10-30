@@ -19,15 +19,14 @@ distER <- function(cohensd = 0, n = 100, nmin = 20, nSims = 100) {
 
         options(scipen = 999) # disable scientific notation for numbers
 
-        ER <- numeric(nSims) # set up empty variable to store all simulated ER
+        ER <- as.numeric(nSims) # set up empty variable to store all simulated ER
 
         for(i in 1:nSims){
 
                 x <- rnorm(n = n, mean = 0, sd = 1) # produce N simulated participants
                 y <- rnorm(n = n, mean = 0 + cohensd, sd = 1) # produce N simulated participants
-                z <- t.test(x,y) # perform a t-test for independant samples
 
-                ER[i] <- tail(simER(cohensd, n, nmin, plot = FALSE),1)
+                ER[i] <- tail(simER(cohensd, n, nmin, plot = FALSE), 1)
 
         }
 
@@ -38,7 +37,7 @@ distER <- function(cohensd = 0, n = 100, nmin = 20, nSims = 100) {
                 xlab = expression(Evidence~ ~Ratio~ ~(ER[10])),
                 xlim = xlim, ylim = c(0, nSims), col = "steelblue")
 
-        text(median(ER), nSims/2, as.character(paste0("median = ", round(median(ER), 3))))
+        #text(median(ER), nSims/2, as.character(paste0("median = ", round(median(ER), 3))))
 
         return(ER)
 

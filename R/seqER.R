@@ -59,7 +59,7 @@ seqER <- function(mod1, mod2, samplecol, nmin) {
         }
 
         startrow <- min(which(as.numeric(as.character(data$ppt))==nmin)) # check the row number of the nmin
-        # endrow <- max(which(as.numeric(as.character(data$ppt))==max(as.numeric(as.character(data[,samplecol])))))
+
         endrow <- length(data[,samplecol]) # check the row number of the last subject
 
         pb = txtProgressBar(min = 0, max = endrow, initial = 0, style = 3)
@@ -67,7 +67,6 @@ seqER <- function(mod1, mod2, samplecol, nmin) {
         for (i in seq(startrow, endrow, nobs) ) {
 
                 maxrow <- i - 1 + nobs
-                #DF <- data[1:maxrow,] # create a dataframe for each nmin + 1 sample
 
                 if((class(mod1) == "glmerMod")){
 

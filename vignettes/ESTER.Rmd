@@ -37,10 +37,10 @@ devtools::install_github("lnalborczyk/ESTER")
 
 ## 1. Simulation
 
-```{r eval =  FALSE}
+```{r echo = TRUE, eval = TRUE}
 
 library(ESTER)
-ER <- simER(cohensd = 0.4, n = 60, nmin = 20, plot = TRUE)
+ER <- simER(cohensd = 0.6, n = 60, nmin = 20, plot = TRUE)
 
 ```
 
