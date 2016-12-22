@@ -11,8 +11,8 @@ seqERboot(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE)
 
 \item{mod2}{A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).}
 
-\item{samplecol}{Name of the subject/observation column of your dataframe, as a character vector.
-"samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls.}
+\item{samplecol}{If applicable, name of the subject column of your dataframe, as a character vector.
+"samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls (default is NULL).}
 
 \item{order_nb}{Number of random rearrangments to evaluate.}
 

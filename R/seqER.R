@@ -5,8 +5,8 @@
 #' @param mod1 A mathematical model, of class "lm" or "lmerMod".
 #' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
 #' @param nmin Minimum sample size from which start to compute iterative evidence ratios (ER).
-#' @param samplecol Name of the subject/observation column of your dataframe, as a character vector.
-#' "samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls.
+#' @param samplecol If applicable, name of the subject column of your dataframe, as a character vector.
+#' "samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls (default is NULL).
 #'
 #' @importFrom stats aggregate family formula lm
 #' @importFrom AICcmodavg aictab
@@ -14,6 +14,7 @@
 #' @importFrom utils tail
 #' @importFrom graphics grid plot text
 #' @importFrom utils setTxtProgressBar txtProgressBar
+#' @importFrom magrittr %>%
 #'
 #' @examples
 #' library(lme4)
@@ -24,7 +25,7 @@
 #'
 #' @export seqER
 
-seqER <- function(mod1, mod2, samplecol, nmin) {
+seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
 
         if(!class(mod1)==class(mod2)){
 
@@ -42,24 +43,34 @@ seqER <- function(mod1, mod2, samplecol, nmin) {
                 data <- data.frame(eval(mod1@call$data))
         }
 
-        count <- plyr::count(data[, samplecol], 1) # count frequencies
-        nobs <- max(count$freq) # count number of observations by subject
-        a <- as.vector(count$x[count$freq < nobs]) # identify subjects with less than n observations
+        data <- data[sample(nrow(data)),]
 
-        data$ppt <- rep(seq(1, length(unique(data[,samplecol])), 1), each = nobs)
+        if(is.null(samplecol)==TRUE){
 
-        if(length(a)>0){
+                samplecol <- formula(mod1)[[2]] %>% as.character
+                nobs <- 1
+                data$ppt <- rep(seq(1, length(data[,samplecol]), 1), each = nobs)
 
-                # if needed, remove subjects with less than n observations (nobs)
-                for (i in 1:length(a) ) {
-                        data <- data[!data[, samplecol]==as.numeric(a[i]), ]
+        }else{
+
+                count <- plyr::count(data[, samplecol], 1) # count frequencies
+                nobs <- max(count$freq) # count number of observations by subject
+                a <- as.vector(count$x[count$freq < nobs]) # identify subjects with less than n observations
+                data$ppt <- rep(seq(1, length(unique(data[,samplecol])), 1), each = nobs)
+
+                if(length(a)>0){
+
+                        # if needed, remove subjects with less than n observations (nobs)
+                        for (i in 1:length(a) ) {
+                                data <- data[!data[, samplecol]==as.numeric(a[i]), ]
+                        }
+
+                        warning("Different numbers of observation by subject. Subjects with less than max(nobs) have been removed.")
                 }
 
-                warning("Different numbers of observation by subject. Subjects with less than max(nobs) have been removed.")
         }
 
         startrow <- min(which(as.numeric(as.character(data$ppt))==nmin)) # check the row number of the nmin
-
         endrow <- length(data[,samplecol]) # check the row number of the last subject
 
         pb = txtProgressBar(min = 0, max = endrow, initial = 0, style = 3)

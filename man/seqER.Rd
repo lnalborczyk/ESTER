@@ -4,15 +4,15 @@
 \alias{seqER}
 \title{Sequential evidence ratios.}
 \usage{
-seqER(mod1, mod2, samplecol, nmin)
+seqER(mod1, mod2, samplecol = NULL, nmin)
 }
 \arguments{
 \item{mod1}{A mathematical model, of class "lm" or "lmerMod".}
 
 \item{mod2}{A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).}
 
-\item{samplecol}{Name of the subject/observation column of your dataframe, as a character vector.
-"samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls.}
+\item{samplecol}{If applicable, name of the subject column of your dataframe, as a character vector.
+"samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls (default is NULL).}
 
 \item{nmin}{Minimum sample size from which start to compute iterative evidence ratios (ER).}
 }
