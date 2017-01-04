@@ -21,7 +21,7 @@
 #'
 #' @export seqERboot
 
-seqERboot <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE) {
+seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace = FALSE) {
 
         if(!class(mod1)==class(mod2)){stop("Error: mod1 and mod2 have to be of the same class")}
 
@@ -36,19 +36,28 @@ seqERboot <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALS
 
         }
 
+        data1 <- data1[sample(nrow(data1)),]
         order_nb <- order_nb + 1
 
-        count <- plyr::count(data1[, samplecol], 1) # count frequencies
-        nobs <- as.numeric(max(count$freq)) # count number of observations by subject
-        a <- as.vector(count$x[count$freq < nobs]) # identify subjects with less than n observations
+        if(is.null(samplecol)==TRUE){
 
-        data1$ppt <- rep(seq(1, length(unique(data1[, samplecol])), 1), each = nobs)
+                samplecol <- formula(mod1)[[2]] %>% as.character
+                nobs <- 1
+                data1$ppt <- rep(seq(1, length(data1[,samplecol]), 1), each = nobs)
 
-        if(length(a)>0){
+        }else{
+
+                count <- plyr::count(data1[, samplecol], 1) # count frequencies
+                nobs <- as.numeric(max(count$freq)) # count number of observations by subject
+                a <- as.vector(count$x[count$freq < nobs]) # identify subjects with less than n observations
+                data1$ppt <- rep(seq(1, length(unique(data1[, samplecol])), 1), each = nobs)
+
+                if(length(a)>0){
 
                 # if needed, remove subjects with less than n observations (nobs)
                 for (i in 1:length(a) ) {
                         data1 <- data1[!data1[,samplecol]==as.numeric(a[i]), ]
+                        }
                 }
         }
 
@@ -60,19 +69,18 @@ seqERboot <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALS
 
         list = ls(pattern = "data*")
 
-        pair <- function(data){
+        if(nobs>1){
 
-                data <- data[order(factor(data$ppt, levels = unique(data$ppt))), ]
-                return(data)
-        }
+                pair <- function(data){
 
-        #list <- list(lapply(ls(pattern="data*"), function(x) get(x)))
-        #rapply(list, pair, how = "replace")
+                        data <- data[order(factor(data$ppt, levels = unique(data$ppt))), ]
+                        return(data)
+                        }
 
-        for(i in 1:length(list)){
+                for(i in 1:length(list)){
 
-                assign(list[i], pair(get(list[i])) )
-
+                        assign(list[i], pair(get(list[i])) )
+                }
         }
 
         startrow <- nmin * nobs
@@ -82,8 +90,6 @@ seqERboot <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALS
                 endrow <- as.numeric(nrow(data))
 
                 for (i in seq(startrow, endrow, nobs) ) {
-
-                        #DF <- data[1:i,]
 
                         if((class(mod1) == "glmerMod")){
 
@@ -117,11 +123,10 @@ seqERboot <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALS
 
                 }
 
-                if(class(data1[,samplecol])=="factor") nbppt <- as.numeric(length(levels(data1[,samplecol])))
-                if(class(data1[,samplecol])=="integer") nbppt <- as.numeric(length(unique(data1[,samplecol])))
-                if(class(data1[,samplecol])=="numeric") nbppt <- as.numeric(length(unique(data1[,samplecol])))
+                #if(class(data1[,samplecol])=="factor") nbppt <- as.numeric(length(levels(data1[,samplecol])))
+                #if(class(data1[,samplecol])=="numeric") nbppt <- as.numeric(length(unique(data1[,samplecol])))
 
-                ER <- data.frame(cbind(ER, seq(nmin, nbppt, 1) ) )
+                ER <- data.frame(cbind(ER, seq(nmin, max(data1$ppt), 1) ) )
                 ER <- data.frame(ER[c(2,1)])
                 colnames(ER) <- c("ppt","ER")
 
@@ -134,7 +139,6 @@ seqERboot <- function(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALS
         for(i in 1:order_nb){
 
                 assign(paste0("ER", i), randER(get(paste0("data", i))) )
-
                 setTxtProgressBar(pb,i)
 
         }
@@ -182,10 +186,9 @@ plot.ERlist <- function(x, ...) {
 
         }
 
-        options( digits = 3 )
+        options(digits = 3)
 
         text(max(x$ER$ppt[x$ER$ERi=="ER1"]), tail((x$ER$ER[x$ER$ERi=="ER1"]), 1) * 1.1,
                 as.character(round(tail(x$ER$ER[x$ER$ERi=="ER1"], 1), 2)))
 
 }
-

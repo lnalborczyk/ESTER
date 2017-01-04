@@ -6,7 +6,7 @@
 #' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
 #' @param nmin Minimum sample size from which start to compute iterative evidence ratios (ER).
 #' @param samplecol If applicable, name of the subject column of your dataframe, as a character vector.
-#' "samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls (default is NULL).
+#' "samplecol" has to be a column of the data passed as the "data" argument of the mod1 and mod2 calls (default is NULL).
 #'
 #' @importFrom stats aggregate family formula lm
 #' @importFrom AICcmodavg aictab

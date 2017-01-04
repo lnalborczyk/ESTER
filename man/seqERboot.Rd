@@ -4,7 +4,8 @@
 \alias{seqERboot}
 \title{Sequential evidence ratios of original sample and random rearrangments.}
 \usage{
-seqERboot(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE)
+seqERboot(mod1, mod2, samplecol = NULL, order_nb, nmin = 10,
+  replace = FALSE)
 }
 \arguments{
 \item{mod1}{A mathematical model, of class "lm" or "lmerMod".}
@@ -12,7 +13,7 @@ seqERboot(mod1, mod2, samplecol, order_nb, nmin = 10, replace = FALSE)
 \item{mod2}{A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).}
 
 \item{samplecol}{If applicable, name of the subject column of your dataframe, as a character vector.
-"samplecol" has to be a column of the passed as the "data" argument of the mod1 and mod2 calls (default is NULL).}
+"samplecol" has to be a column of the data passed as the "data" argument of the mod1 and mod2 calls (default is NULL).}
 
 \item{order_nb}{Number of random rearrangments to evaluate.}
 
