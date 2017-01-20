@@ -19,7 +19,7 @@ distER <- function(cohensd = 0, n = 100, nmin = 20, nSims = 100) {
 
         options(scipen = 999) # disable scientific notation for numbers
 
-        ER <- as.numeric(nSims) # set up empty variable to store all simulated ER
+        ER <- nSims %>% as.numeric # set up empty variable to store all simulated ER
 
         for(i in 1:nSims){
 
@@ -30,14 +30,12 @@ distER <- function(cohensd = 0, n = 100, nmin = 20, nSims = 100) {
 
         }
 
-        xlim = c(0, mean(ER) + IQR(ER)/2)
+        xlim = c(0, mean(ER) + IQR(ER) / 2)
 
         hist(ER, breaks = 1000, border = FALSE, main = paste0("ER distribution with Cohen's d = ",
                 cohensd, ", n = ", n, ", nSims = ", nSims),
                 xlab = expression(Evidence~ ~Ratio~ ~(ER[10])),
-                xlim = xlim, ylim = c(0, nSims), col = "steelblue")
-
-        #text(median(ER), nSims/2, as.character(paste0("median = ", round(median(ER), 3))))
+                xlim = xlim, ylim = c(0, nSims), las = 1, col = "steelblue")
 
         return(ER)
 

@@ -25,13 +25,13 @@ simER <- function(cohensd = 0, n = 100, nmin = 20, plot = TRUE) {
         x <- cbind( rnorm(n = n, mean = 0, sd = 1), rep("x", n) )
         y <- cbind( rnorm(n = n, mean = mean(as.numeric(x[,1])) + cohensd, sd = 1), rep("y", n) )
 
-        df_pop <- as.data.frame( rbind( y, x ) )
+        df_pop <- as.data.frame( rbind(y, x ) )
         colnames(df_pop) <- c("value", "group")
         df_pop$value <- df_pop$value %>% as.character %>% as.numeric
 
         df_pop <- df_pop[sample(nrow(df_pop), replace = FALSE), ]
 
-        ER_comp <- as.numeric(nmin)
+        ER_comp <- nmin %>% as.numeric
 
         for(i in nmin:n){
 
@@ -49,14 +49,14 @@ simER <- function(cohensd = 0, n = 100, nmin = 20, plot = TRUE) {
 
         if(plot == TRUE){
 
-                suppressWarnings(plot(ER_comp, type = "p", pch = 20, xlab = "sample size",
-                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), xlim = c(nmin, n),
-                main = paste0("Cohen's d = ", cohensd, ", ", "n = ", n), log = "y", bty = "l"))
+                suppressWarnings(plot(ER_comp, type = "l", col = "steelblue", lwd = 2, xlab = "sample size",
+                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), xlim = c(nmin, n), las = 1,
+                main = paste0("Cohen's d = ", cohensd, ", ", "n = ", n), log = "y", bty = "l") )
 
-                abline(h = 1, lty = 3)
+                abline(h = 1, lty = 2)
         }
 
-        cat(paste("Final ER = ", round(tail(ER_comp,1),4)))
+        cat(paste("Final ER = ", round(tail(ER_comp, 1), 4) ) )
 
         return(ER_comp[nmin:n])
 
