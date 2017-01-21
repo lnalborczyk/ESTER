@@ -10,7 +10,7 @@ ESTER: Efficient Sequential Testing with Evidence Ratios
 * Development version from Github:
 
 ```
-library(devtools)
+# install.packages("devtools")
 devtools::install_github("lnalborczyk/ESTER")
 ```
 
