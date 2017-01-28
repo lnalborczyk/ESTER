@@ -4,7 +4,7 @@
 \alias{simER}
 \title{Simulates a sequential ER for independant two-groups comparisons, as a function of sample size and Cohen's d.}
 \usage{
-simER(cohensd = 0, n = 100, nmin = 20, plot = TRUE)
+simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
 }
 \arguments{
 \item{cohensd}{Expected effect size.}
@@ -20,7 +20,7 @@ simER(cohensd = 0, n = 100, nmin = 20, plot = TRUE)
 }
 \examples{
 library(ESTER)
-ER <- simER(cohensd = 0.2, n = 100, nmin = 20, plot = TRUE)
+ER <- simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
 
 }
 

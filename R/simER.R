@@ -11,16 +11,15 @@
 #' @importFrom AICcmodavg aictab
 #' @importFrom graphics abline points
 #' @importFrom magrittr %>%
+#' @importFrom dplyr sample_n
 #'
 #' @examples
 #' library(ESTER)
-#' ER <- simER(cohensd = 0.2, n = 100, nmin = 20, plot = TRUE)
+#' ER <- simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
 #'
 #' @export simER
 
-simER <- function(cohensd = 0, n = 100, nmin = 20, plot = TRUE) {
-
-        options(scipen = 999) # disable scientific notation for numbers
+simER <- function(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE) {
 
         x <- cbind( rnorm(n = n, mean = 0, sd = 1), rep("x", n) )
         y <- cbind( rnorm(n = n, mean = mean(as.numeric(x[,1])) + cohensd, sd = 1), rep("y", n) )
@@ -29,14 +28,14 @@ simER <- function(cohensd = 0, n = 100, nmin = 20, plot = TRUE) {
         colnames(df_pop) <- c("value", "group")
         df_pop$value <- df_pop$value %>% as.character %>% as.numeric
 
-        df_pop <- df_pop[sample(nrow(df_pop), replace = FALSE), ]
+        df_pop <- df_pop %>% sample_n(nrow(df_pop) )
 
-        ER_comp <- nmin %>% as.numeric
+        ER_comp <- nmin %>% as.numeric # initialies ER_comp
 
         for(i in nmin:n){
 
-                model_1 <- lm(value ~ 1, data = df_pop[1:i,])
-                model_2 <- lm(value ~ group, data = df_pop[1:i,])
+                model_1 <- lm(value ~ 1, data = df_pop[1:i, ] )
+                model_2 <- lm(value ~ group, data = df_pop[1:i, ] )
 
                 model_comp <- as.data.frame(aictab(list(model_1, model_2),
                         modnames = c("model_1", "model_2"), sort = FALSE) )
@@ -49,14 +48,17 @@ simER <- function(cohensd = 0, n = 100, nmin = 20, plot = TRUE) {
 
         if(plot == TRUE){
 
-                suppressWarnings(plot(ER_comp, type = "l", col = "steelblue", lwd = 2, xlab = "sample size",
-                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), xlim = c(nmin, n), las = 1,
-                main = paste0("Cohen's d = ", cohensd, ", ", "n = ", n), log = "y", bty = "l") )
+                suppressWarnings(plot(ER_comp, type = "l", col = "steelblue",
+                        lwd = 2, xlab = "sample size",
+                        ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
+                        xlim = c(nmin, n), las = 1,
+                        main = paste0("Cohen's d = ", cohensd, ", ", "n = ", n),
+                        log = "y", bty = "l") )
 
                 abline(h = 1, lty = 2)
         }
 
-        cat(paste("Final ER = ", round(tail(ER_comp, 1), 4) ) )
+        # cat(paste("Final ER = ", round(tail(ER_comp, 1), 4) ) )
 
         return(ER_comp[nmin:n])
 

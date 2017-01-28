@@ -4,7 +4,7 @@
 \alias{distER}
 \title{Simulates experiments and sequential evidence ratios.}
 \usage{
-distER(cohensd = 0, n = 100, nmin = 20, nSims = 100)
+distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
 }
 \arguments{
 \item{cohensd}{Expected effect size.}
@@ -20,7 +20,7 @@ distER(cohensd = 0, n = 100, nmin = 20, nSims = 100)
 }
 \examples{
 library(ESTER)
-distER(cohensd = 0.4, n = 100, nmin = 20, nSims = 100)
+ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
 
 }
 
