@@ -26,11 +26,10 @@ seqERboot(mod1, mod2, samplecol = NULL, order_nb, nmin = 10,
 for a given data set and for N random rearrangments of this dataset.
 }
 \examples{
-library(lme4)
-data <- sleepstudy
-mod1 <- lm(Reaction ~ 1, data)
-mod2 <- lm(Reaction ~ Days, data)
-seqERboot(mod1, mod2, samplecol = "Subject", order_nb = 10, nmin = 10, replace = FALSE)
+data(mtcars)
+mod1 <- lm(mpg ~ 1, mtcars)
+mod2 <- lm(mpg ~ cyl, mtcars)
+seq_boot_mtcars <- seqERboot(mod1, mod2, order_nb = 10, nmin = 10, replace = FALSE)
 
 }
 

@@ -29,7 +29,7 @@ The `ESTER` package is not on CRAN yet, but you can install the development vers
 
 ```{r, eval = FALSE}
 
-library(devtools)
+if(!require(devtools)){install.packages("devtools")}
 devtools::install_github("lnalborczyk/ESTER")
 
 ```
@@ -41,27 +41,31 @@ devtools::install_github("lnalborczyk/ESTER")
 
 ## 1. Simulation
 
-```{r echo = TRUE, eval = TRUE}
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4}
 
 library(ESTER)
-ER <- simER(cohensd = 0.6, n = 60, nmin = 20, plot = TRUE)
+ER <- simER(cohensd = 0.3, n = 100, nmin = 20, plot = TRUE)
+
+```
+
+Then, one can study the long-term properties of evidence ratios using the `distER` function.
+
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 6}
+
+ER <- distER(cohensd = 0.3, n = 100, nmin = 20, nSims = 100)
 
 ```
 
 ## 2. Observed data.
 
-```{r eval = FALSE}
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
 
-library(lme4)
-data <- sleepstudy
-mod1 <- lm(Reaction ~ 1, data)
-mod2 <- lm(Reaction ~ Days, data)
-seqERboot(mod1, mod2, samplecol = "Subject", order_nb = 10, nmin = 10, replace = FALSE)
+data(mtcars)
+mod1 <- lm(mpg ~ 1, mtcars)
+mod2 <- lm(mpg ~ cyl, mtcars)
+seq_mtcars <- seqER(mod1, mod2, nmin = 10)
+plot(seq_mtcars)
 
 ```
 
-`ESTER` uses the `AICcmodavg` package (available on [CRAN](https://cran.r-project.org/web/packages/AICcmodavg/index.html); Mazerolle, 2016) to compute AIC, AICc and Akaike Weights.
-
-## Development
-
-The *ESTER* package is also available in a development version at the GitHub development page: [https://github.com/lnalborczyk/ESTER](https://github.com/lnalborczyk/ESTER).
+Under the hood, `ESTER` uses the `AICcmodavg` package (available on [CRAN](https://cran.r-project.org/web/packages/AICcmodavg/index.html); Mazerolle, 2016) to compute AICc and Akaike Weights.

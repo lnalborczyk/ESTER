@@ -20,11 +20,10 @@ seqER(mod1, mod2, samplecol = NULL, nmin)
 \code{seqER} computes evidence ratios (ER) as a function of sample size, for a given data set.
 }
 \examples{
-library(lme4)
-data <- sleepstudy
-mod1 <- lm(Reaction ~ 1, data)
-mod2 <- lm(Reaction ~ Days, data)
-seqER(mod1, mod2, samplecol = "Subject", nmin = 10)
+data(mtcars)
+mod1 <- lm(mpg ~ 1, mtcars)
+mod2 <- lm(mpg ~ cyl, mtcars)
+seq_mtcars <- seqER(mod1, mod2, nmin = 10)
 
 }
 

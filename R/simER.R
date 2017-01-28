@@ -58,8 +58,6 @@ simER <- function(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE) {
                 abline(h = 1, lty = 2)
         }
 
-        # cat(paste("Final ER = ", round(tail(ER_comp, 1), 4) ) )
-
         return(ER_comp[nmin:n])
 
         }

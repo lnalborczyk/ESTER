@@ -13,11 +13,10 @@
 #' @importFrom graphics lines
 #'
 #' @examples
-#' library(lme4)
-#' data <- sleepstudy
-#' mod1 <- lm(Reaction ~ 1, data)
-#' mod2 <- lm(Reaction ~ Days, data)
-#' seqERboot(mod1, mod2, samplecol = "Subject", order_nb = 10, nmin = 10, replace = FALSE)
+#' data(mtcars)
+#' mod1 <- lm(mpg ~ 1, mtcars)
+#' mod2 <- lm(mpg ~ cyl, mtcars)
+#' seq_boot_mtcars <- seqERboot(mod1, mod2, order_nb = 10, nmin = 10, replace = FALSE)
 #'
 #' @export seqERboot
 
@@ -175,7 +174,7 @@ plot.ERlist <- function(x, ...) {
         plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l",
                 lwd = 1.5, xlab = expression(Sample~ ~size),
                 ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
-                bty = "n", log = "y", ylim = ylim,
+                bty = "l", log = "y", ylim = ylim,
                 panel.first = grid(0, NULL, lty = 3) )
 
         for(i in 2:nlevels(x$ER$ERi)){
@@ -184,11 +183,6 @@ plot.ERlist <- function(x, ...) {
                                 x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ),
                         lwd = 0.8, col = "grey" )
 
+                }
+
         }
-
-        options(digits = 3)
-
-        text(max(x$ER$ppt[x$ER$ERi=="ER1"]), tail((x$ER$ER[x$ER$ERi=="ER1"]), 1) * 1.1,
-                as.character(round(tail(x$ER$ER[x$ER$ERi=="ER1"], 1), 2)))
-
-}

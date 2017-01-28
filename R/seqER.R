@@ -17,11 +17,10 @@
 #' @importFrom magrittr %>%
 #'
 #' @examples
-#' library(lme4)
-#' data <- sleepstudy
-#' mod1 <- lm(Reaction ~ 1, data)
-#' mod2 <- lm(Reaction ~ Days, data)
-#' seqER(mod1, mod2, samplecol = "Subject", nmin = 10)
+#' data(mtcars)
+#' mod1 <- lm(mpg ~ 1, mtcars)
+#' mod2 <- lm(mpg ~ cyl, mtcars)
+#' seq_mtcars <- seqER(mod1, mod2, nmin = 10)
 #'
 #' @export seqER
 
@@ -123,9 +122,7 @@ seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
 plot.seqER <- function(x, ...) {
 
         plot(x$ppt, x$ER, type = "l", xlab = expression(Sample~ ~size),
-                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), bty = "n",
+                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])), bty = "l",
                 log = "y", panel.first = grid (0, NULL, lty = 3))
 
-        text(max(x$ppt), tail((x$ER), 1) * 1.1, as.character(round(tail(x$ER, 1), 2)))
-
-}
+        }
