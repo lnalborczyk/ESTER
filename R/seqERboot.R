@@ -169,6 +169,8 @@ seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace
 #' @S3method plot ERlist
 plot.ERlist <- function(x, ...) {
 
+        options(digits = 10)
+
         ylim <- c(min(x$ER$ER)/1.1, max(x$ER$ER)*1.1 )
 
         plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l",
