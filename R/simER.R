@@ -49,7 +49,7 @@ simER <- function(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE) {
         if(plot == TRUE){
 
                 suppressWarnings(plot(ER_comp, type = "l", col = "steelblue",
-                        lwd = 2, xlab = "sample size",
+                        lwd = 2, xlab = "Sample size",
                         ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
                         xlim = c(nmin, n), las = 1,
                         main = paste0("Cohen's d = ", cohensd, ", ", "n = ", n),

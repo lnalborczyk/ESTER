@@ -174,7 +174,7 @@ plot.ERlist <- function(x, ...) {
         plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l",
                 lwd = 1.5, xlab = expression(Sample~ ~size),
                 ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
-                bty = "l", log = "y", ylim = ylim,
+                bty = "l", log = "y", ylim = ylim, las = 1,
                 panel.first = grid(0, NULL, lty = 3) )
 
         for(i in 2:nlevels(x$ER$ERi)){
