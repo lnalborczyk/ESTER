@@ -11,6 +11,7 @@
 #' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
 #' @importFrom graphics lines
+#' @importFrom grDevices adjustcolor
 #'
 #' @examples
 #' data(mtcars)
@@ -174,7 +175,7 @@ plot.ERlist <- function(x, ...) {
         ylim <- c(min(x$ER$ER)/1.1, max(x$ER$ER)*1.1 )
 
         plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l",
-                lwd = 1.5, xlab = expression(Sample~ ~size),
+                lwd = 2, xlab = expression(Sample~ ~size),
                 ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
                 bty = "l", log = "y", ylim = ylim, las = 1,
                 col = "steelblue")
@@ -183,7 +184,7 @@ plot.ERlist <- function(x, ...) {
 
                 lines(loess( x$ER$ER[x$ER$ERi==as.character(paste0("ER", i))] ~
                                 x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ),
-                        lwd = 0.8, col = "grey" )
+                        lwd = 0.8, col = adjustcolor("steelblue", alpha.f = 0.5) )
 
         }
 
