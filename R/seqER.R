@@ -125,8 +125,7 @@ plot.seqER <- function(x, ...) {
 
         plot(x$ppt, x$ER, type = "l", lwd = 2, xlab = expression(Sample~ ~size),
                 las = 1, ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
-                bty = "l", log = "y", panel.first = grid (0, NULL, lty = 3),
-                col = "steelblue")
+                bty = "l", log = "y", col = "steelblue")
 
         abline(h = 1, lty = 2)
 

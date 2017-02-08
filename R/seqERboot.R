@@ -177,7 +177,7 @@ plot.ERlist <- function(x, ...) {
                 lwd = 1.5, xlab = expression(Sample~ ~size),
                 ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
                 bty = "l", log = "y", ylim = ylim, las = 1,
-                panel.first = grid(0, NULL, lty = 3) )
+                col = "steelblue")
 
         for(i in 2:nlevels(x$ER$ERi)){
 
@@ -185,6 +185,8 @@ plot.ERlist <- function(x, ...) {
                                 x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ),
                         lwd = 0.8, col = "grey" )
 
-                }
+        }
+
+        abline(h = 1, lty = 2)
 
         }
