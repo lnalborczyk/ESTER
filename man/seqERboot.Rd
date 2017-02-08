@@ -27,8 +27,8 @@ for a given data set and for N random rearrangments of this dataset.
 }
 \examples{
 data(mtcars)
-mod1 <- lm(mpg ~ 1, mtcars)
-mod2 <- lm(mpg ~ cyl, mtcars)
+mod1 <- lm(mpg ~ cyl, mtcars)
+mod2 <- lm(mpg ~ cyl * disp, mtcars)
 seq_boot_mtcars <- seqERboot(mod1, mod2, order_nb = 10, nmin = 10, replace = FALSE)
 
 }

@@ -43,7 +43,9 @@ devtools::install_github("lnalborczyk/ESTER")
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4}
 
+library(magrittr)
 library(ESTER)
+
 ER <- simER(cohensd = 0.3, n = 100, nmin = 20, plot = TRUE)
 
 ```
@@ -56,15 +58,25 @@ ER <- distER(cohensd = 0.3, n = 100, nmin = 20, nSims = 100)
 
 ```
 
-## 2. Observed data.
+## 2. Observed data
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
 
 data(mtcars)
-mod1 <- lm(mpg ~ 1, mtcars)
-mod2 <- lm(mpg ~ cyl, mtcars)
-seq_mtcars <- seqER(mod1, mod2, nmin = 10)
-plot(seq_mtcars)
+mod1 <- lm(mpg ~ cyl, mtcars)
+mod2 <- lm(mpg ~ cyl * disp, mtcars)
+seqER(mod1, mod2, nmin = 10) %>% plot
+
+```
+
+Studying the behavior of bootstrapped samples.
+
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
+
+data(mtcars)
+mod1 <- lm(mpg ~ cyl, mtcars)
+mod2 <- lm(mpg ~ cyl * disp, mtcars)
+#seqERboot(mod1, mod2, order_nb = 2, nmin = 10, replace = TRUE) %>% plot
 
 ```
 

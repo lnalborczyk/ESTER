@@ -121,7 +121,7 @@ seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
 #' @S3method plot seqER
 plot.seqER <- function(x, ...) {
 
-        options(digits = 10)
+        options(scipen = 10)
 
         plot(x$ppt, x$ER, type = "l", lwd = 2, xlab = expression(Sample~ ~size),
                 las = 1, ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),

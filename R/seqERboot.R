@@ -12,11 +12,12 @@
 #' @importFrom lme4 lmer glmer
 #' @importFrom graphics lines
 #' @importFrom grDevices adjustcolor
+#' @importFrom magrittr %>%
 #'
 #' @examples
 #' data(mtcars)
-#' mod1 <- lm(mpg ~ 1, mtcars)
-#' mod2 <- lm(mpg ~ cyl, mtcars)
+#' mod1 <- lm(mpg ~ cyl, mtcars)
+#' mod2 <- lm(mpg ~ cyl * disp, mtcars)
 #' seq_boot_mtcars <- seqERboot(mod1, mod2, order_nb = 10, nmin = 10, replace = FALSE)
 #'
 #' @export seqERboot
@@ -87,14 +88,16 @@ seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace
 
         randER <- function(data) {
 
-                endrow <- as.numeric(nrow(data))
+                endrow <- data %>% nrow %>% as.numeric
 
                 for (i in seq(startrow, endrow, nobs) ) {
 
                         if((class(mod1) == "glmerMod")){
 
-                                mod1 <- lme4::lmer(formula(mod1), family = family(mod1)$family, data[1:i,])
-                                mod2 <- lme4::lmer(formula(mod2), family = family(mod2)$family, data[1:i,])
+                                mod1 <- lme4::lmer(formula(mod1),
+                                        family = family(mod1)$family, data[1:i,])
+                                mod2 <- lme4::lmer(formula(mod2),
+                                        family = family(mod2)$family, data[1:i,])
 
                         }
 
@@ -113,18 +116,16 @@ seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace
                         }
 
 
-                        tabtab <- AICcmodavg::aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
-                        tempER <- data.frame(cbind(tabtab$AICcWt[tabtab$Modnames=="mod2"] /
-                                        tabtab$AICcWt[tabtab$Modnames=="mod1"]) )
+                        tabtab <- AICcmodavg::aictab(list(mod1,mod2),
+                                modnames = c("mod1","mod2"), sort = FALSE)
+                        tempER <- tabtab$AICcWt[tabtab$Modnames=="mod2"] /
+                                        tabtab$AICcWt[tabtab$Modnames=="mod1"] %>% data.frame
 
-                        if (!exists("ER")) ER <- tempER else ER <- rbind(ER,tempER)
+                        if (!exists("ER") ) ER <- tempER else ER <- rbind(ER, tempER)
 
                         rm(tempER)
 
                 }
-
-                #if(class(data1[,samplecol])=="factor") nbppt <- as.numeric(length(levels(data1[,samplecol])))
-                #if(class(data1[,samplecol])=="numeric") nbppt <- as.numeric(length(unique(data1[,samplecol])))
 
                 ER <- data.frame(cbind(ER, seq(nmin, max(data1$ppt), 1) ) )
                 ER <- data.frame(ER[c(2,1)])
@@ -155,7 +156,7 @@ seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace
 
         }
 
-        agg_ER <- data.frame(as.matrix(aggregate(ER ~ ppt, ER, mean)))
+        agg_ER <- aggregate(ER ~ ppt, ER, mean) %>% as.matrix %>% data.frame
 
         class(ER) <- c("itER", "data.frame")
         class(agg_ER) <- c("itERrand", "data.frame")
@@ -170,7 +171,7 @@ seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace
 #' @S3method plot ERlist
 plot.ERlist <- function(x, ...) {
 
-        options(digits = 10)
+        options(scipen = 10)
 
         ylim <- c(min(x$ER$ER)/1.1, max(x$ER$ER)*1.1 )
 
