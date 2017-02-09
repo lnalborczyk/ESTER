@@ -42,42 +42,45 @@ devtools::install_github("lnalborczyk/ESTER")
 ## 1. Simulation
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4}
-
 library(magrittr)
 library(ESTER)
-
-ER <- simER(cohensd = 0.3, n = 100, nmin = 20, plot = TRUE)
-
+ER <- simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
 ```
 
 Then, one can study the long-term properties of evidence ratios using the `distER` function.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 6}
-
-ER <- distER(cohensd = 0.3, n = 100, nmin = 20, nSims = 100)
-
+ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
 ```
 
 ## 2. Observed data
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
+```{r echo = FALSE, eval = TRUE, warning = FALSE, results = "hide"}
+rm(list = ls())
+library(magrittr)
+library(ESTER)
+```
 
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl * disp, mtcars)
 seqER(mod1, mod2, nmin = 10) %>% plot
-
 ```
 
 Studying the behavior of bootstrapped samples.
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
-
+```{r echo = FALSE, eval = TRUE, warning = FALSE, results = "hide"}
+rm(list = ls())
+library(magrittr)
+library(ESTER)
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl * disp, mtcars)
-#seqERboot(mod1, mod2, order_nb = 2, nmin = 10, replace = TRUE) %>% plot
+```
 
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
+seqERboot(mod1, mod2, order_nb = 20, nmin = 10, replace = TRUE) %>% plot
 ```
 
 Under the hood, `ESTER` uses the `AICcmodavg` package (available on [CRAN](https://cran.r-project.org/web/packages/AICcmodavg/index.html); Mazerolle, 2016) to compute AICc and Akaike Weights.

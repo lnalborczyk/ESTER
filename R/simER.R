@@ -24,7 +24,7 @@ simER <- function(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE) {
         x <- cbind( rnorm(n = n, mean = 0, sd = 1), rep("x", n) )
         y <- cbind( rnorm(n = n, mean = mean(as.numeric(x[,1])) + cohensd, sd = 1), rep("y", n) )
 
-        df_pop <- as.data.frame( rbind(y, x ) )
+        df_pop <- rbind(y, x) %>% as.data.frame
         colnames(df_pop) <- c("value", "group")
         df_pop$value <- df_pop$value %>% as.character %>% as.numeric
 

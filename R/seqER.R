@@ -5,7 +5,7 @@
 #' @param mod1 A mathematical model, of class "lm" or "lmerMod".
 #' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
 #' @param nmin Minimum sample size from which start to compute iterative evidence ratios (ER).
-#' @param samplecol If applicable, name of the subject column of your dataframe, as a character vector.
+#' @param samplecol If applicable (e.g., repeated measures), name of the subject column of your dataframe, as a character vector.
 #' "samplecol" has to be a column of the data passed as the "data" argument of the mod1 and mod2 calls (default is NULL).
 #'
 #' @importFrom stats aggregate family formula lm
@@ -18,8 +18,8 @@
 #'
 #' @examples
 #' data(mtcars)
-#' mod1 <- lm(mpg ~ 1, mtcars)
-#' mod2 <- lm(mpg ~ cyl, mtcars)
+#' mod1 <- lm(mpg ~ cyl, mtcars)
+#' mod2 <- lm(mpg ~ cyl * disp, mtcars)
 #' seq_mtcars <- seqER(mod1, mod2, nmin = 10)
 #'
 #' @export seqER
@@ -69,8 +69,8 @@ seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
 
         }
 
-        startrow <- min(which(as.numeric(as.character(data$ppt))==nmin)) # check the row number of the nmin
-        endrow <- length(data[,samplecol]) # check the row number of the last subject
+        startrow <- which(as.numeric(as.character(data$ppt))==nmin) %>% min # check the row number of the nmin
+        endrow <- data[,samplecol] %>% length # check the row number of the last subject
 
         pb = txtProgressBar(min = 0, max = endrow, initial = 0, style = 3)
 
@@ -96,7 +96,7 @@ seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
                         mod2 <- lm(formula(mod2), data[1:maxrow,])
                 }
 
-                tabtab <- AICcmodavg::aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
+                tabtab <- aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
                 tempER <- data.frame(cbind(tabtab$AICcWt[tabtab$Modnames=="mod2"] /
                                 tabtab$AICcWt[tabtab$Modnames=="mod1"], data$ppt[i] ) )
 

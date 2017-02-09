@@ -18,7 +18,7 @@
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl * disp, mtcars)
-#' seq_boot_mtcars <- seqERboot(mod1, mod2, order_nb = 10, nmin = 10, replace = FALSE)
+#' seq_boot_mtcars <- seqERboot(mod1, mod2, order_nb = 100, nmin = 10, replace = FALSE)
 #'
 #' @export seqERboot
 
@@ -173,7 +173,7 @@ plot.ERlist <- function(x, ...) {
 
         options(scipen = 10)
 
-        ylim <- c(min(x$ER$ER)/1.1, max(x$ER$ER)*1.1 )
+        ylim <- c(min(x$ER$ER) / 1.1, max(x$ER$ER) * 1.1 )
 
         plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l",
                 lwd = 2, xlab = expression(Sample~ ~size),
@@ -185,9 +185,8 @@ plot.ERlist <- function(x, ...) {
 
                 lines(loess( x$ER$ER[x$ER$ERi==as.character(paste0("ER", i))] ~
                                 x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ),
-                        lwd = 0.8, col = adjustcolor("steelblue", alpha.f = 0.5) )
-
-        }
+                        lwd = 1, col = adjustcolor("steelblue", alpha.f = 0.3) )
+                }
 
         abline(h = 1, lty = 2)
 
