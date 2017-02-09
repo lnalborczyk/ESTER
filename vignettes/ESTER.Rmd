@@ -55,6 +55,8 @@ ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
 
 ## 2. Observed data
 
+`seqERboot` allows you to study the behavior of sequential ERs computed on an observed sample.
+
 ```{r echo = FALSE, eval = TRUE, warning = FALSE, results = "hide"}
 rm(list = ls())
 library(magrittr)
@@ -64,11 +66,11 @@ library(ESTER)
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
-mod2 <- lm(mpg ~ cyl * disp, mtcars)
+mod2 <- lm(mpg ~ cyl + disp, mtcars)
 seqER(mod1, mod2, nmin = 10) %>% plot
 ```
 
-Studying the behavior of bootstrapped samples.
+`seqERboot` allows you to study the behavior of sequential ERs computed on an observed sample along with sequential ERs computed on bootstrapped samples.
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE, results = "hide"}
 rm(list = ls())
@@ -76,11 +78,11 @@ library(magrittr)
 library(ESTER)
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
-mod2 <- lm(mpg ~ cyl * disp, mtcars)
+mod2 <- lm(mpg ~ cyl + disp, mtcars)
 ```
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
-seqERboot(mod1, mod2, order_nb = 20, nmin = 10, replace = TRUE) %>% plot
+seqERboot(mod1, mod2, order_nb = 100, nmin = 10, replace = TRUE) %>% plot
 ```
 
 Under the hood, `ESTER` uses the `AICcmodavg` package (available on [CRAN](https://cran.r-project.org/web/packages/AICcmodavg/index.html); Mazerolle, 2016) to compute AICc and Akaike Weights.

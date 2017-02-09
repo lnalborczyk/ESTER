@@ -6,7 +6,6 @@
 #' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
 #' @param nmin Minimum sample size from which start to compute iterative evidence ratios (ER).
 #' @param samplecol If applicable (e.g., repeated measures), name of the subject column of your dataframe, as a character vector.
-#' "samplecol" has to be a column of the data passed as the "data" argument of the mod1 and mod2 calls (default is NULL).
 #'
 #' @importFrom stats aggregate family formula lm
 #' @importFrom AICcmodavg aictab
@@ -19,7 +18,7 @@
 #' @examples
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
-#' mod2 <- lm(mpg ~ cyl * disp, mtcars)
+#' mod2 <- lm(mpg ~ cyl + disp, mtcars)
 #' seq_mtcars <- seqER(mod1, mod2, nmin = 10)
 #'
 #' @export seqER
@@ -42,7 +41,7 @@ seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
                 data <- data.frame(eval(mod1@call$data))
         }
 
-        data <- data[sample(nrow(data)),]
+        #data <- data[sample(nrow(data)),]
 
         if(is.null(samplecol)==TRUE){
 

@@ -17,7 +17,7 @@
 #' @examples
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
-#' mod2 <- lm(mpg ~ cyl * disp, mtcars)
+#' mod2 <- lm(mpg ~ cyl + disp, mtcars)
 #' seq_boot_mtcars <- seqERboot(mod1, mod2, order_nb = 100, nmin = 10, replace = FALSE)
 #'
 #' @export seqERboot
@@ -37,7 +37,7 @@ seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace
 
         }
 
-        data1 <- data1[sample(nrow(data1)),]
+        #data1 <- data1[sample(nrow(data1)),]
         order_nb <- order_nb + 1
 
         if(is.null(samplecol)==TRUE){
@@ -183,11 +183,14 @@ plot.ERlist <- function(x, ...) {
 
         for(i in 2:nlevels(x$ER$ERi)){
 
-                lines(loess( x$ER$ER[x$ER$ERi==as.character(paste0("ER", i))] ~
+                lines(loess(x$ER$ER[x$ER$ERi==as.character(paste0("ER", i))] ~
                                 x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ),
-                        lwd = 1, col = adjustcolor("steelblue", alpha.f = 0.3) )
-                }
+                        lwd = 1.5, col = adjustcolor("snow3", alpha.f = 0.8) )
+        }
+
+        lines(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"],
+                type = "l", lwd = 2, col = "steelblue")
 
         abline(h = 1, lty = 2)
 
-        }
+}
