@@ -30,7 +30,7 @@ simER <- function(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE) {
 
         df_pop <- df_pop %>% sample_n(nrow(df_pop) )
 
-        ER_comp <- nmin %>% as.numeric
+        ER_comp <- numeric()
 
         for(i in nmin:n){
 

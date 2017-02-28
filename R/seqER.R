@@ -41,8 +41,6 @@ seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
                 data <- data.frame(eval(mod1@call$data))
         }
 
-        #data <- data[sample(nrow(data)),]
-
         if(is.null(samplecol)==TRUE){
 
                 samplecol <- formula(mod1)[[2]] %>% as.character

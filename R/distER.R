@@ -17,14 +17,14 @@
 
 distER <- function(cohensd = 0.6, n = 100, nmin = 20, nSims = 100) {
 
-        ER <- nSims %>% as.numeric
+        ER <- numeric()
 
         for(i in 1:nSims){
 
                 x <- rnorm(n = n, mean = 0, sd = 1)
                 y <- rnorm(n = n, mean = 0 + cohensd, sd = 1)
 
-                ER[i] <- tail(simER(cohensd, n, nmin, plot = FALSE), 1)
+                ER[i] <- tail(simER(cohensd, n, nmin, plot = FALSE), 1) %>% invisible
 
         }
 
