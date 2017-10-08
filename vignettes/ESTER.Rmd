@@ -9,17 +9,29 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## (Information) Theoretical background
+## Theoretical background
 
 *This brief introduction is greatly inspired by a paper by Burnham & Anderson (2004): "Multimodel Inference, Understanding AIC and BIC in Model Selection".*
 
-Akaike’s approach allowed model selection to be firmly based on a fundamental theory and allowed further theoretical work. When $K$ is large relative to sample size n (which includes when $n$ is small, for any $K$), there is a small-sample (second-order bias correction) version of the AIC, called AICc, $$AIC_c = AIC+\dfrac{2K(K+1)}{n-K-1}$$ knowing that $$AIC = -2log(\mathcal{L}(\hat{\theta}))+2K$$ where $-2log(\mathcal{L}(\hat{\theta}))$ is known as the *deviance* of a model (see Sugiura 1978; Hurvich and Tsai 1989, 1995). AICc should be used unless $n/K$ > about 40 for the model with the largest value of $K$.
+Akaike’s approach allowed model selection to be firmly based on a fundamental theory and allowed further theoretical work. When $K$ is large relative to sample size n (which includes when $n$ is small, for any $K$), there is a small-sample (second-order bias correction) version of the AIC, called AICc:
+
+$$AIC_c = AIC+\dfrac{2K(K+1)}{n-K-1}$$
+
+knowing that:
+
+$$AIC = -2log(\mathcal{L}(\hat{\theta}))+2K$$
+
+where $-2log(\mathcal{L}(\hat{\theta}))$ is known as the *deviance* of a model (see Sugiura 1978; Hurvich and Tsai 1989, 1995). AICc should be used unless $n/K$ > about 40 for the model with the largest value of $K$.
 
 The individual AICc values are not interpretable as they contain arbitrary constants and are much affected by sample size. Here it is imperative to rescale AICc to $\Delta_{AICc}=AICc_{i}-AICc_{min}$ where $AICc_{min}$ is the minimum of the $R$ different $AICc_{i}$ values (i.e., the minimum is at $i = min$). This transformation forces the best model to have $\Delta=0$, while the rest of the models have positive values.
 
 The simple transformation $exp(−\Delta_i/2)$, for $i = 1, 2, ..., R$, provides the likelihood of the model (Akaike, 1981) given the data: $\mathcal{L}(g_i|data)$. This is a likelihood function over the model set in the sense that $\mathcal{L}(\theta|data, g_i)$ is the likelihood over the parameter space (for model $g_i$) of the parameter $\theta$, given the data ($x$) and the model ($g_i$).
 
-It is convenient to normalize the model likelihoods such that they sum to 1 and treat them as probabilities; hence, we use $$w_{i}=\dfrac{exp(-\Delta_{i}/2)}{\sum_{r=1}^{R}exp(-\Delta_{r}/2)}.$$ The $w_i$, called Akaike weights, are useful as the “weight of evidence” in favor of model $g_i(·|\theta)$ as being the actual Kullback-Leibler best model in the set. The ratios $w_i/w_j$ are identical to the original likelihood ratios, $\mathcal{L}(g_i|data)/\mathcal{L}(g_j|data)$, and so they are invariant to the model set, but the $w_i$ values depend on the full model set because they sum to 1.
+It is convenient to normalize the model likelihoods such that they sum to 1 and treat them as probabilities; hence, we use
+
+$$w_{i}=\dfrac{exp(-\Delta_{i}/2)}{\sum_{r=1}^{R}exp(-\Delta_{r}/2)}.$$
+
+The $w_i$, called Akaike weights, are useful as the “weight of evidence” in favor of model $g_i(·|\theta)$ as being the actual Kullback-Leibler best model in the set. The ratios $w_i/w_j$ are identical to the original likelihood ratios, $\mathcal{L}(g_i|data)/\mathcal{L}(g_j|data)$, and so they are invariant to the model set, but the $w_i$ values depend on the full model set because they sum to 1.
 
 Evidence can be judged by the relative likelihood of model pairs as $\mathcal{L}(g_i|x)/\mathcal{L}(g_j|x)$ or, equivalently, the ratio of Akaike weights $w_i/w_j$. Such ratios are called **evidence ratios** and represend the evidence about fitted models as to which is better in a Kullback-Leibler information sense.
 
@@ -39,14 +51,14 @@ devtools::install_github("lnalborczyk/ESTER")
 
 ## 1. Simulation
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4}
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 6, fig.width = 6}
 library(ESTER)
 ER <- simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
 ```
 
-Then, one can study the long-term properties of evidence ratios using the `distER` function.
+Then, one can study the distribution of evidence ratios using the `distER` function.
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 6}
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 6, fig.width = 9}
 ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
 ```
 
@@ -59,7 +71,7 @@ rm(list = ls() )
 library(ESTER)
 ```
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 6, fig.width = 6, warning = FALSE, results = "hide"}
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
@@ -75,7 +87,7 @@ mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
 ```
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 6, fig.width = 6, warning = FALSE, results = "hide"}
 plot(seqERboot(mod1, mod2, order_nb = 100, nmin = 10, replace = TRUE) )
 ```
 
