@@ -2,7 +2,8 @@
 % Please edit documentation in R/seqER.R
 \name{seqER}
 \alias{seqER}
-\title{Sequential evidence ratios.}
+\title{Computes evidence ratios (ER) as a function of sample size,
+for a given data set.}
 \usage{
 seqER(mod1, mod2, samplecol = NULL, nmin)
 }
@@ -16,7 +17,8 @@ seqER(mod1, mod2, samplecol = NULL, nmin)
 \item{nmin}{Minimum sample size from which start to compute iterative evidence ratios (ER).}
 }
 \description{
-\code{seqER} computes evidence ratios (ER) as a function of sample size, for a given data set.
+Computes evidence ratios (ER) as a function of sample size,
+for a given data set.
 }
 \examples{
 data(mtcars)
@@ -25,4 +27,3 @@ mod2 <- lm(mpg ~ cyl + disp, mtcars)
 seq_mtcars <- seqER(mod1, mod2, nmin = 10)
 
 }
-

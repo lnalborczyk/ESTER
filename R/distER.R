@@ -1,46 +1,38 @@
-#' Simulates experiments and sequential evidence ratios.
-#'
-#' \code{distER} computes evidence ratios (ER) as a function of sample size and cohen's d
+#' Simulates many sequential evidence ratios, keeps the last of each simulation,
+#' and plot their distribution.
 #'
 #' @inheritParams simER
 #' @param nSims Number of experiments to simulate.
 #'
 #' @importFrom stats lm rnorm t.test median IQR
 #' @importFrom AICcmodavg aictab
-#' @importFrom graphics abline points hist axis
+#' @import ggplot2
 #'
 #' @examples
 #' library(ESTER)
 #' ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
 #'
-#' @export distER
+#' @export
 
-distER <- function(cohensd = 0.6, n = 100, nmin = 20, nSims = 100) {
+distER <- function(cohensd = 0.6, nmin = 20, n = 100, nSims = 100) {
 
         ER <- numeric()
 
         for(i in 1:nSims){
 
                 x <- rnorm(n = n, mean = 0, sd = 1)
-                y <- rnorm(n = n, mean = 0 + cohensd, sd = 1)
+                y <- rnorm(n = n, mean = cohensd, sd = 1)
 
                 ER[i] <- tail(simER(cohensd, n, nmin, plot = FALSE), 1) %>% invisible
 
         }
 
-        xlab <- c("[0,1/10]","[1/10,1/6]","[1/6,1/3]","[1/3,1]","[1,3]","[3,6]",
-                "[6,10]",expression(paste("[10,",infinity,"]")))
+        print(
+                qplot(x = ER, geom = "histogram", bins = sqrt(nSims),
+                        alpha = 0.75, log = "x", show.legend = FALSE) +
+                        theme_bw(base_size = 12) +
+                        geom_vline(aes(xintercept = median(ER) ), linetype = "dashed") )
 
-        ER2 <- ER %>% cut(c(0,1/10,1/6,1/3,1,3,6,10,Inf) ) %>% table
+        return(ER)
 
-        ER2 %>% plot(main = paste0("ER distribution with Cohen's d = ",
-                cohensd, ", n = ", n, ", nSims = ", nSims),
-                xlab = expression(Evidence~ ~Ratio~ ~(ER[10])),
-                ylab = "Frequency", las = 1, col = "steelblue",
-                lwd = 10, xaxt = "n")
-
-        axis(1, at = 1:length(ER2), labels = xlab)
-
-        return(ER2)
-
-        }
+}

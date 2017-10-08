@@ -2,25 +2,26 @@
 % Please edit documentation in R/distER.R
 \name{distER}
 \alias{distER}
-\title{Simulates experiments and sequential evidence ratios.}
+\title{Simulates many sequential evidence ratios, keeps the last of each simulation,
+and plot their distribution.}
 \usage{
-distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
+distER(cohensd = 0.6, nmin = 20, n = 100, nSims = 100)
 }
 \arguments{
 \item{cohensd}{Expected effect size.}
 
-\item{n}{Sample size.}
-
 \item{nmin}{Minimum sample size from which start to compute ER.}
+
+\item{n}{Sample size.}
 
 \item{nSims}{Number of experiments to simulate.}
 }
 \description{
-\code{distER} computes evidence ratios (ER) as a function of sample size and cohen's d
+Simulates many sequential evidence ratios, keeps the last of each simulation,
+and plot their distribution.
 }
 \examples{
 library(ESTER)
 ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
 
 }
-

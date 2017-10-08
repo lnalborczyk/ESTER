@@ -1,6 +1,5 @@
-#' Simulates a sequential ER for independant two-groups comparisons, as a function of sample size and Cohen's d.
-#'
-#' \code{simER} computes evidence ratios (ER) as a function of sample size and cohen's d
+#' Simulates a sequential ER for independant two-groups comparisons,
+#' as a function of sample size and effect size (Cohen's d).
 #'
 #' @param cohensd Expected effect size.
 #' @param n Sample size.
@@ -9,26 +8,31 @@
 #'
 #' @importFrom stats lm rnorm
 #' @importFrom AICcmodavg aictab
-#' @importFrom graphics abline points
-#' @importFrom magrittr %>%
-#' @importFrom dplyr sample_n
+#' @importFrom magrittr %>% set_names
+#' @import ggplot2
+#' @import dplyr
 #'
 #' @examples
 #' library(ESTER)
 #' ER <- simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
 #'
-#' @export simER
+#' @export
+
+# quiets concerns of R CMD check re: the .'s that appear in pipelines
+# if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "value") )
+
 
 simER <- function(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE) {
 
         x <- cbind( rnorm(n = n, mean = 0, sd = 1), rep("x", n) )
-        y <- cbind( rnorm(n = n, mean = mean(as.numeric(x[,1])) + cohensd, sd = 1), rep("y", n) )
+        y <- cbind( rnorm(n = n, mean = cohensd, sd = 1), rep("y", n) )
 
-        df_pop <- rbind(y, x) %>% as.data.frame
-        colnames(df_pop) <- c("value", "group")
-        df_pop$value <- df_pop$value %>% as.character %>% as.numeric
-
-        df_pop <- df_pop %>% sample_n(nrow(df_pop) )
+        df_pop <-
+                rbind(y, x) %>%
+                as.data.frame %>%
+                set_names(c("value", "group") ) %>%
+                mutate(value = value %>% as.character %>% as.numeric) %>%
+                sample_n(nrow(.) )
 
         ER_comp <- numeric()
 
@@ -42,22 +46,21 @@ simER <- function(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE) {
 
                 rownames(model_comp) <- c("model_1", "model_2")
 
-                ER_comp[i] <- model_comp["model_2", "AICcWt"] / model_comp["model_1", "AICcWt"]
+                ER_comp[i] <-model_comp["model_2", "AICcWt"] / model_comp["model_1", "AICcWt"]
 
         }
 
         if(plot == TRUE){
 
-                suppressWarnings(plot(ER_comp, type = "l", col = "steelblue",
-                        lwd = 2, xlab = "Sample size",
-                        ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
-                        xlim = c(nmin, n), las = 1,
-                        main = paste0("Cohen's d = ", cohensd, ", ", "n = ", n),
-                        log = "y", bty = "l") )
+                print(
+                        qplot(nmin - 1 + seq_along(ER_comp[nmin:n]), ER_comp[nmin:n],
+                        log = "y", geom = "line",
+                        xlab = "Sample size",
+                        ylab = expression(Evidence~ ~Ratio~ ~(ER[10]) ) ) +
+                        theme_bw(base_size = 12) )
 
-                abline(h = 1, lty = 2)
         }
 
         return(ER_comp[nmin:n])
 
-        }
+}

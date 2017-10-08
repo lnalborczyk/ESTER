@@ -1,13 +1,13 @@
 Package: ESTER
 Title: Efficient Sequential Testing with Evidence Ratios
 Version: 0.0.2
-Date: 2016-10-20
+Date: 2017-10-10
 Authors@R: as.person("Ladislas Nalborczyk <ladislas.nalborczyk@gmail.com> [aut, cre]")
 Description: Sequential testing with AICc-based evidence ratios, for observed data as well as simulated data.
 License: MIT + file LICENSE
 LazyData: yes
-RoxygenNote: 5.0.1
-Imports: AICcmodavg, lme4, plyr, dplyr, magrittr
+RoxygenNote: 6.0.1
+Imports: AICcmodavg, lme4, plyr, dplyr, magrittr, ggplot2, rlang
 URL: https://github.com/lnalborczyk/ESTER
 BugReports: https://github.com/lnalborczyk/ESTER/issues
 Suggests: knitr, rmarkdown

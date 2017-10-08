@@ -28,10 +28,8 @@ Evidence can be judged by the relative likelihood of model pairs as $\mathcal{L}
 The `ESTER` package is not on CRAN yet, but you can install the development version from Github:
 
 ```{r, eval = FALSE}
-
 if(!require(devtools)){install.packages("devtools")}
 devtools::install_github("lnalborczyk/ESTER")
-
 ```
 
 ## Different questions
@@ -42,7 +40,6 @@ devtools::install_github("lnalborczyk/ESTER")
 ## 1. Simulation
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4}
-library(magrittr)
 library(ESTER)
 ER <- simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
 ```
@@ -58,8 +55,7 @@ ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
 `seqERboot` allows you to study the behavior of sequential ERs computed on an observed sample.
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE, results = "hide"}
-rm(list = ls())
-library(magrittr)
+rm(list = ls() )
 library(ESTER)
 ```
 
@@ -67,14 +63,12 @@ library(ESTER)
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-seqER(mod1, mod2, nmin = 10) %>% plot
+plot(seqER(mod1, mod2, nmin = 10) )
 ```
 
 `seqERboot` allows you to study the behavior of sequential ERs computed on an observed sample along with sequential ERs computed on bootstrapped samples.
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE, results = "hide"}
-rm(list = ls())
-library(magrittr)
 library(ESTER)
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
@@ -82,7 +76,7 @@ mod2 <- lm(mpg ~ cyl + disp, mtcars)
 ```
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 4, fig.width = 4, warning = FALSE, results = "hide"}
-seqERboot(mod1, mod2, order_nb = 100, nmin = 10, replace = TRUE) %>% plot
+plot(seqERboot(mod1, mod2, order_nb = 100, nmin = 10, replace = TRUE) )
 ```
 
 Under the hood, `ESTER` uses the `AICcmodavg` package (available on [CRAN](https://cran.r-project.org/web/packages/AICcmodavg/index.html); Mazerolle, 2016) to compute AICc and Akaike Weights.

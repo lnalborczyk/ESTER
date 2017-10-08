@@ -1,6 +1,4 @@
-#' Sequential evidence ratios of original sample and random rearrangments.
-#'
-#' \code{seqERboot} computes evidence ratios (ER) as a function of sample size,
+#' Computes sequential evidence ratios (ER) as a function of sample size,
 #' for a given data set and for N random rearrangments of this dataset.
 #'
 #' @inheritParams seqER
@@ -10,9 +8,10 @@
 #' @importFrom stats aggregate family formula lm loess
 #' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
-#' @importFrom graphics lines
-#' @importFrom grDevices adjustcolor
 #' @importFrom magrittr %>%
+#' @importFrom grDevices adjustcolor
+#' @import graphics
+#' @import ggplot2
 #'
 #' @examples
 #' data(mtcars)
@@ -20,7 +19,7 @@
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
 #' seq_boot_mtcars <- seqERboot(mod1, mod2, order_nb = 100, nmin = 10, replace = FALSE)
 #'
-#' @export seqERboot
+#' @export
 
 seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace = FALSE) {
 
@@ -168,12 +167,19 @@ seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace
 
 }
 
-#' @S3method plot ERlist
+#' @export
+
 plot.ERlist <- function(x, ...) {
 
         options(scipen = 10)
 
         ylim <- c(min(x$ER$ER) / 1.1, max(x$ER$ER) * 1.1 )
+
+        # qplot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"],
+        #         geom = "line", log = "y",
+        #         xlab = "Sample size",
+        #         ylab = expression(Evidence~ ~Ratio~ ~(ER[10]) ) ) +
+        #         theme_bw(base_size = 12)
 
         plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l",
                 lwd = 2, xlab = expression(Sample~ ~size),

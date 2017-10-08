@@ -1,6 +1,5 @@
-#' Sequential evidence ratios.
-#'
-#' \code{seqER} computes evidence ratios (ER) as a function of sample size, for a given data set.
+#' Computes evidence ratios (ER) as a function of sample size,
+#' for a given data set.
 #'
 #' @param mod1 A mathematical model, of class "lm" or "lmerMod".
 #' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
@@ -11,9 +10,10 @@
 #' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
 #' @importFrom utils tail
-#' @importFrom graphics grid plot text
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom magrittr %>%
+#' @importFrom rlang f_lhs
+#' @import ggplot2
 #'
 #' @examples
 #' data(mtcars)
@@ -21,38 +21,43 @@
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
 #' seq_mtcars <- seqER(mod1, mod2, nmin = 10)
 #'
-#' @export seqER
+#' @export
 
 seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
 
-        if(!class(mod1)==class(mod2)){
+        if(!class(mod1)==class(mod2) ) {
 
                 stop("Error: mod1 and mod2 have to be of the same class")
 
         }
 
-        if(class(mod1) == "lm"){
+        if(class(mod1) == "lm") {
 
-                data <- data.frame(eval(mod1$call[["data"]]))
+                data <- data.frame(eval(mod1$call[["data"]] ) )
         }
 
-        if(class(mod1) == "glmerMod" | class(mod1) == "lmerMod"){
+        if(class(mod1) == "glmerMod" | class(mod1) == "lmerMod") {
 
-                data <- data.frame(eval(mod1@call$data))
+                data <- data.frame(eval(mod1@call$data) )
         }
 
-        if(is.null(samplecol)==TRUE){
+        if(is.null(samplecol)==TRUE) {
 
-                samplecol <- formula(mod1)[[2]] %>% as.character
+                samplecol <- deparse(f_lhs(formula(mod1) ) )
                 nobs <- 1
                 data$ppt <- rep(seq(1, length(data[,samplecol]), 1), each = nobs)
 
         }else{
 
-                count <- plyr::count(data[, samplecol], 1) # count frequencies
-                nobs <- max(count$freq) # count number of observations by subject
-                a <- as.vector(count$x[count$freq < nobs]) # identify subjects with less than n observations
-                data$ppt <- rep(seq(1, length(unique(data[,samplecol])), 1), each = nobs)
+                # count frequencies
+                count <- plyr::count(data[, samplecol], 1)
+
+                # count number of observations by subject
+                nobs <- max(count$freq)
+                # identify subjects with less than n observations
+                a <- as.vector(count$x[count$freq < nobs])
+
+                data$ppt <- rep(seq(1, length(unique(data[,samplecol]) ), 1), each = nobs)
 
                 if(length(a)>0){
 
@@ -61,13 +66,17 @@ seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
                                 data <- data[!data[, samplecol]==as.numeric(a[i]), ]
                         }
 
-                        warning("Different numbers of observation by subject. Subjects with less than max(nobs) have been removed.")
+                        warning("Different numbers of observation by subject.
+                                Subjects with less than max(nobs) have been removed.")
                 }
 
         }
 
-        startrow <- which(as.numeric(as.character(data$ppt))==nmin) %>% min # check the row number of the nmin
-        endrow <- data[,samplecol] %>% length # check the row number of the last subject
+        # check the row number of the nmin
+        startrow <- which(as.numeric(as.character(data$ppt))==nmin) %>% min
+
+        # check the row number of the last subject
+        endrow <- data[,samplecol] %>% length
 
         pb = txtProgressBar(min = 0, max = endrow, initial = 0, style = 3)
 
@@ -75,39 +84,50 @@ seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
 
                 maxrow <- i - 1 + nobs
 
-                if((class(mod1) == "glmerMod")){
+                if( (class(mod1) == "glmerMod") ){
 
-                        mod1 <- glmer(formula(mod1), family = family(mod1)$family, data[1:maxrow,])
-                        mod2 <- glmer(formula(mod2), family = family(mod2)$family, data[1:maxrow,])
+                        mod1 <- glmer(formula(mod1),
+                                family = family(mod1)$family,
+                                data[1:maxrow, ])
+
+                        mod2 <- glmer(formula(mod2),
+                                family = family(mod2)$family,
+                                data[1:maxrow, ])
                 }
 
-                if((class(mod1) == "lmerMod")){
+                if( (class(mod1) == "lmerMod") ){
 
-                        mod1 <- lmer(formula(mod1), REML = FALSE, data[1:maxrow,])
-                        mod2 <- lmer(formula(mod2), REML = FALSE, data[1:maxrow,])
+                        mod1 <- lmer(formula(mod1),
+                                REML = FALSE, data[1:maxrow, ])
+
+                        mod2 <- lmer(formula(mod2),
+                                REML = FALSE, data[1:maxrow, ])
                 }
 
-                if((class(mod1) == "lm")){
+                if( (class(mod1) == "lm") ){
 
-                        mod1 <- lm(formula(mod1), data[1:maxrow,])
-                        mod2 <- lm(formula(mod2), data[1:maxrow,])
+                        mod1 <- lm(formula(mod1), data[1:maxrow, ])
+
+                        mod2 <- lm(formula(mod2), data[1:maxrow, ])
                 }
 
-                tabtab <- aictab(list(mod1,mod2), modnames = c("mod1","mod2"), sort = FALSE)
+                tabtab <- aictab(list(mod1,mod2),
+                        modnames = c("mod1","mod2"), sort = FALSE)
+
                 tempER <- data.frame(cbind(tabtab$AICcWt[tabtab$Modnames=="mod2"] /
                                 tabtab$AICcWt[tabtab$Modnames=="mod1"], data$ppt[i] ) )
 
                 # if the merged dataset doesn't exist, create it, else, rbind it
-                if (!exists("ER")) ER <- tempER else ER <- rbind(ER,tempER)
+                if (!exists("ER") ) ER <- tempER else ER <- rbind(ER, tempER)
 
                 rm(tempER)
 
-                setTxtProgressBar(pb,i)
+                setTxtProgressBar(pb, i)
 
         }
 
-        ER <- data.frame(ER[c(2,1)])
-        colnames(ER) <- c("ppt","ER")
+        ER <- data.frame(ER[c(2, 1)] )
+        colnames(ER) <- c("ppt", "ER")
 
         class(ER) <- c("seqER", "data.frame")
 
@@ -115,15 +135,14 @@ seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
 
 }
 
-#' @S3method plot seqER
-plot.seqER <- function(x, ...) {
+#' @export
 
-        options(scipen = 10)
+plot.seqER <- function(x, ... ) {
 
-        plot(x$ppt, x$ER, type = "l", lwd = 2, xlab = expression(Sample~ ~size),
-                las = 1, ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
-                bty = "l", log = "y", col = "steelblue")
+        qplot(x$ppt, x$ER,
+                log = "y", geom = "line",
+                xlab = "Sample size",
+                ylab = expression(Evidence~ ~Ratio~ ~(ER[10]) ) ) +
+                theme_bw(base_size = 12)
 
-        abline(h = 1, lty = 2)
-
-        }
+}
