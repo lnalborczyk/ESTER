@@ -2,8 +2,7 @@
 % Please edit documentation in R/seqER.R
 \name{seqER}
 \alias{seqER}
-\title{Computes evidence ratios (ER) as a function of sample size,
-for a given data set.}
+\title{Computes sequential evidence ratios}
 \usage{
 seqER(mod1, mod2, nmin, samplecol = NULL)
 }
@@ -18,8 +17,7 @@ seqER(mod1, mod2, nmin, samplecol = NULL)
 dataframe, as a character vector.}
 }
 \description{
-Computes evidence ratios (ER) as a function of sample size,
-for a given data set.
+Computes sequential evidence ratios.
 }
 \examples{
 data(mtcars)

@@ -2,19 +2,18 @@
 % Please edit documentation in R/simER.R
 \name{simER}
 \alias{simER}
-\title{Simulates a sequential ER for independant two-groups comparisons,
-as a function of sample size and effect size (Cohen's d).}
+\title{Simulates a sequential ER for independant two-groups comparisons}
 \usage{
 simER(cohensd, nmin, n, plot = TRUE)
 }
 \arguments{
-\item{cohensd}{Expected effect size.}
+\item{cohensd}{Expected effect size}
 
-\item{nmin}{Minimum sample size from which start to compute ER.}
+\item{nmin}{Minimum sample size from which start computing ERs}
 
-\item{n}{Sample size.}
+\item{n}{Total sample size}
 
-\item{plot}{If TRUE, produces a nice plot of the evolution of the ER.}
+\item{plot}{If TRUE, produces a plot of the evolution of the ERs}
 }
 \description{
 Simulates a sequential ER for independant two-groups comparisons,
@@ -22,6 +21,6 @@ as a function of sample size and effect size (Cohen's d).
 }
 \examples{
 library(ESTER)
-ER <- simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
+ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
 
 }

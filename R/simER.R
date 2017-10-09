@@ -1,20 +1,22 @@
+#' Simulates a sequential ER for independant two-groups comparisons
+#'
 #' Simulates a sequential ER for independant two-groups comparisons,
 #' as a function of sample size and effect size (Cohen's d).
 #'
-#' @param cohensd Expected effect size.
-#' @param nmin Minimum sample size from which start to compute ER.
-#' @param n Sample size.
-#' @param plot If TRUE, produces a nice plot of the evolution of the ER.
+#' @param cohensd Expected effect size
+#' @param nmin Minimum sample size from which start computing ERs
+#' @param n Total sample size
+#' @param plot If TRUE, produces a plot of the evolution of the ERs
 #'
-#' @importFrom AICcmodavg aictab
 #' @importFrom magrittr %>% set_names
+#' @importFrom AICcmodavg aictab
 #' @importFrom stats lm rnorm
 #' @import ggplot2
 #' @import dplyr
 #'
 #' @examples
 #' library(ESTER)
-#' ER <- simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
+#' ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
 #'
 #' @export
 
@@ -32,10 +34,9 @@ simER <- function(cohensd, nmin, n,  plot = TRUE) {
 
         ER_comp <- numeric()
 
-        for (i in nmin:n){
+        for (i in nmin:n) {
 
                 model_1 <- lm(value ~ 1, data = df_pop[1:i, ] )
-
                 model_2 <- lm(value ~ group, data = df_pop[1:i, ] )
 
                 model_comp <- as.data.frame(aictab(list(model_1, model_2),
@@ -48,7 +49,7 @@ simER <- function(cohensd, nmin, n,  plot = TRUE) {
 
         }
 
-        if (plot == TRUE){
+        if (plot == TRUE) {
 
                 print(
                         qplot(

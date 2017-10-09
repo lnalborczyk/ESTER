@@ -1,5 +1,6 @@
-#' Computes evidence ratios (ER) as a function of sample size,
-#' for a given data set.
+#' Computes sequential evidence ratios
+#'
+#' Computes sequential evidence ratios.
 #'
 #' @param mod1 A mathematical model, of class "lm" or "lmerMod".
 #' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
@@ -7,13 +8,13 @@
 #' @param samplecol If applicable (e.g., repeated measures), name of the subject column of your
 #' dataframe, as a character vector.
 #'
-#' @importFrom stats aggregate family formula lm
+#' @importFrom stats family formula lm
 #' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
 #' @importFrom magrittr %>%
 #' @importFrom rlang f_lhs
-#' @import utils
 #' @import ggplot2
+#' @import utils
 #'
 #' @examples
 #' data(mtcars)

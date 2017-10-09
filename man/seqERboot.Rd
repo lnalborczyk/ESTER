@@ -2,8 +2,7 @@
 % Please edit documentation in R/seqERboot.R
 \name{seqERboot}
 \alias{seqERboot}
-\title{Computes sequential evidence ratios (ER) as a function of sample size,
-for a given data set and for N random rearrangments of this dataset.}
+\title{Computes sequential evidence ratios for a given data set and bootstrapped samples}
 \usage{
 seqERboot(mod1, mod2, nmin, samplecol = NULL, order_nb, replace = FALSE)
 }
@@ -22,8 +21,8 @@ dataframe, as a character vector.}
 \item{replace}{If TRUE, corresponds to bootstrap with replacement.}
 }
 \description{
-Computes sequential evidence ratios (ER) as a function of sample size,
-for a given data set and for N random rearrangments of this dataset.
+Computes sequential evidence ratios for a given data set as well as
+for order_nb random rearrangments of this dataset.
 }
 \examples{
 data(mtcars)

@@ -1,22 +1,23 @@
-#' Simulates many sequential evidence ratios, keeps the last of each simulation,
+#' Simulates many sequential ERs to obtain their distribution
+#'
+#' Simulates many sequential ERs, keeps the last of each simulation,
 #' and plot their distribution.
 #'
 #' @inheritParams simER
 #' @param nsims Number of experiments to simulate.
 #'
 #' @importFrom AICcmodavg aictab
-#' @importFrom stats lm rnorm median
 #' @import ggplot2
 #'
 #' @examples
 #' library(ESTER)
-#' ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nsims = 100)
+#' ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)
 #'
 #' @export
 
-distER <- function (cohensd, nmin, n, nsims) {
+distER <- function(cohensd, nmin, n, nsims) {
 
-        ER <- numeric()
+        ER <- vector(mode = "numeric", length = nsims)
 
         for (i in 1:nsims) {
 
