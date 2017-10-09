@@ -74,7 +74,7 @@ seqER <- function(mod1, mod2, nmin, samplecol = NULL) {
         }
 
         # check the row number of the nmin
-        startrow <- which(as.numeric(as.character(data$ppt))==nmin) %>% min
+        startrow <- which(as.numeric(as.character(data$ppt) )==nmin) %>% min
 
         # check the row number of the last subject
         endrow <- data[,samplecol] %>% length
@@ -143,7 +143,7 @@ plot.seqER <- function(x, ... ) {
         qplot(x$ppt, x$ER,
                 log = "y", geom = "line",
                 xlab = "Sample size",
-                ylab = expression(log-Evidence~ ~Ratio~ ~(ER[10]) ) ) +
+                ylab = expression(Evidence~ ~Ratio~ ~(ER[10]) ) ) +
                 theme_bw(base_size = 12)
 
 }

@@ -57,7 +57,7 @@ simER <- function(cohensd, nmin, n,  plot = TRUE) {
                         qplot(nmin - 1 + seq_along(ER_comp[nmin:n]), ER_comp[nmin:n],
                         log = "y", geom = "line",
                         xlab = "Sample size",
-                        ylab = expression(log-Evidence~ ~Ratio~ ~(ER[10]) ) ) +
+                        ylab = expression(Evidence~ ~Ratio~ ~(ER[10]) ) ) +
                         theme_bw(base_size = 12) )
 
         }

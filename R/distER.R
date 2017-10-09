@@ -30,7 +30,7 @@ distER <- function(cohensd, nmin, n, nSims) {
         print(
                 qplot(x = ER, geom = "histogram", bins = sqrt(nSims),
                         alpha = 0.75, log = "x", show.legend = FALSE,
-                        xlab = expression(log-Evidence~ ~Ratio~ ~(ER[10]) ) ) +
+                        xlab = expression(Evidence~ ~Ratio~ ~(ER[10]) ) ) +
                         theme_bw(base_size = 12) +
                         geom_vline(aes(xintercept = median(ER) ), linetype = "dashed") )
 
