@@ -15,7 +15,7 @@ devtools::install_github("lnalborczyk/ESTER")
 
 1. **Simulation**. Given an expected effect size and sample size, what ER evolution should I reasonnably expect ?
 
-2. **Observed data**. When stop to recruit participants ?
+2. **Observed data**. When to stop recruiting participants ?
 
 ## 1. Simulation
 

@@ -18,9 +18,6 @@
 #'
 #' @export
 
-# quiets concerns of R CMD check re: the .'s that appear in pipelines
-# if(getRversion() >= "2.15.1") utils::globalVariables(c(".") )
-
 simER <- function(cohensd, nmin, n,  plot = TRUE) {
 
         x <- cbind(rnorm(n = n, mean = 0, sd = 1), rep("x", n) )
