@@ -29,7 +29,7 @@ ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
 We also can study the distribution of evidence ratios for `nSims` simulations runned with the previous function using `distER`, where the plotted vertical dashed line represents the median of the ERs distribution.
 
 ```r
-ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nSims = 100)
+ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)
 ```
 
 ## 2. Observed data
@@ -63,4 +63,4 @@ plot(seqERboot(mod1, mod2, nmin = 10, order_nb = 20, replace = TRUE) )
 
 Note that under the hood, `ESTER` uses the `AICcmodavg` package (available on [CRAN](https://cran.r-project.org/web/packages/AICcmodavg/index.html); Mazerolle, 2016) to compute AICc and Akaike Weights.
 
-For more information and theoretic backgroun, read the [manual](https://rawgit.com/lnalborczyk/ESTER/master/vignettes/ESTER.html).
+For more information and theoretic background, read the [manual](https://rawgit.com/lnalborczyk/ESTER/master/vignettes/ESTER.html).

@@ -32,7 +32,7 @@ simER <- function(cohensd, nmin, n,  plot = TRUE) {
 
         ER_comp <- numeric()
 
-        for(i in nmin:n){
+        for (i in nmin:n){
 
                 model_1 <- lm(value ~ 1, data = df_pop[1:i, ] )
 
@@ -48,17 +48,20 @@ simER <- function(cohensd, nmin, n,  plot = TRUE) {
 
         }
 
-        if(plot == TRUE){
+        if (plot == TRUE){
 
                 print(
-                        qplot(nmin - 1 + seq_along(ER_comp[nmin:n]), ER_comp[nmin:n],
-                        log = "y", geom = "line",
-                        xlab = "Sample size",
-                        ylab = expression(Evidence~ ~Ratio~ ~(ER[10]) ) ) +
-                        theme_bw(base_size = 12) )
+                        qplot(
+                                nmin - 1 + seq_along(ER_comp[nmin:n]),
+                                ER_comp[nmin:n],
+                                log = "y", geom = "line",
+                                xlab = "Sample size",
+                                ylab = expression(
+                                        Evidence~ ~Ratio~ ~ (ER[10]) ) ) +
+                                theme_bw(base_size = 12) )
 
         }
 
-        return(ER_comp[nmin:n])
+        return (ER_comp[nmin:n])
 
 }

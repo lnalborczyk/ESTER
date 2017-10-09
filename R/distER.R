@@ -2,7 +2,7 @@
 #' and plot their distribution.
 #'
 #' @inheritParams simER
-#' @param nSims Number of experiments to simulate.
+#' @param nsims Number of experiments to simulate.
 #'
 #' @importFrom AICcmodavg aictab
 #' @importFrom stats lm rnorm median
@@ -10,30 +10,28 @@
 #'
 #' @examples
 #' library(ESTER)
-#' ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
+#' ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nsims = 100)
 #'
 #' @export
 
-distER <- function(cohensd, nmin, n, nSims) {
+distER <- function (cohensd, nmin, n, nsims) {
 
         ER <- numeric()
 
-        for(i in 1:nSims){
+        for (i in 1:nsims) {
 
-                x <- rnorm(n = n, mean = 0, sd = 1)
-                y <- rnorm(n = n, mean = cohensd, sd = 1)
-
-                ER[i] <- tail(simER(cohensd, n, nmin, plot = FALSE), 1) %>% invisible
+                ER[i] <-
+                        tail(simER(cohensd, n, nmin, plot = FALSE), 1) %>%
+                        invisible
 
         }
 
         print(
-                qplot(x = ER, geom = "histogram", bins = sqrt(nSims),
+                qplot(x = ER, geom = "histogram", bins = sqrt(nsims),
                         alpha = 0.75, log = "x", show.legend = FALSE,
-                        xlab = expression(Evidence~ ~Ratio~ ~(ER[10]) ) ) +
-                        theme_bw(base_size = 12) +
-                        geom_vline(aes(xintercept = median(ER) ), linetype = "dashed") )
+                        xlab = expression(Evidence~ ~Ratio~ ~ (ER[10]) ) ) +
+                        theme_bw(base_size = 12) )
 
-        return(ER)
+        return (ER)
 
 }

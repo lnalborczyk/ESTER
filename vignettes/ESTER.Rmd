@@ -59,10 +59,10 @@ library(ESTER)
 ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
 ```
 
-We also can study the distribution of evidence ratios for `nSims` simulations runned with the previous function using `distER`, where the plotted vertical dashed line represents the median of the ERs distribution.
+We also can study the distribution of evidence ratios for `nsims` simulations runned with the previous function using `distER`.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 7.5}
-ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nSims = 100)
+ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)
 ```
 
 ## 2. Observed data

@@ -5,7 +5,7 @@
 \title{Simulates many sequential evidence ratios, keeps the last of each simulation,
 and plot their distribution.}
 \usage{
-distER(cohensd, nmin, n, nSims)
+distER(cohensd, nmin, n, nsims)
 }
 \arguments{
 \item{cohensd}{Expected effect size.}
@@ -14,7 +14,7 @@ distER(cohensd, nmin, n, nSims)
 
 \item{n}{Sample size.}
 
-\item{nSims}{Number of experiments to simulate.}
+\item{nsims}{Number of experiments to simulate.}
 }
 \description{
 Simulates many sequential evidence ratios, keeps the last of each simulation,
@@ -22,6 +22,6 @@ and plot their distribution.
 }
 \examples{
 library(ESTER)
-ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
+ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nsims = 100)
 
 }
