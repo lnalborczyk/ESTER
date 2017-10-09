@@ -4,7 +4,8 @@
 #' @param mod1 A mathematical model, of class "lm" or "lmerMod".
 #' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
 #' @param nmin Minimum sample size from which start to compute iterative evidence ratios (ER).
-#' @param samplecol If applicable (e.g., repeated measures), name of the subject column of your dataframe, as a character vector.
+#' @param samplecol If applicable (e.g., repeated measures), name of the subject column of your
+#' dataframe, as a character vector.
 #'
 #' @importFrom stats aggregate family formula lm
 #' @importFrom AICcmodavg aictab
@@ -23,7 +24,7 @@
 #'
 #' @export
 
-seqER <- function(mod1, mod2, samplecol = NULL, nmin) {
+seqER <- function(mod1, mod2, nmin, samplecol = NULL) {
 
         if(!class(mod1)==class(mod2) ) {
 
@@ -142,7 +143,7 @@ plot.seqER <- function(x, ... ) {
         qplot(x$ppt, x$ER,
                 log = "y", geom = "line",
                 xlab = "Sample size",
-                ylab = expression(Evidence~ ~Ratio~ ~(ER[10]) ) ) +
+                ylab = expression(log-Evidence~ ~Ratio~ ~(ER[10]) ) ) +
                 theme_bw(base_size = 12)
 
 }

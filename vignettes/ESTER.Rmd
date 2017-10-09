@@ -11,7 +11,7 @@ vignette: >
 
 ## Theoretical background
 
-*This brief introduction is greatly inspired by a paper by Burnham & Anderson (2004): "Multimodel Inference, Understanding AIC and BIC in Model Selection".*
+*This brief introduction is greatly inspired by a paper of Burnham & Anderson (2004): "Multimodel Inference, Understanding AIC and BIC in Model Selection".*
 
 Akaike’s approach allowed model selection to be firmly based on a fundamental theory and allowed further theoretical work. When $K$ is large relative to sample size n (which includes when $n$ is small, for any $K$), there is a small-sample (second-order bias correction) version of the AIC, called AICc:
 
@@ -51,15 +51,15 @@ devtools::install_github("lnalborczyk/ESTER")
 
 ## 1. Simulation
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 6, fig.width = 6}
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5}
 library(ESTER)
-ER <- simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
+ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
 ```
 
 Then, one can study the distribution of evidence ratios using the `distER` function.
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 6, fig.width = 9}
-ER <- distER(cohensd = 0.6, n = 100, nmin = 20, nSims = 100)
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 7.5}
+ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nSims = 100)
 ```
 
 ## 2. Observed data
@@ -71,7 +71,7 @@ rm(list = ls() )
 library(ESTER)
 ```
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 6, fig.width = 6, warning = FALSE, results = "hide"}
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
@@ -87,8 +87,8 @@ mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
 ```
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 6, fig.width = 6, warning = FALSE, results = "hide"}
-plot(seqERboot(mod1, mod2, order_nb = 100, nmin = 10, replace = TRUE) )
+```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
+plot(seqERboot(mod1, mod2, nmin = 10, order_nb = 100, replace = TRUE) )
 ```
 
 Under the hood, `ESTER` uses the `AICcmodavg` package (available on [CRAN](https://cran.r-project.org/web/packages/AICcmodavg/index.html); Mazerolle, 2016) to compute AICc and Akaike Weights.

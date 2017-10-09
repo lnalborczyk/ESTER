@@ -5,7 +5,7 @@
 \title{Simulates many sequential evidence ratios, keeps the last of each simulation,
 and plot their distribution.}
 \usage{
-distER(cohensd = 0.6, nmin = 20, n = 100, nSims = 100)
+distER(cohensd, nmin, n, nSims)
 }
 \arguments{
 \item{cohensd}{Expected effect size.}

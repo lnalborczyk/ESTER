@@ -5,16 +5,17 @@
 \title{Computes evidence ratios (ER) as a function of sample size,
 for a given data set.}
 \usage{
-seqER(mod1, mod2, samplecol = NULL, nmin)
+seqER(mod1, mod2, nmin, samplecol = NULL)
 }
 \arguments{
 \item{mod1}{A mathematical model, of class "lm" or "lmerMod".}
 
 \item{mod2}{A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).}
 
-\item{samplecol}{If applicable (e.g., repeated measures), name of the subject column of your dataframe, as a character vector.}
-
 \item{nmin}{Minimum sample size from which start to compute iterative evidence ratios (ER).}
+
+\item{samplecol}{If applicable (e.g., repeated measures), name of the subject column of your
+dataframe, as a character vector.}
 }
 \description{
 Computes evidence ratios (ER) as a function of sample size,

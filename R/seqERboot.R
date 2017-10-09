@@ -9,8 +9,6 @@
 #' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
 #' @importFrom magrittr %>%
-#' @importFrom grDevices adjustcolor
-#' @import graphics
 #' @import ggplot2
 #'
 #' @examples
@@ -21,7 +19,7 @@
 #'
 #' @export
 
-seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace = FALSE) {
+seqERboot <- function(mod1, mod2, nmin, samplecol = NULL, order_nb, replace = FALSE) {
 
         if(!class(mod1)==class(mod2)){stop("Error: mod1 and mod2 have to be of the same class")}
 
@@ -171,32 +169,14 @@ seqERboot <- function(mod1, mod2, samplecol = NULL, order_nb, nmin = 10, replace
 
 plot.ERlist <- function(x, ...) {
 
-        options(scipen = 10)
+        raw <- x$ER[x$ER$ERi=="ER1", ]
 
-        ylim <- c(min(x$ER$ER) / 1.1, max(x$ER$ER) * 1.1 )
-
-        # qplot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"],
-        #         geom = "line", log = "y",
-        #         xlab = "Sample size",
-        #         ylab = expression(Evidence~ ~Ratio~ ~(ER[10]) ) ) +
-        #         theme_bw(base_size = 12)
-
-        plot(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"], type = "l",
-                lwd = 2, xlab = expression(Sample~ ~size),
-                ylab = expression(Evidence~ ~Ratio~ ~(ER[10])),
-                bty = "l", log = "y", ylim = ylim, las = 1,
-                col = "steelblue")
-
-        for(i in 2:nlevels(x$ER$ERi)){
-
-                lines(loess(x$ER$ER[x$ER$ERi==as.character(paste0("ER", i))] ~
-                                x$ER$ppt[x$ER$ERi==as.character(paste0("ER", i))]  ),
-                        lwd = 1.5, col = adjustcolor("snow3", alpha.f = 0.8) )
-        }
-
-        lines(x$ER$ppt[x$ER$ERi=="ER1"], x$ER$ER[x$ER$ERi=="ER1"],
-                type = "l", lwd = 2, col = "steelblue")
-
-        abline(h = 1, lty = 2)
+        ggplot(x$ER, aes(x = x$ER$ppt, y = x$ER$ER, group = x$ER$ERi) ) +
+                scale_y_log10() +
+                geom_line(alpha = 0.2) +
+                geom_line(aes(x = ppt, y = ER, group = NULL), data = raw, size = 0.75) +
+                theme_bw(base_size = 12) +
+                xlab("Sample size") +
+                ylab(expression(log-Evidence~ ~Ratio~ ~(ER[10]) ) )
 
 }

@@ -5,19 +5,19 @@
 \title{Computes sequential evidence ratios (ER) as a function of sample size,
 for a given data set and for N random rearrangments of this dataset.}
 \usage{
-seqERboot(mod1, mod2, samplecol = NULL, order_nb, nmin = 10,
-  replace = FALSE)
+seqERboot(mod1, mod2, nmin, samplecol = NULL, order_nb, replace = FALSE)
 }
 \arguments{
 \item{mod1}{A mathematical model, of class "lm" or "lmerMod".}
 
 \item{mod2}{A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).}
 
-\item{samplecol}{If applicable (e.g., repeated measures), name of the subject column of your dataframe, as a character vector.}
+\item{nmin}{Minimum sample size from which start to compute iterative evidence ratios (ER).}
+
+\item{samplecol}{If applicable (e.g., repeated measures), name of the subject column of your
+dataframe, as a character vector.}
 
 \item{order_nb}{Number of random rearrangments to evaluate.}
-
-\item{nmin}{Minimum sample size from which start to compute iterative evidence ratios (ER).}
 
 \item{replace}{If TRUE, corresponds to bootstrap with replacement.}
 }

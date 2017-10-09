@@ -5,14 +5,14 @@
 \title{Simulates a sequential ER for independant two-groups comparisons,
 as a function of sample size and effect size (Cohen's d).}
 \usage{
-simER(cohensd = 0.6, n = 100, nmin = 20, plot = TRUE)
+simER(cohensd, nmin, n, plot = TRUE)
 }
 \arguments{
 \item{cohensd}{Expected effect size.}
 
-\item{n}{Sample size.}
-
 \item{nmin}{Minimum sample size from which start to compute ER.}
+
+\item{n}{Sample size.}
 
 \item{plot}{If TRUE, produces a nice plot of the evolution of the ER.}
 }
