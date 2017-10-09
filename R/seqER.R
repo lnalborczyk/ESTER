@@ -10,10 +10,9 @@
 #' @importFrom stats aggregate family formula lm
 #' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
-#' @importFrom utils tail
-#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom magrittr %>%
 #' @importFrom rlang f_lhs
+#' @import utils
 #' @import ggplot2
 #'
 #' @examples

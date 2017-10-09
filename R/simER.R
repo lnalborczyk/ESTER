@@ -6,9 +6,9 @@
 #' @param n Sample size.
 #' @param plot If TRUE, produces a nice plot of the evolution of the ER.
 #'
-#' @importFrom stats lm rnorm
 #' @importFrom AICcmodavg aictab
 #' @importFrom magrittr %>% set_names
+#' @importFrom stats lm rnorm
 #' @import ggplot2
 #' @import dplyr
 #'
@@ -19,7 +19,7 @@
 #' @export
 
 # quiets concerns of R CMD check re: the .'s that appear in pipelines
-# if(getRversion() >= "2.15.1") utils::globalVariables(c(".", "value") )
+# if(getRversion() >= "2.15.1") utils::globalVariables(c(".") )
 
 simER <- function(cohensd, nmin, n,  plot = TRUE) {
 
@@ -30,7 +30,7 @@ simER <- function(cohensd, nmin, n,  plot = TRUE) {
                 rbind(y, x) %>%
                 as.data.frame %>%
                 set_names(c("value", "group") ) %>%
-                mutate(value = value %>% as.character %>% as.numeric) %>%
+                mutate_(value = ~value %>% as.character %>% as.numeric) %>%
                 sample_n(nrow(.) )
 
         ER_comp <- numeric()

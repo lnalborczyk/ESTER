@@ -5,7 +5,7 @@
 #' @param order_nb Number of random rearrangments to evaluate.
 #' @param replace If TRUE, corresponds to bootstrap with replacement.
 #'
-#' @importFrom stats aggregate family formula lm loess
+#' @importFrom stats family formula lm
 #' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
 #' @importFrom magrittr %>%

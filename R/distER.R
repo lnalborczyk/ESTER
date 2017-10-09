@@ -4,8 +4,8 @@
 #' @inheritParams simER
 #' @param nSims Number of experiments to simulate.
 #'
-#' @importFrom stats lm rnorm t.test median IQR
 #' @importFrom AICcmodavg aictab
+#' @importFrom stats lm rnorm median
 #' @import ggplot2
 #'
 #' @examples
