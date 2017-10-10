@@ -17,22 +17,22 @@
 
 distER <- function(cohensd, nmin, n, nsims) {
 
-        ER <- vector(mode = "numeric", length = nsims)
+  ER <- vector(mode = "numeric", length = nsims)
 
-        for (i in 1:nsims) {
+  for (i in 1:nsims) {
 
-                ER[i] <-
-                        tail(simER(cohensd, n, nmin, plot = FALSE), 1) %>%
-                        invisible
+    ER[i] <-
+      tail(simER(cohensd, n, nmin, plot = FALSE), 1) %>% invisible
 
-        }
+  }
 
-        print(
-                qplot(x = ER, geom = "histogram", bins = sqrt(nsims),
-                        alpha = 0.75, log = "x", show.legend = FALSE,
-                        xlab = expression(Evidence~ ~Ratio~ ~ (ER[10]) ) ) +
-                        theme_bw(base_size = 12) )
+  print(
+    qplot(x = ER, geom = "histogram", bins = sqrt(nsims),
+                  alpha = 0.75, log = "x", show.legend = FALSE,
+                  xlab = expression(Evidence~ ~Ratio~ ~ (ER[10]) ) ) +
+                  theme_bw(base_size = 12)
+    )
 
-        return (ER)
+  return (ER)
 
 }
