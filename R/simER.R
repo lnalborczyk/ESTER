@@ -21,62 +21,62 @@
 
 simER <- function(cohensd, nmin, n,  plot = TRUE) {
 
-  if (nmin == 0) {
+    if (nmin == 0) {
 
-    stop("nmin should be a positive integer")
+        stop("nmin should be a positive integer")
 
-  }
+    }
 
-  if (nmin > n) {
+    if (nmin > n) {
 
-    stop("n should be superior to nmin")
+        stop("n should be superior to nmin")
 
-  }
+    }
 
-  if (nmin < 10) {
+    if (nmin < 10) {
 
-    warning("nmin should usually set above 10...")
+        warning("nmin should usually set above 10...")
 
-  }
+    }
 
-  x <- cbind(rnorm(n, 0, 1), rep("x", n) )
-  y <- cbind(rnorm(n, cohensd, 1), rep("y", n) )
+    x <- cbind(rnorm(n, 0, 1), rep("x", n) )
+    y <- cbind(rnorm(n, cohensd, 1), rep("y", n) )
 
-  df_pop <-
-    rbind(y, x) %>%
-    as.data.frame %>%
-    set_names(c("value", "group") ) %>%
-    mutate_(value = ~value %>% as.character %>% as.numeric) %>%
-    sample_n(nrow(.) )
+    df_pop <-
+        rbind(y, x) %>%
+        as.data.frame %>%
+        set_names(c("value", "group") ) %>%
+        mutate_(value = ~value %>% as.character %>% as.numeric) %>%
+        sample_n(nrow(.) )
 
-  ER_comp <- numeric()
+    ER_comp <- numeric()
 
-  for (i in nmin:n) {
+    for (i in nmin:n) {
 
-    mod1 <- lm(value ~ 1, data = df_pop[1:i, ] )
-    mod2 <- lm(value ~ group, data = df_pop[1:i, ] )
+        mod1 <- lm(value ~ 1, data = df_pop[1:i, ] )
+        mod2 <- lm(value ~ group, data = df_pop[1:i, ] )
 
-    model_comp <- aictab(mod1, mod2)
+        model_comp <- aictab(mod1, mod2)
 
-    ER_comp[i] <-
-      model_comp$aic_wt[model_comp$modnames == "mod2"] /
-      model_comp$aic_wt[model_comp$modnames == "mod1"]
+        ER_comp[i] <-
+            model_comp$aic_wt[model_comp$modnames == "mod2"] /
+            model_comp$aic_wt[model_comp$modnames == "mod1"]
 
-  }
+    }
 
-  if (plot == TRUE) {
+    if (plot == TRUE) {
 
-    print(
-      qplot(
-        nmin - 1 + seq_along(ER_comp[nmin:n]), ER_comp[nmin:n],
-        log = "y", geom = "line",
-        xlab = "Sample size",
-        ylab = expression(Evidence~ ~Ratio~ ~ (ER[10]) ) ) +
-        theme_bw(base_size = 12)
-      )
+        print(
+            qplot(
+                nmin - 1 + seq_along(ER_comp[nmin:n]), ER_comp[nmin:n],
+                log = "y", geom = "line",
+                xlab = "Sample size",
+                ylab = expression(Evidence~ ~Ratio~ ~ (ER[10]) ) ) +
+                theme_bw(base_size = 12)
+            )
 
-  }
+    }
 
-  return (ER_comp[nmin:n])
+    return (ER_comp[nmin:n])
 
 }

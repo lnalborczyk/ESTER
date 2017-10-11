@@ -23,7 +23,11 @@ aic(mod1)
 
 }
 \references{
-Burnham, K. P., \& Anderson, D. R. (2002). Model Selection and Multimodel Inference: A Practical Information-Theoretical Approach. 2d ed. New York: Springer-Verlag.
+Burnham, K. P., \& Anderson, D. R. (2002). Model Selection
+and Multimodel Inference: A Practical Information-Theoretical Approach.
+2d ed. New York: Springer-Verlag.
 
-Burnham, K. P., \& Anderson, D. R. (2004). Multimodel inference: Understanding AIC and BIC in model selection. Sociological Methods and Research, 33(2), 261-304.
+Burnham, K. P., \& Anderson, D. R. (2004). Multimodel
+inference: Understanding AIC and BIC in model selection. Sociological
+Methods and Research, 33(2), 261-304.
 }

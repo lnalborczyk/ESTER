@@ -25,124 +25,124 @@
 
 seqER <- function(mod1, mod2, nmin, samplecol = NULL) {
 
-  if (!class(mod1) == class(mod2) ) {
+    if (!class(mod1) == class(mod2) ) {
 
-    stop("Error: mod1 and mod2 have to be of the same class")
+        stop("Error: mod1 and mod2 have to be of the same class")
 
-  }
+    }
 
-  if (class(mod1) == "lm") {
+    if (class(mod1) == "lm") {
 
-    data <- data.frame(eval(mod1$call[["data"]] ) )
+        data <- data.frame(eval(mod1$call[["data"]]) )
 
-  }
+    }
 
-  if (class(mod1) == "glmerMod" | class(mod1) == "lmerMod") {
+    if (class(mod1) == "glmerMod" | class(mod1) == "lmerMod") {
 
-    data <- data.frame(eval(mod1@call$data) )
+        data <- data.frame(eval(mod1@call$data) )
 
-  }
+    }
 
-  if (!is.null(samplecol) == TRUE) {
+    if (!is.null(samplecol) == TRUE) {
 
-    samplecol <- deparse(substitute(samplecol) )
+        samplecol <- deparse(substitute(samplecol) )
 
-  }
+    }
 
-  if (is.null(samplecol) == TRUE) {
+    if (is.null(samplecol) == TRUE) {
 
-    samplecol <- deparse(f_lhs(formula(mod1) ) )
-    nobs <- 1
-    data$ppt <- rep(seq(1, length(data[, samplecol]), 1), each = nobs)
+        samplecol <- deparse(f_lhs(formula(mod1) ) )
+        nobs <- 1
+        data$ppt <- rep(seq(1, length(data[, samplecol]), 1), each = nobs)
 
-  } else {
+    } else {
 
-    # count frequencies
-    count <- plyr::count(data[, samplecol], 1)
+        # count frequencies
+        count <- data.frame(table(data[, samplecol]) )
 
-    # count number of observations by subject
-    nobs <- max(count$freq)
+        # count number of observations by subject
+        nobs <- max(count$Freq)
 
-    # identify subjects with less than n observations
-    a <- as.vector(count$x[count$freq < nobs])
+        # identify subjects with less than nobs
+        a <- as.vector(count$Var1[count$Freq < nobs])
 
-    data$ppt <- rep(seq(1, length (unique(data[, samplecol]) ), 1), each = nobs)
+        data$ppt <-
+            rep(seq(1, length (unique(data[, samplecol]) ), 1), each = nobs)
 
-    if (length(a) > 0) {
+        if (length(a) > 0) {
 
-      # if needed, remove subjects with less than nobs
-      for (i in 1:length(a) ) {
+            # if needed, remove subjects with less than nobs
+            for (i in 1:length(a) ) {
 
-        data <- data[!data[, samplecol] == as.numeric(a[i]), ]
+                data <- data[!data[, samplecol] == as.numeric(a[i]), ]
 
-      }
+            }
 
-      warning("Different numbers of observation by subject.
+            warning("Different numbers of observation by subject.
                           Subjects with less than max(nobs)
                           have been removed.")
+            }
 
     }
 
-  }
+    # check the row number of the nmin
+    startrow <- which(as.numeric(as.character(data$ppt) ) == nmin) %>% min
 
-  # check the row number of the nmin
-  startrow <- which(as.numeric(as.character(data$ppt) ) == nmin) %>% min
+    # check the row number of the last subject
+    endrow <- data[, samplecol] %>% length
 
-  # check the row number of the last subject
-  endrow <- data[, samplecol] %>% length
+    pb <- txtProgressBar(min = 0, max = endrow, initial = 0, style = 3)
 
-  pb <- txtProgressBar(min = 0, max = endrow, initial = 0, style = 3)
+    for (i in seq(startrow, endrow, nobs) ) {
 
-  for (i in seq(startrow, endrow, nobs) ) {
+        maxrow <- i - 1 + nobs
 
-    maxrow <- i - 1 + nobs
+        if ( (class(mod1) == "glmerMod") ) {
 
-    if ( (class(mod1) == "glmerMod") ) {
+            mod1 <- glmer(formula(mod1),
+                family = family(mod1)$family, data[1:maxrow, ])
 
-      mod1 <- glmer(formula(mod1),
-        family = family(mod1)$family, data[1:maxrow, ])
+            mod2 <- glmer(formula(mod2),
+                family = family(mod2)$family, data[1:maxrow, ])
 
-      mod2 <- glmer(formula(mod2),
-        family = family(mod2)$family, data[1:maxrow, ])
+        }
+
+        if ( (class(mod1) == "lmerMod") ) {
+
+            mod1 <- lmer(formula(mod1),
+                REML = FALSE, data[1:maxrow, ])
+
+            mod2 <- lmer(formula(mod2),
+                REML = FALSE, data[1:maxrow, ])
+
+        }
+
+        if ( (class(mod1) == "lm") ) {
+
+            mod1 <- lm(formula(mod1), data[1:maxrow, ])
+
+            mod2 <- lm(formula(mod2), data[1:maxrow, ])
+
+        }
+
+        tabtab <- aictab(mod1, mod2)
+
+        temp_er <- data.frame(cbind(data$ppt[i],
+            tabtab$aic_wt[tabtab$modnames == "mod2"] /
+                tabtab$aic_wt[tabtab$modnames == "mod1"]) )
+
+        # if the merged dataset doesn't exist, create it, else, rbind it
+        if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
+
+        rm(temp_er)
+        setTxtProgressBar(pb, i)
 
     }
 
-    if ( (class(mod1) == "lmerMod") ) {
+    colnames(er) <- c("ppt", "ER")
+    class(er) <- c("seqER", "data.frame")
 
-      mod1 <- lmer(formula(mod1),
-        REML = FALSE, data[1:maxrow, ])
-
-      mod2 <- lmer(formula(mod2),
-        REML = FALSE, data[1:maxrow, ])
-
-    }
-
-    if ( (class(mod1) == "lm") ) {
-
-      mod1 <- lm(formula(mod1), data[1:maxrow, ])
-
-      mod2 <- lm(formula(mod2), data[1:maxrow, ])
-
-    }
-
-    tabtab <- aictab(mod1, mod2)
-
-    temp_er <- data.frame(cbind(data$ppt[i],
-      tabtab$aic_wt[tabtab$modnames == "mod2"] /
-        tabtab$aic_wt[tabtab$modnames == "mod1"]) )
-
-    # if the merged dataset doesn't exist, create it, else, rbind it
-    if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
-
-    rm(temp_er)
-    setTxtProgressBar(pb, i)
-
-  }
-
-  colnames(er) <- c("ppt", "ER")
-  class(er) <- c("seqER", "data.frame")
-
-  return(er)
+    return(er)
 
 }
 
@@ -150,10 +150,10 @@ seqER <- function(mod1, mod2, nmin, samplecol = NULL) {
 
 plot.seqER <- function(x, ... ) {
 
-  qplot(x$ppt, x$ER,
-    log = "y", geom = "line",
-    xlab = "Sample size",
-    ylab = expression(Evidence~ ~Ratio~ ~ (ER[10]) ) ) +
-    theme_bw(base_size = 12)
+    qplot(x$ppt, x$ER,
+        log = "y", geom = "line",
+        xlab = "Sample size",
+        ylab = expression(Evidence~ ~Ratio~ ~ (ER[10]) ) ) +
+        theme_bw(base_size = 12)
 
 }

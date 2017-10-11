@@ -21,162 +21,167 @@
 #' @export
 
 seqERboot <- function(
-  mod1, mod2, nmin, samplecol = NULL, order_nb, replace = FALSE) {
+    mod1, mod2, nmin, samplecol = NULL, order_nb, replace = FALSE) {
 
-  if (!class(mod1) == class(mod2) ) {
+    if (!class(mod1) == class(mod2) ) {
 
-    stop("Error: mod1 and mod2 have to be of the same class")
-
-  }
-
-  if (class(mod1) == "lm") {
-
-    data1 <- data.frame(eval(mod1$call[["data"]]) )
-
-  }
-
-  if (class(mod1) == "lmerMod" | class(mod1) == "glmerMod") {
-
-    data1 <- data.frame(eval(mod1@call$data) )
-
-  }
-
-  order_nb <- order_nb + 1
-
-  if (is.null(samplecol) == TRUE) {
-
-    samplecol <- formula(mod1)[[2]] %>% as.character
-    nobs <- 1
-    data1$ppt <- rep(seq(1, length(data1[, samplecol]), 1), each = nobs)
-
-  } else {
-
-    # count frequencies
-    count <- plyr::count(data1[, samplecol], 1)
-    # count number of observations by subject
-    nobs <- as.numeric(max(count$freq) )
-    # identify subjects with less than n observations
-    a <- as.vector(count$x[count$freq < nobs])
-
-    data1$ppt <-
-      rep(seq(1, length(unique(data1[, samplecol]) ), 1), each = nobs)
-
-    if (length(a) > 0) {
-
-      # if needed, remove subjects with less than nobs
-      for (i in 1:length(a) ) {
-
-        data1 <- data1[!data1[, samplecol] == as.numeric(a[i]), ]
-
-      }
+        stop("Error: mod1 and mod2 have to be of the same class")
 
     }
 
-  }
+    if (class(mod1) == "lm") {
 
-  for (i in (order_nb - order_nb + 2):order_nb) {
+        data1 <- data.frame(eval(mod1$call[["data"]]) )
 
-    assign(paste0("data", i), data1[sample(nrow(data1), replace = replace), ])
+    }
 
-  }
+    if (class(mod1) == "lmerMod" | class(mod1) == "glmerMod") {
 
-  list <- ls(pattern = "data*")
+        data1 <- data.frame(eval(mod1@call$data) )
 
-  if (nobs > 1) {
+    }
 
-    pair <- function(data) {
+    order_nb <- order_nb + 1
 
-      data <- data[order(factor(data$ppt, levels = unique(data$ppt) ) ), ]
-      return (data)
+    if (is.null(samplecol) == TRUE) {
+
+        samplecol <- formula(mod1)[[2]] %>% as.character
+        nobs <- 1
+        data1$ppt <- rep(seq(1, length(data1[, samplecol]), 1), each = nobs)
+
+    } else {
+
+        # count frequencies
+        count <- data.frame(table(data[, samplecol]) )
+
+        # count number of observations by subject
+        nobs <- max(count$Freq)
+
+        # identify subjects with less than nobs
+        a <- as.vector(count$Var1[count$Freq < nobs])
+
+        data1$ppt <-
+            rep(seq(1, length(unique(data1[, samplecol]) ), 1), each = nobs)
+
+        if (length(a) > 0) {
+
+            # if needed, remove subjects with less than nobs
+            for (i in 1:length(a) ) {
+
+                data1 <- data1[!data1[, samplecol] == as.numeric(a[i]), ]
+
+            }
+
+        }
+
+    }
+
+    for (i in (order_nb - order_nb + 2):order_nb) {
+
+        assign(paste0("data", i),
+            data1[sample(nrow(data1), replace = replace), ])
+
+    }
+
+    list <- ls(pattern = "data*")
+
+    if (nobs > 1) {
+
+        pair <- function(data) {
+
+            data <-
+                data[order(factor(data$ppt, levels = unique(data$ppt) ) ), ]
+
+            return (data)
 
     }
 
     for (i in 1:length(list) ) {
 
-      assign(list[i], pair(get(list[i]) ) )
+        assign(list[i], pair(get(list[i]) ) )
 
     }
 
-  }
+    }
 
-  startrow <- nmin * nobs
+    startrow <- nmin * nobs
 
-  rand_er <- function(data) {
+    rand_er <- function(data) {
 
-    endrow <- as.numeric(nrow(data) )
+        endrow <- as.numeric(nrow(data) )
 
     for (i in seq(startrow, endrow, nobs) ) {
 
-      if ( (class(mod1) == "glmerMod") ) {
+        if ( (class(mod1) == "glmerMod") ) {
 
-        mod1 <- lme4::lmer(formula(mod1),
-          family = family(mod1)$family, data[1:i, ])
+            mod1 <- lme4::lmer(formula(mod1),
+                family = family(mod1)$family, data[1:i, ])
 
-        mod2 <- lme4::lmer(formula(mod2),
-          family = family(mod2)$family, data[1:i, ])
+            mod2 <- lme4::lmer(formula(mod2),
+                family = family(mod2)$family, data[1:i, ])
 
-      }
+        }
 
-      if ( (class(mod1) == "lmerMod") ) {
+        if ( (class(mod1) == "lmerMod") ) {
 
-        mod1 <- lme4::lmer(formula(mod1), REML = FALSE, data[1:i, ])
+            mod1 <- lme4::lmer(formula(mod1), REML = FALSE, data[1:i, ])
 
-        mod2 <- lme4::lmer(formula(mod2), REML = FALSE, data[1:i, ])
+            mod2 <- lme4::lmer(formula(mod2), REML = FALSE, data[1:i, ])
 
-      }
+        }
 
-      if ( (class(mod1) == "lm") ) {
+        if ( (class(mod1) == "lm") ) {
 
-        mod1 <- lm(formula(mod1), data[1:i, ])
+            mod1 <- lm(formula(mod1), data[1:i, ])
 
-        mod2 <- lm(formula(mod2), data[1:i, ])
+            mod2 <- lm(formula(mod2), data[1:i, ])
 
-      }
+        }
 
-      tabtab <- aictab(mod1, mod2)
+        tabtab <- aictab(mod1, mod2)
 
-      temp_er <-
-        tabtab$aic_wt[tabtab$modnames == "mod2"] /
-        tabtab$aic_wt[tabtab$modnames == "mod1"]
+        temp_er <-
+            tabtab$aic_wt[tabtab$modnames == "mod2"] /
+            tabtab$aic_wt[tabtab$modnames == "mod1"]
 
-      if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
+        if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
 
-      rm(temp_er)
+        rm(temp_er)
 
     }
 
-    er <- data.frame(cbind(er, seq(nmin, max(data1$ppt), 1) ) )
-    er <- data.frame(er[c(2, 1)])
-    colnames(er) <- c("ppt", "ER")
+        er <- data.frame(cbind(er, seq(nmin, max(data1$ppt), 1) ) )
+        er <- data.frame(er[c(2, 1)])
+        colnames(er) <- c("ppt", "ER")
 
-    return (er)
+        return(er)
 
-  }
+    }
 
-  pb <- txtProgressBar(min = 0, max = order_nb, initial = 0, style = 3)
+    pb <- txtProgressBar(min = 0, max = order_nb, initial = 0, style = 3)
 
-  for (i in 1:order_nb) {
+    for (i in 1:order_nb) {
 
-    assign(paste0("ER", i), rand_er(get(paste0("data", i) ) ) )
-    setTxtProgressBar(pb, i)
+        assign(paste0("ER", i), rand_er(get(paste0("data", i) ) ) )
+        setTxtProgressBar(pb, i)
 
-  }
+    }
 
-  for (i in 1:order_nb) {
+    for (i in 1:order_nb) {
 
-    ERi <- rep(paste0(paste0("ER", i) ), nrow(get(paste0("ER", i) ) ) )
+        ERi <- rep(paste0(paste0("ER", i) ), nrow(get(paste0("ER", i) ) ) )
 
-    temp_er <- cbind(get(paste0("ER", i) ), ERi)
-    colnames(temp_er) <- c("ppt", "ER", "ERi")
-    temp_er <- temp_er[, c(3, 1, 2)]
+        temp_er <- cbind(get(paste0("ER", i) ), ERi)
+        colnames(temp_er) <- c("ppt", "ER", "ERi")
+        temp_er <- temp_er[, c(3, 1, 2)]
 
-    if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
+        if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
 
-  }
+    }
 
-  class(er) <- c("ERboot", "data.frame")
+    class(er) <- c("ERboot", "data.frame")
 
-  return(er)
+    return(er)
 
 }
 
@@ -184,15 +189,15 @@ seqERboot <- function(
 
 plot.ERboot <- function(x, ... ) {
 
-  raw <- x[, 2:3][x[, 1] == "ER1", ]
+    raw <- x[, 2:3][x[, 1] == "ER1", ]
 
-  ggplot(x, aes_string(x = "ppt", y = "ER", group = "ERi") ) +
-    scale_y_log10() +
-    geom_line(alpha = 0.2) +
-    geom_line(aes_string(x = "ppt", y = "ER", group = NULL),
-      data = raw, size = 0.75) +
-    theme_bw(base_size = 12) +
-    xlab("Sample size") +
-    ylab(expression(Evidence~ ~Ratio~ ~ (ER[10]) ) )
+    ggplot(x, aes_string(x = "ppt", y = "ER", group = "ERi") ) +
+        scale_y_log10() +
+        geom_line(alpha = 0.2) +
+        geom_line(aes_string(x = "ppt", y = "ER", group = NULL),
+            data = raw, size = 0.75) +
+        theme_bw(base_size = 12) +
+        xlab("Sample size") +
+        ylab(expression(Evidence~ ~Ratio~ ~ (ER[10]) ) )
 
 }
