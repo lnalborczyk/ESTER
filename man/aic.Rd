@@ -16,7 +16,6 @@ bias correction for small samples. Threshold definition is based on
 recommendations from Burnham & Anderson (2002, 2004).
 }
 \examples{
-library(ESTER)
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 aic(mod1)

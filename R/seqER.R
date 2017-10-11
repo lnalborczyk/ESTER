@@ -2,11 +2,11 @@
 #'
 #' Computes sequential evidence ratios.
 #'
-#' @param mod1 Amodel of class "lm" or "lmerMod".
+#' @param mod1 A model of class "lm" or "lmerMod".
 #' @param mod2 A model of class "lm" or "lmerMod" (of the same class of mod1).
 #' @param nmin Minimum sample size from which start to compute sequential evidence ratios.
-#' @param samplecol If applicable (e.g., repeated measures), name of the subject column of your
-#' dataframe.
+#' @param id If applicable (e.g., repeated measures), name of the id column of your
+#' dataframe, in character string.
 #'
 #' @importFrom stats family formula lm
 #' @importFrom lme4 lmer glmer
@@ -21,9 +21,16 @@
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
 #' seq_mtcars <- seqER(mod1, mod2, nmin = 10)
 #'
+#' # Example with repeated measures
+#' library(lme4)
+#' data(sleepstudy)
+#' mod1 <- lm(Reaction ~ Days, sleepstudy)
+#' mod2 <- lm(Reaction ~ Days + I(Days^2), sleepstudy)
+#' seqER(mod1, mod2, nmin = 10, id = "Subject")
+#'
 #' @export
 
-seqER <- function(mod1, mod2, nmin, samplecol = NULL) {
+seqER <- function(mod1, mod2, nmin, id = NULL) {
 
     if (!class(mod1) == class(mod2) ) {
 
@@ -43,22 +50,16 @@ seqER <- function(mod1, mod2, nmin, samplecol = NULL) {
 
     }
 
-    if (!is.null(samplecol) == TRUE) {
+    if (is.null(id) == TRUE) {
 
-        samplecol <- deparse(substitute(samplecol) )
-
-    }
-
-    if (is.null(samplecol) == TRUE) {
-
-        samplecol <- deparse(f_lhs(formula(mod1) ) )
+        id <- deparse(f_lhs(formula(mod1) ) )
         nobs <- 1
-        data$ppt <- rep(seq(1, length(data[, samplecol]), 1), each = nobs)
+        data$ppt <- rep(seq(1, length(data[, id]), 1), each = nobs)
 
     } else {
 
         # count frequencies
-        count <- data.frame(table(data[, samplecol]) )
+        count <- data.frame(table(data[, id]) )
 
         # count number of observations by subject
         nobs <- max(count$Freq)
@@ -67,14 +68,14 @@ seqER <- function(mod1, mod2, nmin, samplecol = NULL) {
         a <- as.vector(count$Var1[count$Freq < nobs])
 
         data$ppt <-
-            rep(seq(1, length (unique(data[, samplecol]) ), 1), each = nobs)
+            rep(seq(1, length (unique(data[, id]) ), 1), each = nobs)
 
         if (length(a) > 0) {
 
             # if needed, remove subjects with less than nobs
             for (i in 1:length(a) ) {
 
-                data <- data[!data[, samplecol] == as.numeric(a[i]), ]
+                data <- data[!data[, id] == as.numeric(a[i]), ]
 
             }
 
@@ -86,10 +87,10 @@ seqER <- function(mod1, mod2, nmin, samplecol = NULL) {
     }
 
     # check the row number of the nmin
-    startrow <- which(as.numeric(as.character(data$ppt) ) == nmin) %>% min
+    startrow <- min(which(as.numeric(as.character(data$ppt) ) == nmin) )
 
     # check the row number of the last subject
-    endrow <- data[, samplecol] %>% length
+    endrow <- length(data[, id] )
 
     pb <- txtProgressBar(min = 0, max = endrow, initial = 0, style = 3)
 

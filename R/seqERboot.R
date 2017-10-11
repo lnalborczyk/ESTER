@@ -18,10 +18,17 @@
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
 #' seq_boot_mtcars <- seqERboot(mod1, mod2, nmin = 10, order_nb = 20, replace = FALSE)
 #'
+#' # Example with repeated measures
+#' library(lme4)
+#' data(sleepstudy)
+#' mod1 <- lm(Reaction ~ Days, sleepstudy)
+#' mod2 <- lm(Reaction ~ Days + I(Days^2), sleepstudy)
+#' seqERboot(mod1, mod2, nmin = 10, id = "Subject", order_nb = 20, replace = TRUE)
+#'
 #' @export
 
 seqERboot <- function(
-    mod1, mod2, nmin, samplecol = NULL, order_nb, replace = FALSE) {
+    mod1, mod2, nmin, id = NULL, order_nb, replace = FALSE) {
 
     if (!class(mod1) == class(mod2) ) {
 
@@ -43,16 +50,16 @@ seqERboot <- function(
 
     order_nb <- order_nb + 1
 
-    if (is.null(samplecol) == TRUE) {
+    if (is.null(id) == TRUE) {
 
-        samplecol <- formula(mod1)[[2]] %>% as.character
+        id <- as.character(formula(mod1)[[2]] )
         nobs <- 1
-        data1$ppt <- rep(seq(1, length(data1[, samplecol]), 1), each = nobs)
+        data1$ppt <- rep(seq(1, length(data1[, id]), 1), each = nobs)
 
     } else {
 
         # count frequencies
-        count <- data.frame(table(data[, samplecol]) )
+        count <- data.frame(table(data1[, id]) )
 
         # count number of observations by subject
         nobs <- max(count$Freq)
@@ -61,14 +68,14 @@ seqERboot <- function(
         a <- as.vector(count$Var1[count$Freq < nobs])
 
         data1$ppt <-
-            rep(seq(1, length(unique(data1[, samplecol]) ), 1), each = nobs)
+            rep(seq(1, length(unique(data1[, id]) ), 1), each = nobs)
 
         if (length(a) > 0) {
 
             # if needed, remove subjects with less than nobs
             for (i in 1:length(a) ) {
 
-                data1 <- data1[!data1[, samplecol] == as.numeric(a[i]), ]
+                data1 <- data1[!data1[, id] == as.numeric(a[i]), ]
 
             }
 
@@ -94,13 +101,13 @@ seqERboot <- function(
 
             return (data)
 
-    }
+        }
 
-    for (i in 1:length(list) ) {
+        for (i in 1:length(list) ) {
 
-        assign(list[i], pair(get(list[i]) ) )
+            assign(list[i], pair(get(list[i]) ) )
 
-    }
+            }
 
     }
 
@@ -110,48 +117,51 @@ seqERboot <- function(
 
         endrow <- as.numeric(nrow(data) )
 
-    for (i in seq(startrow, endrow, nobs) ) {
+        for (i in seq(startrow, endrow, nobs) ) {
 
-        if ( (class(mod1) == "glmerMod") ) {
+            if ( (class(mod1) == "glmerMod") ) {
 
-            mod1 <- lme4::lmer(formula(mod1),
-                family = family(mod1)$family, data[1:i, ])
+                mod1 <- lme4::lmer(formula(mod1),
+                    family = family(mod1)$family, data[1:i, ])
 
-            mod2 <- lme4::lmer(formula(mod2),
-                family = family(mod2)$family, data[1:i, ])
+                mod2 <- lme4::lmer(formula(mod2),
+                    family = family(mod2)$family, data[1:i, ])
+
+            }
+
+            if ( (class(mod1) == "lmerMod") ) {
+
+                mod1 <- lme4::lmer(formula(mod1), REML = FALSE, data[1:i, ])
+
+                mod2 <- lme4::lmer(formula(mod2), REML = FALSE, data[1:i, ])
+
+            }
+
+            if ( (class(mod1) == "lm") ) {
+
+                mod1 <- lm(formula(mod1), data[1:i, ])
+
+                mod2 <- lm(formula(mod2), data[1:i, ])
+
+            }
+
+            tabtab <- aictab(mod1, mod2)
+
+            temp_er <-
+                tabtab$aic_wt[tabtab$modnames == "mod2"] /
+                tabtab$aic_wt[tabtab$modnames == "mod1"]
+
+            if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
+
+            rm(temp_er)
 
         }
 
-        if ( (class(mod1) == "lmerMod") ) {
+        er <-
+            data.frame(
+                cbind(seq(nmin, max(data1$ppt), 1), er),
+                row.names = NULL)
 
-            mod1 <- lme4::lmer(formula(mod1), REML = FALSE, data[1:i, ])
-
-            mod2 <- lme4::lmer(formula(mod2), REML = FALSE, data[1:i, ])
-
-        }
-
-        if ( (class(mod1) == "lm") ) {
-
-            mod1 <- lm(formula(mod1), data[1:i, ])
-
-            mod2 <- lm(formula(mod2), data[1:i, ])
-
-        }
-
-        tabtab <- aictab(mod1, mod2)
-
-        temp_er <-
-            tabtab$aic_wt[tabtab$modnames == "mod2"] /
-            tabtab$aic_wt[tabtab$modnames == "mod1"]
-
-        if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
-
-        rm(temp_er)
-
-    }
-
-        er <- data.frame(cbind(er, seq(nmin, max(data1$ppt), 1) ) )
-        er <- data.frame(er[c(2, 1)])
         colnames(er) <- c("ppt", "ER")
 
         return(er)
@@ -172,7 +182,7 @@ seqERboot <- function(
         ERi <- rep(paste0(paste0("ER", i) ), nrow(get(paste0("ER", i) ) ) )
 
         temp_er <- cbind(get(paste0("ER", i) ), ERi)
-        colnames(temp_er) <- c("ppt", "ER", "ERi")
+        #colnames(temp_er) <- c("ppt", "ER", "ERi")
         temp_er <- temp_er[, c(3, 1, 2)]
 
         if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)

@@ -20,7 +20,6 @@ Simulates a sequential ER for independant two-groups comparisons,
 as a function of sample size and effect size (Cohen's d).
 }
 \examples{
-library(ESTER)
 ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
 
 }

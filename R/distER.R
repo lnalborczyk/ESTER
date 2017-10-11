@@ -7,8 +7,7 @@
 #' @param nsims Number of experiments to simulate.
 #'
 #' @examples
-#' library(ESTER)
-#' ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)
+#' \dontrun{ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)}
 #'
 #' @export
 

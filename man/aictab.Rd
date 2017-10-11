@@ -14,7 +14,6 @@ Returns a table with AICs or AICc (depending on the number of parameters
 and the number of observations, see \code{?aic}), and Akaike weights of a set of models.
 }
 \examples{
-library(ESTER)
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + vs, mtcars)

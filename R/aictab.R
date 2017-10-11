@@ -8,7 +8,6 @@
 #' @importFrom rlang dots_list f_lhs
 #'
 #' @examples
-#' library(ESTER)
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + vs, mtcars)

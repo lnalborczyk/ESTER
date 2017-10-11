@@ -10,7 +10,6 @@
 #' @importFrom stats logLik nobs
 #'
 #' @examples
-#' library(ESTER)
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' aic(mod1)

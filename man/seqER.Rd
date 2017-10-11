@@ -4,17 +4,17 @@
 \alias{seqER}
 \title{Computes sequential evidence ratios}
 \usage{
-seqER(mod1, mod2, nmin, samplecol = NULL)
+seqER(mod1, mod2, nmin, id = NULL)
 }
 \arguments{
-\item{mod1}{Amodel of class "lm" or "lmerMod".}
+\item{mod1}{A model of class "lm" or "lmerMod".}
 
 \item{mod2}{A model of class "lm" or "lmerMod" (of the same class of mod1).}
 
 \item{nmin}{Minimum sample size from which start to compute sequential evidence ratios.}
 
-\item{samplecol}{If applicable (e.g., repeated measures), name of the subject column of your
-dataframe.}
+\item{id}{If applicable (e.g., repeated measures), name of the id column of your
+dataframe, in character string.}
 }
 \description{
 Computes sequential evidence ratios.
@@ -24,5 +24,12 @@ data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
 seq_mtcars <- seqER(mod1, mod2, nmin = 10)
+
+# Example with repeated measures
+library(lme4)
+data(sleepstudy)
+mod1 <- lm(Reaction ~ Days, sleepstudy)
+mod2 <- lm(Reaction ~ Days + I(Days^2), sleepstudy)
+seqER(mod1, mod2, nmin = 10, id = "Subject")
 
 }

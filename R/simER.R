@@ -14,7 +14,6 @@
 #' @import dplyr
 #'
 #' @examples
-#' library(ESTER)
 #' ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
 #'
 #' @export
