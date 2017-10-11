@@ -7,14 +7,14 @@
 seqER(mod1, mod2, nmin, samplecol = NULL)
 }
 \arguments{
-\item{mod1}{A mathematical model, of class "lm" or "lmerMod".}
+\item{mod1}{Amodel of class "lm" or "lmerMod".}
 
-\item{mod2}{A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).}
+\item{mod2}{A model of class "lm" or "lmerMod" (of the same class of mod1).}
 
-\item{nmin}{Minimum sample size from which start to compute iterative evidence ratios (ER).}
+\item{nmin}{Minimum sample size from which start to compute sequential evidence ratios.}
 
 \item{samplecol}{If applicable (e.g., repeated measures), name of the subject column of your
-dataframe, as a character vector.}
+dataframe.}
 }
 \description{
 Computes sequential evidence ratios.

@@ -61,6 +61,4 @@ mod2 <- lm(mpg ~ cyl + disp, mtcars)
 plot(seqERboot(mod1, mod2, nmin = 10, order_nb = 20, replace = TRUE) )
 ```
 
-Note that under the hood, `ESTER` uses the `AICcmodavg` package (available on [CRAN](https://cran.r-project.org/web/packages/AICcmodavg/index.html); Mazerolle, 2016) to compute AICc and Akaike Weights.
-
 For more information and theoretic background, read the [manual](https://rawgit.com/lnalborczyk/ESTER/master/vignettes/ESTER.html).

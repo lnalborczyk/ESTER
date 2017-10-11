@@ -67,7 +67,7 @@ ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)
 
 ## 2. Observed data
 
-On the other hand (and perhaps more interestingly), `ESTER` can be used to do sequential testing on your own data. You can study the evolution of sequentials ERs using the `seqER` function.
+On the other hand (and perhaps more interestingly), `ESTER` can be used to do sequential testing on your own data. You can study the evolution of sequential ERs using the `seqER` function.
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE, results = "hide"}
 rm(list = ls() )
@@ -93,5 +93,3 @@ mod2 <- lm(mpg ~ cyl + disp, mtcars)
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
 plot(seqERboot(mod1, mod2, nmin = 10, order_nb = 20, replace = TRUE) )
 ```
-
-Under the hood, `ESTER` uses the `AICcmodavg` package (available on [CRAN](https://cran.r-project.org/web/packages/AICcmodavg/index.html); Mazerolle, 2016) to compute AICc and Akaike Weights.

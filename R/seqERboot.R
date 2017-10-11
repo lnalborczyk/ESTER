@@ -8,7 +8,6 @@
 #' @param replace If TRUE, corresponds to bootstrap with replacement.
 #'
 #' @importFrom stats family formula lm
-#' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
 #' @importFrom magrittr %>%
 #' @import ggplot2
@@ -102,7 +101,7 @@ seqERboot <- function(
 
   startrow <- nmin * nobs
 
-  randER <- function(data) {
+  rand_er <- function(data) {
 
     endrow <- as.numeric(nrow(data) )
 
@@ -134,23 +133,23 @@ seqERboot <- function(
 
       }
 
-      tabtab <-
-        aictab(list(mod1, mod2), modnames = c("mod1", "mod2"), sort = FALSE)
+      tabtab <- aictab(mod1, mod2)
 
-      tempER <- tabtab$AICcWt[tabtab$Modnames == "mod2"] /
-        tabtab$AICcWt[tabtab$Modnames == "mod1"] %>% data.frame
+      temp_er <-
+        tabtab$aic_wt[tabtab$modnames == "mod2"] /
+        tabtab$aic_wt[tabtab$modnames == "mod1"]
 
-      if (!exists("ER") ) ER <- tempER else ER <- rbind(ER, tempER)
+      if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
 
-      rm(tempER)
+      rm(temp_er)
 
     }
 
-    ER <- data.frame(cbind(ER, seq(nmin, max(data1$ppt), 1) ) )
-    ER <- data.frame(ER[c(2, 1)])
-    colnames(ER) <- c("ppt", "ER")
+    er <- data.frame(cbind(er, seq(nmin, max(data1$ppt), 1) ) )
+    er <- data.frame(er[c(2, 1)])
+    colnames(er) <- c("ppt", "ER")
 
-    return (ER)
+    return (er)
 
   }
 
@@ -158,7 +157,7 @@ seqERboot <- function(
 
   for (i in 1:order_nb) {
 
-    assign(paste0("ER", i), randER(get(paste0("data", i) ) ) )
+    assign(paste0("ER", i), rand_er(get(paste0("data", i) ) ) )
     setTxtProgressBar(pb, i)
 
   }
@@ -167,17 +166,17 @@ seqERboot <- function(
 
     ERi <- rep(paste0(paste0("ER", i) ), nrow(get(paste0("ER", i) ) ) )
 
-    tempER <- cbind(get(paste0("ER", i) ), ERi)
-    colnames(tempER) <- c("ppt", "ER", "ERi")
-    tempER <- tempER[, c(3, 1, 2)]
+    temp_er <- cbind(get(paste0("ER", i) ), ERi)
+    colnames(temp_er) <- c("ppt", "ER", "ERi")
+    temp_er <- temp_er[, c(3, 1, 2)]
 
-    if (!exists("ER") ) ER <- tempER else ER <- rbind(ER, tempER)
+    if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
 
   }
 
-  class(ER) <- c("ERboot", "data.frame")
+  class(er) <- c("ERboot", "data.frame")
 
-  return(ER)
+  return(er)
 
 }
 

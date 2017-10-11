@@ -9,7 +9,6 @@
 #' @param plot If TRUE, produces a plot of the evolution of the ERs
 #'
 #' @importFrom magrittr %>% set_names
-#' @importFrom AICcmodavg aictab
 #' @importFrom stats lm rnorm
 #' @import ggplot2
 #' @import dplyr
@@ -22,8 +21,26 @@
 
 simER <- function(cohensd, nmin, n,  plot = TRUE) {
 
-  x <- cbind(rnorm(n = n, mean = 0, sd = 1), rep("x", n) )
-  y <- cbind(rnorm(n = n, mean = cohensd, sd = 1), rep("y", n) )
+  if (nmin == 0) {
+
+    stop("nmin should be a positive integer")
+
+  }
+
+  if (nmin > n) {
+
+    stop("n should be superior to nmin")
+
+  }
+
+  if (nmin < 10) {
+
+    warning("nmin should usually set above 10...")
+
+  }
+
+  x <- cbind(rnorm(n, 0, 1), rep("x", n) )
+  y <- cbind(rnorm(n, cohensd, 1), rep("y", n) )
 
   df_pop <-
     rbind(y, x) %>%
@@ -36,16 +53,14 @@ simER <- function(cohensd, nmin, n,  plot = TRUE) {
 
   for (i in nmin:n) {
 
-    model_1 <- lm(value ~ 1, data = df_pop[1:i, ] )
-    model_2 <- lm(value ~ group, data = df_pop[1:i, ] )
+    mod1 <- lm(value ~ 1, data = df_pop[1:i, ] )
+    mod2 <- lm(value ~ group, data = df_pop[1:i, ] )
 
-    model_comp <- as.data.frame(aictab(list(model_1, model_2),
-            modnames = c("model_1", "model_2"), sort = FALSE) )
-
-    rownames(model_comp) <- c("model_1", "model_2")
+    model_comp <- aictab(mod1, mod2)
 
     ER_comp[i] <-
-      model_comp["model_2", "AICcWt"] / model_comp["model_1", "AICcWt"]
+      model_comp$aic_wt[model_comp$modnames == "mod2"] /
+      model_comp$aic_wt[model_comp$modnames == "mod1"]
 
   }
 

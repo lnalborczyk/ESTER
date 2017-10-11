@@ -2,14 +2,13 @@
 #'
 #' Computes sequential evidence ratios.
 #'
-#' @param mod1 A mathematical model, of class "lm" or "lmerMod".
-#' @param mod2 A mathematical model, of class "lm" or "lmerMod" (of the same class of mod1).
-#' @param nmin Minimum sample size from which start to compute iterative evidence ratios (ER).
+#' @param mod1 Amodel of class "lm" or "lmerMod".
+#' @param mod2 A model of class "lm" or "lmerMod" (of the same class of mod1).
+#' @param nmin Minimum sample size from which start to compute sequential evidence ratios.
 #' @param samplecol If applicable (e.g., repeated measures), name of the subject column of your
-#' dataframe, as a character vector.
+#' dataframe.
 #'
 #' @importFrom stats family formula lm
-#' @importFrom AICcmodavg aictab
 #' @importFrom lme4 lmer glmer
 #' @importFrom magrittr %>%
 #' @importFrom rlang f_lhs
@@ -41,6 +40,12 @@ seqER <- function(mod1, mod2, nmin, samplecol = NULL) {
   if (class(mod1) == "glmerMod" | class(mod1) == "lmerMod") {
 
     data <- data.frame(eval(mod1@call$data) )
+
+  }
+
+  if (!is.null(samplecol) == TRUE) {
+
+    samplecol <- deparse(substitute(samplecol) )
 
   }
 
@@ -120,27 +125,24 @@ seqER <- function(mod1, mod2, nmin, samplecol = NULL) {
 
     }
 
-    tabtab <-
-      aictab(list(mod1, mod2), modnames = c("mod1", "mod2"), sort = FALSE)
+    tabtab <- aictab(mod1, mod2)
 
-    tempER <- data.frame(cbind(
-      tabtab$AICcWt[tabtab$Modnames == "mod2"] /
-        tabtab$AICcWt[tabtab$Modnames == "mod1"], data$ppt[i] ) )
+    temp_er <- data.frame(cbind(data$ppt[i],
+      tabtab$aic_wt[tabtab$modnames == "mod2"] /
+        tabtab$aic_wt[tabtab$modnames == "mod1"]) )
 
     # if the merged dataset doesn't exist, create it, else, rbind it
-    if (!exists("ER") ) ER <- tempER else ER <- rbind(ER, tempER)
+    if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
 
-    rm(tempER)
+    rm(temp_er)
     setTxtProgressBar(pb, i)
 
   }
 
-  ER <- data.frame(ER[c(2, 1)] )
-  colnames(ER) <- c("ppt", "ER")
+  colnames(er) <- c("ppt", "ER")
+  class(er) <- c("seqER", "data.frame")
 
-  class(ER) <- c("seqER", "data.frame")
-
-  return(ER)
+  return(er)
 
 }
 
