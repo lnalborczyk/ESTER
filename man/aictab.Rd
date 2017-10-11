@@ -2,22 +2,23 @@
 % Please edit documentation in R/aictab.R
 \name{aictab}
 \alias{aictab}
-\title{Returns a table with AICs or AICc, and Akaike weights of a set of models}
+\title{Returns a table with AICs or AICcs, and Akaike weights of a set of models}
 \usage{
 aictab(...)
 }
 \arguments{
-\item{...}{A set of models of class lm or merMod.}
+\item{...}{A set of models of class \code{lm} or \code{merMod}.}
 }
 \description{
-Returns a table with AICs or AICc (depending on the number of parameters
+Returns a table with AICs or AICcs (depending on the number of parameters
 and the number of observations, see \code{?aic}), and Akaike weights of a set of models.
 }
 \examples{
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + vs, mtcars)
-aictab(mod1, mod2)
+mod3 <- lm(mpg ~ cyl * vs, mtcars)
+aictab(mod1, mod2, mod3)
 
 }
 \references{

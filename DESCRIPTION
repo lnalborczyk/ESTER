@@ -1,7 +1,7 @@
 Package: ESTER
 Title: Efficient Sequential Testing with Evidence Ratios
 Version: 0.0.4
-Date: 2017-10-11
+Date: 2017-10-12
 Authors@R: as.person("Ladislas Nalborczyk <ladislas.nalborczyk@gmail.com> [aut, cre]")
 Description: Sequential testing with AIC-based evidence ratios.
 License: MIT + file LICENSE

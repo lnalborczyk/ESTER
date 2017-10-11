@@ -1,9 +1,9 @@
-#' Returns a table with AICs or AICc, and Akaike weights of a set of models
+#' Returns a table with AICs or AICcs, and Akaike weights of a set of models
 #'
-#' Returns a table with AICs or AICc (depending on the number of parameters
+#' Returns a table with AICs or AICcs (depending on the number of parameters
 #' and the number of observations, see \code{?aic}), and Akaike weights of a set of models.
 #'
-#' @param ... A set of models of class lm or merMod.
+#' @param ... A set of models of class \code{lm} or \code{merMod}.
 #'
 #' @importFrom rlang dots_list f_lhs
 #'
@@ -11,7 +11,8 @@
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + vs, mtcars)
-#' aictab(mod1, mod2)
+#' mod3 <- lm(mpg ~ cyl * vs, mtcars)
+#' aictab(mod1, mod2, mod3)
 #'
 #' @references Burnham, K. P., \& Anderson, D. R. (2002). Model Selection
 #' and Multimodel Inference: A Practical Information-Theoretical Approach.

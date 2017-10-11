@@ -20,6 +20,6 @@ Simulates many sequential ERs, keeps the last of each simulation,
 and plot their distribution.
 }
 \examples{
-\dontrun{ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)}
+\dontrun{distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)}
 
 }

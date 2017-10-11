@@ -7,9 +7,9 @@
 seqERboot(mod1, mod2, nmin, id = NULL, order_nb, replace = FALSE)
 }
 \arguments{
-\item{mod1}{A model of class "lm" or "lmerMod".}
+\item{mod1}{A model of class \code{lm} or \code{lmerMod}.}
 
-\item{mod2}{A model of class "lm" or "lmerMod" (of the same class of mod1).}
+\item{mod2}{A model of class \code{lm} or \code{lmerMod} (of the same class of mod1).}
 
 \item{nmin}{Minimum sample size from which start to compute sequential evidence ratios.}
 
@@ -22,7 +22,7 @@ dataframe, in character string.}
 }
 \description{
 Computes sequential evidence ratios for a given data set as well as
-for order_nb random rearrangments of this dataset.
+for \code{order_nb} random rearrangments of this dataset.
 }
 \examples{
 data(mtcars)

@@ -2,8 +2,8 @@
 #'
 #' Computes sequential evidence ratios.
 #'
-#' @param mod1 A model of class "lm" or "lmerMod".
-#' @param mod2 A model of class "lm" or "lmerMod" (of the same class of mod1).
+#' @param mod1 A model of class \code{lm} or \code{lmerMod}.
+#' @param mod2 A model of class \code{lm} or \code{lmerMod} (of the same class of mod1).
 #' @param nmin Minimum sample size from which start to compute sequential evidence ratios.
 #' @param id If applicable (e.g., repeated measures), name of the id column of your
 #' dataframe, in character string.

@@ -1,7 +1,7 @@
 #' Computes sequential evidence ratios for a given data set and bootstrapped samples
 #'
 #' Computes sequential evidence ratios for a given data set as well as
-#' for order_nb random rearrangments of this dataset.
+#' for \code{order_nb} random rearrangments of this dataset.
 #'
 #' @inheritParams seqER
 #' @param order_nb Number of random rearrangments to evaluate.

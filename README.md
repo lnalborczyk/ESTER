@@ -5,8 +5,6 @@ ESTER: Efficient Sequential Testing with Evidence Ratios
 
 [![CRAN status](http://www.r-pkg.org/badges/version/ESTER)](https://cran.r-project.org/package=ESTER) [![Build Status](https://travis-ci.org/lnalborczyk/ESTER.svg?branch=master)](https://travis-ci.org/lnalborczyk/ESTER)
 
-The goal of ESTER is to ...
-
 Installation
 ------------
 
@@ -24,8 +22,8 @@ Different questions
 
 2.  **Observed data**. When to stop recruiting participants ?
 
-1. Simulation
--------------
+Simulation
+----------
 
 This first function runs a simulated study in which we compare two independant groups, for various effect size and sample size. The `nmin` argument serves to specify from which participant we want to start doing sequential testing (usually we recommand to avoid `nmin` &lt; 20).
 
@@ -44,8 +42,8 @@ ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)
 
 ![](README-unnamed-chunk-3-1.png)
 
-2. Observed data
-----------------
+Observed data
+-------------
 
 On the other hand (and perhaps more interestingly), `ESTER` can be used to do sequential testing on your own data. You can study the evolution of sequentials ERs using the `seqER` function.
 

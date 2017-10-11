@@ -7,9 +7,9 @@
 seqER(mod1, mod2, nmin, id = NULL)
 }
 \arguments{
-\item{mod1}{A model of class "lm" or "lmerMod".}
+\item{mod1}{A model of class \code{lm} or \code{lmerMod}.}
 
-\item{mod2}{A model of class "lm" or "lmerMod" (of the same class of mod1).}
+\item{mod2}{A model of class \code{lm} or \code{lmerMod} (of the same class of mod1).}
 
 \item{nmin}{Minimum sample size from which start to compute sequential evidence ratios.}
 
