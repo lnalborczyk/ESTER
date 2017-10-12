@@ -36,7 +36,7 @@ ER <- simER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, plot = TRUE)
 
 ![](README-unnamed-chunk-2-1.png)
 
-We also can study the distribution of evidence ratios for `nSims` simulations runned with the previous function using `distER`, where the plotted vertical dashed line represents the median of the ERs distribution.
+We also can study the distribution of evidence ratios for `nSims` simulations ran with the previous function using `distER`.
 
 ``` r
 ER <- distER(cohensd = 0.6, nmin = 20, n = 100, ic = bic, nsims = 100)
