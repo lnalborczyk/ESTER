@@ -3,6 +3,7 @@
 #' Simulates a sequential ER for independant two-groups comparisons,
 #' as a function of sample size and effect size (Cohen's d).
 #'
+#' @param ic Indicates whether to use the aic or the bic.
 #' @param cohensd Expected effect size
 #' @param nmin Minimum sample size from which start computing ERs
 #' @param n Total sample size
@@ -14,11 +15,12 @@
 #' @import dplyr
 #'
 #' @examples
-#' simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
+#' simER(cohensd = 0.6, nmin = 20, n = 200, ic = aic, plot = TRUE)
+#' simER(cohensd = 0, nmin = 20, n = 200, ic = bic, plot = TRUE)
 #'
 #' @export
 
-simER <- function(cohensd, nmin, n,  plot = TRUE) {
+simER <- function(cohensd, nmin, n, ic = bic, plot = TRUE) {
 
     if (nmin == 0) {
 
@@ -34,7 +36,7 @@ simER <- function(cohensd, nmin, n,  plot = TRUE) {
 
     if (nmin < 10) {
 
-        warning("nmin should usually set above 10...")
+        warning("nmin should usually be set above 10...")
 
     }
 
@@ -55,11 +57,11 @@ simER <- function(cohensd, nmin, n,  plot = TRUE) {
         mod1 <- lm(value ~ 1, data = df_pop[1:i, ] )
         mod2 <- lm(value ~ group, data = df_pop[1:i, ] )
 
-        model_comp <- aictab(mod1, mod2)
+        model_comp <- ictab(ic, mod1, mod2)
 
         ER_comp[i] <-
-            model_comp$aic_wt[model_comp$modnames == "mod2"] /
-            model_comp$aic_wt[model_comp$modnames == "mod1"]
+            model_comp$ic_wt[model_comp$modnames == "mod2"] /
+            model_comp$ic_wt[model_comp$modnames == "mod1"]
 
     }
 

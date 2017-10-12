@@ -16,19 +16,19 @@
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seq_boot_mtcars <- seqERboot(mod1, mod2, nmin = 10, order_nb = 20, replace = FALSE)
+#' seq_boot_mtcars <- seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20, replace = FALSE)
 #'
 #' # Example with repeated measures
 #' library(lme4)
 #' data(sleepstudy)
 #' mod1 <- lm(Reaction ~ Days, sleepstudy)
 #' mod2 <- lm(Reaction ~ Days + I(Days^2), sleepstudy)
-#' seqERboot(mod1, mod2, nmin = 10, id = "Subject", order_nb = 20, replace = TRUE)
+#' seqERboot(ic = bic, mod1, mod2, nmin = 10, id = "Subject", order_nb = 20, replace = TRUE)
 #'
 #' @export
 
 seqERboot <- function(
-    mod1, mod2, nmin, id = NULL, order_nb, replace = FALSE) {
+    ic, mod1, mod2, nmin, id = NULL, order_nb, replace = FALSE) {
 
     if (!class(mod1) == class(mod2) ) {
 
@@ -145,11 +145,11 @@ seqERboot <- function(
 
             }
 
-            tabtab <- aictab(mod1, mod2)
+            tabtab <- ictab(ic, mod1, mod2)
 
             temp_er <-
-                tabtab$aic_wt[tabtab$modnames == "mod2"] /
-                tabtab$aic_wt[tabtab$modnames == "mod1"]
+                tabtab$ic_wt[tabtab$modnames == "mod2"] /
+                tabtab$ic_wt[tabtab$modnames == "mod1"]
 
             if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
 

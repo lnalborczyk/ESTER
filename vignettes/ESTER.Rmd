@@ -56,13 +56,13 @@ This first function runs a simulated study in which we compare two independant g
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5}
 library(ESTER)
-ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
+ER <- simER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, plot = TRUE)
 ```
 
 We also can study the distribution of evidence ratios for `nsims` simulations runned with the previous function using `distER`.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 7.5}
-ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)
+ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100, ic = bic)
 ```
 
 ## 2. Observed data
@@ -78,7 +78,7 @@ library(ESTER)
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-plot(seqER(mod1, mod2, nmin = 10) )
+plot(seqER(ic = aic, mod1, mod2, nmin = 10) )
 ```
 
 In addition, `seqERboot` allows you to study the behavior of sequential ERs computed on your own data, along with sequential ERs computed on bootstrapped samples from your data.
@@ -91,5 +91,5 @@ mod2 <- lm(mpg ~ cyl + disp, mtcars)
 ```
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
-plot(seqERboot(mod1, mod2, nmin = 10, order_nb = 20, replace = TRUE) )
+plot(seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20, replace = TRUE) )
 ```

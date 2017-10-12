@@ -4,7 +4,7 @@
 \alias{distER}
 \title{Simulates many sequential ERs to obtain their distribution}
 \usage{
-distER(cohensd, nmin, n, nsims)
+distER(cohensd, nmin, n, nsims, ic = bic)
 }
 \arguments{
 \item{cohensd}{Expected effect size}
@@ -14,12 +14,14 @@ distER(cohensd, nmin, n, nsims)
 \item{n}{Total sample size}
 
 \item{nsims}{Number of experiments to simulate.}
+
+\item{ic}{Indicates whether to use the aic or the bic.}
 }
 \description{
 Simulates many sequential ERs, keeps the last of each simulation,
 and plot their distribution.
 }
 \examples{
-\dontrun{distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)}
+\dontrun{distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100, ic = bic)}
 
 }

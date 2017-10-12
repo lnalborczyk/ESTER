@@ -16,6 +16,8 @@ knitr::opts_chunk$set(
 
 [![CRAN status](http://www.r-pkg.org/badges/version/ESTER)](https://cran.r-project.org/package=ESTER) [![Build Status](https://travis-ci.org/lnalborczyk/ESTER.svg?branch=master)](https://travis-ci.org/lnalborczyk/ESTER)
 
+`ESTER` offers an implementation of sequential testing that uses evidence ratios computed from the so-called Akaike weights, that are based on either the Akaike Information Criterion (AIC) or the Bayesian Information Criterion (BIC). It allows to do sequential testing on observed data and to study the behaviour of sequential evidence ratios on simulated data as well.
+
 ## Installation
 
 You can install ESTER from github with:
@@ -37,13 +39,13 @@ This first function runs a simulated study in which we compare two independant g
 
 ```{r}
 library(ESTER)
-ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
+ER <- simER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, plot = TRUE)
 ```
 
 We also can study the distribution of evidence ratios for `nSims` simulations runned with the previous function using `distER`, where the plotted vertical dashed line represents the median of the ERs distribution.
 
 ```{r}
-ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)
+ER <- distER(cohensd = 0.6, nmin = 20, n = 100, ic = bic, nsims = 100)
 ```
 
 ## Observed data
@@ -54,7 +56,7 @@ On the other hand (and perhaps more interestingly), `ESTER` can be used to do se
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-plot(seqER(mod1, mod2, nmin = 10) )
+plot(seqER(ic = aic, mod1, mod2, nmin = 10) )
 ```
 
 In addition, `seqERboot` allows you to study the behavior of sequential ERs computed on your own data, along with sequential ERs computed on bootstrapped samples from your data.
@@ -63,5 +65,5 @@ In addition, `seqERboot` allows you to study the behavior of sequential ERs comp
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-plot(seqERboot(mod1, mod2, nmin = 10, order_nb = 20, replace = TRUE) )
+plot(seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20, replace = TRUE) )
 ```

@@ -1,8 +1,8 @@
 #' Computes AIC or AICc
 #'
-#' Computes the AIC of a model. Except when the number of observations
-#' is much larger thant the number of parameters (i.e., n / k > 40), we apply
-#' the second-order bias correction for small samples (AICc), as suggested by
+#' Computes the Akaike Information Criterion of a model. Except when the number
+#' of observations is much larger than the number of parameters (i.e., n / k > 40),
+#' we apply the second-order bias correction for small samples (AICc), as suggested by
 #' Burnham & Anderson (2002, 2004).
 #'
 #' @param mod A fitted model of class \code{lm} or \code{merMod}.

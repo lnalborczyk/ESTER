@@ -5,6 +5,8 @@ ESTER: Efficient Sequential Testing with Evidence Ratios
 
 [![CRAN status](http://www.r-pkg.org/badges/version/ESTER)](https://cran.r-project.org/package=ESTER) [![Build Status](https://travis-ci.org/lnalborczyk/ESTER.svg?branch=master)](https://travis-ci.org/lnalborczyk/ESTER)
 
+`ESTER` offers an implementation of sequential testing that uses evidence ratios computed from the so-called Akaike weights, that are based on either the Akaike Information Criterion (AIC) or the Bayesian Information Criterion (BIC). It allows to do sequential testing on observed data and to study the behaviour of sequential evidence ratios on simulated data as well.
+
 Installation
 ------------
 
@@ -29,7 +31,7 @@ This first function runs a simulated study in which we compare two independant g
 
 ``` r
 library(ESTER)
-ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
+ER <- simER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, plot = TRUE)
 ```
 
 ![](README-unnamed-chunk-2-1.png)
@@ -37,7 +39,7 @@ ER <- simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
 We also can study the distribution of evidence ratios for `nSims` simulations runned with the previous function using `distER`, where the plotted vertical dashed line represents the median of the ERs distribution.
 
 ``` r
-ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100)
+ER <- distER(cohensd = 0.6, nmin = 20, n = 100, ic = bic, nsims = 100)
 ```
 
 ![](README-unnamed-chunk-3-1.png)
@@ -51,7 +53,7 @@ On the other hand (and perhaps more interestingly), `ESTER` can be used to do se
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-plot(seqER(mod1, mod2, nmin = 10) )
+plot(seqER(ic = aic, mod1, mod2, nmin = 10) )
 ```
 
 ![](README-unnamed-chunk-4-1.png)
@@ -62,7 +64,7 @@ In addition, `seqERboot` allows you to study the behavior of sequential ERs comp
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-plot(seqERboot(mod1, mod2, nmin = 10, order_nb = 20, replace = TRUE) )
+plot(seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20, replace = TRUE) )
 ```
 
 ![](README-unnamed-chunk-5-1.png)

@@ -2,6 +2,7 @@
 #'
 #' Computes sequential evidence ratios.
 #'
+#' @param ic Indicates whether to use the aic or the bic.
 #' @param mod1 A model of class \code{lm} or \code{lmerMod}.
 #' @param mod2 A model of class \code{lm} or \code{lmerMod} (of the same class of mod1).
 #' @param nmin Minimum sample size from which start to compute sequential evidence ratios.
@@ -19,18 +20,18 @@
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seq_mtcars <- seqER(mod1, mod2, nmin = 10)
+#' seq_mtcars <- seqER(ic = aic, mod1, mod2, nmin = 10)
 #'
 #' # Example with repeated measures
 #' library(lme4)
 #' data(sleepstudy)
 #' mod1 <- lm(Reaction ~ Days, sleepstudy)
 #' mod2 <- lm(Reaction ~ Days + I(Days^2), sleepstudy)
-#' seqER(mod1, mod2, nmin = 10, id = "Subject")
+#' seqER(ic = aic, mod1, mod2, nmin = 10, id = "Subject")
 #'
 #' @export
 
-seqER <- function(mod1, mod2, nmin, id = NULL) {
+seqER <- function(ic, mod1, mod2, nmin, id = NULL) {
 
     if (!class(mod1) == class(mod2) ) {
 
@@ -126,11 +127,11 @@ seqER <- function(mod1, mod2, nmin, id = NULL) {
 
         }
 
-        tabtab <- aictab(mod1, mod2)
+        tabtab <- ictab(ic, mod1, mod2)
 
         temp_er <- data.frame(cbind(data$ppt[i],
-            tabtab$aic_wt[tabtab$modnames == "mod2"] /
-                tabtab$aic_wt[tabtab$modnames == "mod1"]) )
+            tabtab$ic_wt[tabtab$modnames == "mod2"] /
+                tabtab$ic_wt[tabtab$modnames == "mod1"]) )
 
         # if the merged dataset doesn't exist, create it, else, rbind it
         if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)

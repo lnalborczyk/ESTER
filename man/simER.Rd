@@ -4,7 +4,7 @@
 \alias{simER}
 \title{Simulates a sequential ER for independant two-groups comparisons}
 \usage{
-simER(cohensd, nmin, n, plot = TRUE)
+simER(cohensd, nmin, n, ic = bic, plot = TRUE)
 }
 \arguments{
 \item{cohensd}{Expected effect size}
@@ -13,6 +13,8 @@ simER(cohensd, nmin, n, plot = TRUE)
 
 \item{n}{Total sample size}
 
+\item{ic}{Indicates whether to use the aic or the bic.}
+
 \item{plot}{If TRUE, produces a plot of the evolution of the ERs}
 }
 \description{
@@ -20,6 +22,7 @@ Simulates a sequential ER for independant two-groups comparisons,
 as a function of sample size and effect size (Cohen's d).
 }
 \examples{
-simER(cohensd = 0.6, nmin = 20, n = 100, plot = TRUE)
+simER(cohensd = 0.6, nmin = 20, n = 200, ic = aic, plot = TRUE)
+simER(cohensd = 0, nmin = 20, n = 200, ic = bic, plot = TRUE)
 
 }
