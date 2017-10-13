@@ -14,6 +14,10 @@
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' aic(mod1)
 #'
+#' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
+#'
+#' @seealso \code{\link{bic}}, \code{\link{ictab}}
+#'
 #' @references Burnham, K. P., \& Anderson, D. R. (2002). Model Selection
 #' and Multimodel Inference: A Practical Information-Theoretical Approach.
 #' 2d ed. New York: Springer-Verlag.

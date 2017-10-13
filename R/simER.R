@@ -18,6 +18,10 @@
 #' simER(cohensd = 0.6, nmin = 20, n = 200, ic = aic, plot = TRUE)
 #' simER(cohensd = 0, nmin = 20, n = 200, ic = bic, plot = TRUE)
 #'
+#' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
+#'
+#' @seealso \code{\link{distER}}
+#'
 #' @export
 
 simER <- function(cohensd, nmin, n, ic = bic, plot = TRUE) {

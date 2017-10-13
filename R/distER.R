@@ -9,6 +9,10 @@
 #' @examples
 #' \dontrun{distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100, ic = bic)}
 #'
+#' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
+#'
+#' @seealso \code{\link{simER}}
+#'
 #' @export
 
 distER <- function(cohensd, nmin, n, nsims, ic = bic) {

@@ -42,3 +42,9 @@ mod2 <- lm(Reaction ~ Days + I(Days^2), sleepstudy)
 seqERboot(ic = bic, mod1, mod2, nmin = 10, id = "Subject", order_nb = 20, replace = TRUE)
 
 }
+\seealso{
+\code{\link{seqER}}
+}
+\author{
+Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>
+}

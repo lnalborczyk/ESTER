@@ -26,3 +26,9 @@ simER(cohensd = 0.6, nmin = 20, n = 200, ic = aic, plot = TRUE)
 simER(cohensd = 0, nmin = 20, n = 200, ic = bic, plot = TRUE)
 
 }
+\seealso{
+\code{\link{distER}}
+}
+\author{
+Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>
+}

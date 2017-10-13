@@ -4,10 +4,9 @@ Version: 0.0.5
 Date: 2017-10-12
 Authors@R: as.person("Ladislas Nalborczyk <ladislas.nalborczyk@gmail.com> [aut, cre]")
 Description: An implementation of sequential testing that uses evidence ratios
-    computed from so-called Akaike weights, based on either the Akaike
-    Information Criterion (AIC) or the Bayesian Information Criterion (BIC).
-    It allows to do sequential testing on observed data and to study the behaviour
-    of sequential evidence ratios on simulated data as well.
+    computed from the Akaike weights of a set of models. These weights are
+    being computed using either the Akaike Information Criterion (AIC) or the
+    Bayesian Information Criterion (BIC).
 License: MIT + file LICENSE
 LazyData: yes
 RoxygenNote: 6.0.1

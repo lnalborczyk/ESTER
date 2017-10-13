@@ -25,3 +25,9 @@ and plot their distribution.
 \dontrun{distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100, ic = bic)}
 
 }
+\seealso{
+\code{\link{simER}}
+}
+\author{
+Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>
+}

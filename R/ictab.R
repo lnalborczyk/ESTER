@@ -7,6 +7,7 @@
 #'
 #' @importFrom rlang dots_list f_lhs
 #' @importFrom dplyr n_distinct
+#' @importFrom stats as.formula
 #'
 #' @examples
 #' data(mtcars)
@@ -15,6 +16,10 @@
 #' mod3 <- lm(mpg ~ cyl * vs, mtcars)
 #' ictab(aic, mod1, mod2, mod3)
 #' ictab(bic, mod1, mod2, mod3)
+#'
+#' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
+#'
+#' @seealso \code{\link{aic}}, \code{\link{bic}}
 #'
 #' @references Burnham, K. P., \& Anderson, D. R. (2002). Model Selection
 #' and Multimodel Inference: A Practical Information-Theoretical Approach.

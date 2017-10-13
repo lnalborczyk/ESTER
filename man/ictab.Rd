@@ -32,3 +32,9 @@ Burnham, K. P., \& Anderson, D. R. (2004). Multimodel
 inference: Understanding AIC and BIC in model selection. Sociological
 Methods and Research, 33(2), 261-304.
 }
+\seealso{
+\code{\link{aic}}, \code{\link{bic}}
+}
+\author{
+Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>
+}

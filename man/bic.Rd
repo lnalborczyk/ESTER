@@ -22,3 +22,9 @@ bic(mod1)
 Schwarz, G. (1978). Estimating the dimension of a model.
 Annals of Statistics, 6, 461-464.
 }
+\seealso{
+\code{\link{aic}}, \code{\link{ictab}}
+}
+\author{
+Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>
+}

@@ -1,11 +1,10 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 ESTER: Efficient Sequential Testing with Evidence Ratios
 ========================================================
 
-[![CRAN status](http://www.r-pkg.org/badges/version/ESTER)](https://cran.r-project.org/package=ESTER) [![Build Status](https://travis-ci.org/lnalborczyk/ESTER.svg?branch=master)](https://travis-ci.org/lnalborczyk/ESTER)
+[![CRAN status](http://www.r-pkg.org/badges/version/ESTER)](https://cran.r-project.org/package=ESTER) [![Build Status](https://travis-ci.org/lnalborczyk/ESTER.svg?branch=master)](https://travis-ci.org/lnalborczyk/ESTER) <!--[![Coverage Status](https://codecov.io/github/paul-buerkner/brms/coverage.svg?branch=master)](https://codecov.io/github/paul-buerkner/brms?branch=master)-->
 
-`ESTER` offers an implementation of sequential testing that uses evidence ratios computed from the Akaike weights and based on either the Akaike Information Criterion (AIC) or the Bayesian Information Criterion (BIC).
+The `ESTER` package implements sequential testing based on evidence ratios computed from the Akaike weights of a set of models. These weights are being computed using either the Akaike Information Criterion (AIC) or the Bayesian Information Criterion (BIC).
 
 Installation
 ------------
@@ -20,14 +19,14 @@ devtools::install_github("lnalborczyk/ESTER")
 Different questions
 -------------------
 
-1.  **Simulation**. Given an expected effect size and sample size, what ER evolution should I reasonnably expect ?
+1.  **Simulation**. Given an expected effect size and a given sample size, what evolution of the evidence ratios should I reasonnably expect ?
 
 2.  **Observed data**. When to stop recruiting participants ?
 
 Simulation
 ----------
 
-This first function runs a simulated study in which we compare two independant groups, for various effect size and sample size. The `nmin` argument serves to specify from which participant we want to start doing sequential testing (usually we recommand to avoid `nmin` &lt; 20).
+This first function runs a simulated study in which we compare two independant groups, for various effect sizes and sample sizes. The `nmin` argument serves to specify from which participant we want to start doing sequential testing (usually we recommand to avoid `nmin` &lt; 20).
 
 ``` r
 library(ESTER)
@@ -47,7 +46,7 @@ ER <- distER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, nsims = 100)
 Observed data
 -------------
 
-On the other hand (and perhaps more interestingly), `ESTER` can be used to do sequential testing on your own data. You can study the evolution of sequentials ERs using the `seqER` function.
+On the other hand (and perhaps more interestingly), `ESTER` can be used to do sequential testing on your own data. You can study the evolution of sequential ERs using the `seqER` function.
 
 ``` r
 data(mtcars)

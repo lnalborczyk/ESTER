@@ -11,6 +11,10 @@
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' bic(mod1)
 #'
+#' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
+#'
+#' @seealso \code{\link{aic}}, \code{\link{ictab}}
+#'
 #' @references Schwarz, G. (1978). Estimating the dimension of a model.
 #' Annals of Statistics, 6, 461-464.
 #'
