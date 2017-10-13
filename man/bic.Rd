@@ -10,7 +10,7 @@ bic(mod)
 \item{mod}{A fitted model of class \code{lm} or \code{merMod}.}
 }
 \description{
-Computes the Bayesian Information Criterion of a model.
+Computes the Bayesian Information Criterion of a model (Schwarz, 1978).
 }
 \examples{
 data(mtcars)

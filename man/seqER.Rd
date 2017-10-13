@@ -15,11 +15,14 @@ seqER(ic, mod1, mod2, nmin, id = NULL)
 
 \item{nmin}{Minimum sample size from which start to compute sequential evidence ratios.}
 
-\item{id}{If applicable (e.g., repeated measures), name of the id column of your
+\item{id}{If applicable (i.e., repeated measures), name of the "id" column of your
 dataframe, in character string.}
 }
 \description{
-Computes sequential evidence ratios.
+Computes sequential evidence ratios, either based on AIC or BIC. Supported
+models include \code{lm} or \code{merMod} models. When data involve repeated
+measures (and so multiple lines per subject), a column indicating the
+subject "id" should be provided to the \code{id} argument.
 }
 \examples{
 data(mtcars)

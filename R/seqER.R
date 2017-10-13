@@ -1,12 +1,15 @@
 #' Computes sequential evidence ratios
 #'
-#' Computes sequential evidence ratios.
+#' Computes sequential evidence ratios, either based on AIC or BIC. Supported
+#' models include \code{lm} or \code{merMod} models. When data involve repeated
+#' measures (and so multiple lines per subject), a column indicating the
+#' subject "id" should be provided to the \code{id} argument.
 #'
 #' @param ic Indicates whether to use the aic or the bic.
 #' @param mod1 A model of class \code{lm} or \code{lmerMod}.
 #' @param mod2 A model of class \code{lm} or \code{lmerMod} (of the same class of mod1).
 #' @param nmin Minimum sample size from which start to compute sequential evidence ratios.
-#' @param id If applicable (e.g., repeated measures), name of the id column of your
+#' @param id If applicable (i.e., repeated measures), name of the "id" column of your
 #' dataframe, in character string.
 #'
 #' @importFrom stats family formula lm
@@ -87,10 +90,8 @@ seqER <- function(ic, mod1, mod2, nmin, id = NULL) {
 
     }
 
-    # check the row number of the nmin
     startrow <- min(which(as.numeric(as.character(data$ppt) ) == nmin) )
 
-    # check the row number of the last subject
     endrow <- length(data[, id] )
 
     pb <- txtProgressBar(min = 0, max = endrow, initial = 0, style = 3)

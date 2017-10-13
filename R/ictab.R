@@ -6,6 +6,7 @@
 #' @param ... A set of models of class \code{lm} or \code{merMod}.
 #'
 #' @importFrom rlang dots_list f_lhs
+#' @importFrom dplyr n_distinct
 #'
 #' @examples
 #' data(mtcars)
@@ -25,14 +26,15 @@
 #'
 #' @export
 
-ictab <- function(ic, ...){
+ictab <- function(ic, ... ) {
 
     mods <- dots_list(...)
     modnames <- unlist(lapply(eval(substitute(alist(...) ) ), deparse) )
 
-    check.resp <- lapply(mods, FUN = function(x) f_lhs(formula(x) ) )
+    check.resp <-
+        lapply(mods, FUN = function(x) f_lhs(as.formula(formula(x) ) ) )
 
-    if (length(unique(check.resp) ) > 1)
+    if (n_distinct(check.resp) > 1)
         stop("\nAll models should be fitted on the same data\n")
 
     res <- data.frame(modnames = modnames)

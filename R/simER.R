@@ -1,7 +1,7 @@
 #' Simulates a sequential ER for independant two-groups comparisons
 #'
 #' Simulates a sequential ER for independant two-groups comparisons,
-#' as a function of sample size and effect size (Cohen's d).
+#' as a function of sample size and standardized effect size (Cohen's d).
 #'
 #' @param ic Indicates whether to use the aic or the bic.
 #' @param cohensd Expected effect size

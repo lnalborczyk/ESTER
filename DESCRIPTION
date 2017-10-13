@@ -4,7 +4,7 @@ Version: 0.0.5
 Date: 2017-10-12
 Authors@R: as.person("Ladislas Nalborczyk <ladislas.nalborczyk@gmail.com> [aut, cre]")
 Description: An implementation of sequential testing that uses evidence ratios
-    computed from so-called Akaike weights, that are based on either the Akaike
+    computed from so-called Akaike weights, based on either the Akaike
     Information Criterion (AIC) or the Bayesian Information Criterion (BIC).
     It allows to do sequential testing on observed data and to study the behaviour
     of sequential evidence ratios on simulated data as well.

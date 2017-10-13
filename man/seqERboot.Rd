@@ -15,7 +15,7 @@ seqERboot(ic, mod1, mod2, nmin, id = NULL, order_nb, replace = FALSE)
 
 \item{nmin}{Minimum sample size from which start to compute sequential evidence ratios.}
 
-\item{id}{If applicable (e.g., repeated measures), name of the id column of your
+\item{id}{If applicable (i.e., repeated measures), name of the "id" column of your
 dataframe, in character string.}
 
 \item{order_nb}{Number of random rearrangments to evaluate.}
@@ -24,7 +24,9 @@ dataframe, in character string.}
 }
 \description{
 Computes sequential evidence ratios for a given data set as well as
-for \code{order_nb} random rearrangments of this dataset.
+for \code{order_nb} random rearrangments of this dataset. When data involve repeated
+measures (and so multiple lines per subject), a column indicating the
+subject "id" should be provided to the \code{id} argument.
 }
 \examples{
 data(mtcars)

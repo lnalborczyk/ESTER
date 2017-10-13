@@ -1,7 +1,9 @@
 #' Computes sequential evidence ratios for a given data set and bootstrapped samples
 #'
 #' Computes sequential evidence ratios for a given data set as well as
-#' for \code{order_nb} random rearrangments of this dataset.
+#' for \code{order_nb} random rearrangments of this dataset. When data involve repeated
+#' measures (and so multiple lines per subject), a column indicating the
+#' subject "id" should be provided to the \code{id} argument.
 #'
 #' @inheritParams seqER
 #' @param order_nb Number of random rearrangments to evaluate.
@@ -182,7 +184,6 @@ seqERboot <- function(
         ERi <- rep(paste0(paste0("ER", i) ), nrow(get(paste0("ER", i) ) ) )
 
         temp_er <- cbind(get(paste0("ER", i) ), ERi)
-        #colnames(temp_er) <- c("ppt", "ER", "ERi")
         temp_er <- temp_er[, c(3, 1, 2)]
 
         if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
