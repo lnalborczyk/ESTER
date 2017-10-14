@@ -30,18 +30,14 @@ This first function runs a simulated study in which we compare two independant g
 
 ``` r
 library(ESTER)
-ER <- simER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, plot = TRUE)
+simER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, plot = TRUE)
 ```
-
-![](README-unnamed-chunk-2-1.png)
 
 We also can study the distribution of evidence ratios for `nSims` simulations ran with the previous function using `distER`.
 
 ``` r
-ER <- distER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, nsims = 100)
+distER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, nsims = 100)
 ```
-
-![](README-unnamed-chunk-3-1.png)
 
 Observed data
 -------------
@@ -52,10 +48,8 @@ On the other hand (and perhaps more interestingly), `ESTER` can be used to do se
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-plot(seqER(ic = bic, mod1, mod2, nmin = 10) )
+seqER(ic = bic, mod1, mod2, nmin = 10)
 ```
-
-![](README-unnamed-chunk-4-1.png)
 
 In addition, `seqERboot` allows you to study the behavior of sequential ERs computed on your own data, along with sequential ERs computed on permutation samples. This feature might be useful to study to what extent the evolution of evidence ratios you observed on the original sample is dependant to the order of the observations.
 
@@ -63,9 +57,7 @@ In addition, `seqERboot` allows you to study the behavior of sequential ERs comp
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-plot(seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20) )
+seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20)
 ```
-
-![](README-unnamed-chunk-5-1.png)
 
 More detailed information can be found by typing `vignette("ESTER")` in the console.
