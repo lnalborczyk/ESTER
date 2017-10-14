@@ -1,9 +1,11 @@
 #' Computes sequential evidence ratios
 #'
-#' Computes sequential evidence ratios, either based on AIC or BIC. Supported
-#' models include \code{lm} or \code{merMod} models. When data involve repeated
-#' measures (and so multiple lines per subject), a column indicating the
-#' subject "id" should be provided to the \code{id} argument.
+#' Computes sequential evidence ratios, either based on the AIC or the BIC.
+#' Supported models currently include \code{lm} or \code{merMod} models.
+#' When data involve repeated measures (and so multiple lines per subject),
+#' a column indicating the subject "id" should be provided to the \code{id} argument.
+#' If nothing is passed to the \code{id} argument, \code{seqER} will suppose
+#' that there is only one observation (i.e., one line) per subject.
 #'
 #' @param ic Indicates whether to use the aic or the bic.
 #' @param mod1 A model of class \code{lm} or \code{lmerMod}.
@@ -28,8 +30,8 @@
 #' # Example with repeated measures
 #' library(lme4)
 #' data(sleepstudy)
-#' mod1 <- lm(Reaction ~ Days, sleepstudy)
-#' mod2 <- lm(Reaction ~ Days + I(Days^2), sleepstudy)
+#' mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
+#' mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
 #' seqER(ic = aic, mod1, mod2, nmin = 10, id = "Subject")
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
@@ -46,15 +48,21 @@ seqER <- function(ic, mod1, mod2, nmin, id = NULL) {
 
     }
 
+    if (nmin < 10) {
+
+        warning("nmin should usually be set above 10...")
+
+    }
+
     if (class(mod1) == "lm") {
 
-        data <- data.frame(eval(mod1$call[["data"]]) )
+        data <- data.frame(eval(mod1$call[["data"]], envir = parent.frame() ) )
 
     }
 
     if (class(mod1) == "glmerMod" | class(mod1) == "lmerMod") {
 
-        data <- data.frame(eval(mod1@call$data) )
+        data <- data.frame(eval(mod1@call$data, envir = parent.frame() ) )
 
     }
 
@@ -95,10 +103,7 @@ seqER <- function(ic, mod1, mod2, nmin, id = NULL) {
     }
 
     startrow <- min(which(as.numeric(as.character(data$ppt) ) == nmin) )
-
-    endrow <- length(data[, id] )
-
-    pb <- txtProgressBar(min = 0, max = endrow, initial = 0, style = 3)
+    endrow <- nrow(data)
 
     for (i in seq(startrow, endrow, nobs) ) {
 
@@ -138,11 +143,9 @@ seqER <- function(ic, mod1, mod2, nmin, id = NULL) {
             tabtab$ic_wt[tabtab$modnames == "mod2"] /
                 tabtab$ic_wt[tabtab$modnames == "mod1"]) )
 
-        # if the merged dataset doesn't exist, create it, else, rbind it
         if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
 
         rm(temp_er)
-        setTxtProgressBar(pb, i)
 
     }
 

@@ -1,31 +1,33 @@
-#' Computes sequential evidence ratios for a given data set and bootstrapped samples
+#' Computes sequential evidence ratios for a given data set and permutation samples
 #'
 #' Computes sequential evidence ratios for a given data set as well as
 #' for \code{order_nb} random rearrangments of this dataset. When data involve repeated
 #' measures (and so multiple lines per subject), a column indicating the
-#' subject "id" should be provided to the \code{id} argument.
+#' subject "id" should be provided to the \code{id} argument. If nothing
+#' is passed to the \code{id} argument, \code{seqERboot} will suppose
+#' that there is only one observation (i.e., one line) per subject.
 #'
 #' @inheritParams seqER
 #' @param order_nb Number of random rearrangments to evaluate.
-#' @param replace If TRUE, corresponds to bootstrap with replacement.
 #'
 #' @importFrom stats family formula lm
 #' @importFrom lme4 lmer glmer
 #' @importFrom magrittr %>%
 #' @import ggplot2
+#' @import dplyr
 #'
 #' @examples
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seq_boot_mtcars <- seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20, replace = FALSE)
+#' seq_boot_mtcars <- seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20)
 #'
 #' # Example with repeated measures
 #' library(lme4)
 #' data(sleepstudy)
-#' mod1 <- lm(Reaction ~ Days, sleepstudy)
-#' mod2 <- lm(Reaction ~ Days + I(Days^2), sleepstudy)
-#' seqERboot(ic = bic, mod1, mod2, nmin = 10, id = "Subject", order_nb = 20, replace = TRUE)
+#' mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
+#' mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
+#' seqERboot(ic = bic, mod1, mod2, nmin = 10, id = "Subject", order_nb = 20)
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
@@ -34,38 +36,37 @@
 #' @export
 
 seqERboot <- function(
-    ic, mod1, mod2, nmin, id = NULL, order_nb, replace = FALSE) {
-
-    if (!class(mod1) == class(mod2) ) {
-
-        stop("Error: mod1 and mod2 have to be of the same class")
-
-    }
+    ic, mod1, mod2, nmin, id = NULL, order_nb) {
 
     if (class(mod1) == "lm") {
 
-        data1 <- data.frame(eval(mod1$call[["data"]]) )
+        data <- data.frame(eval(mod1$call[["data"]]) )
 
     }
 
     if (class(mod1) == "lmerMod" | class(mod1) == "glmerMod") {
 
-        data1 <- data.frame(eval(mod1@call$data) )
+        data <- data.frame(eval(mod1@call$data) )
 
     }
 
-    order_nb <- order_nb + 1
+    erb <-
+        seqER(ic, mod1, mod2, nmin, id) %>%
+        mutate(ERi = rep("er", max(.$ppt) - nmin + 1) ) %>%
+        select_(~ERi, ~ppt, ~ER)
 
     if (is.null(id) == TRUE) {
 
-        id <- as.character(formula(mod1)[[2]] )
+        id2 <- as.character(formula(mod1)[[2]] )
         nobs <- 1
-        data1$ppt <- rep(seq(1, length(data1[, id]), 1), each = nobs)
+        data$ppt <- rep(seq(1, length(data[, id2]), 1), each = nobs)
 
     } else {
 
+        id2 <- id
+
         # count frequencies
-        count <- data.frame(table(data1[, id]) )
+        count <- data.frame(table(data[, id2]) )
 
         # count number of observations by subject
         nobs <- max(count$Freq)
@@ -73,104 +74,19 @@ seqERboot <- function(
         # identify subjects with less than nobs
         a <- as.vector(count$Var1[count$Freq < nobs])
 
-        data1$ppt <-
-            rep(seq(1, length(unique(data1[, id]) ), 1), each = nobs)
+        data$ppt <-
+            rep(seq(1, length(unique(data[, id2]) ), 1), each = nobs)
 
         if (length(a) > 0) {
 
             # if needed, remove subjects with less than nobs
             for (i in 1:length(a) ) {
 
-                data1 <- data1[!data1[, id] == as.numeric(a[i]), ]
+                data <- data[!data[, id2] == as.numeric(a[i]), ]
 
             }
 
         }
-
-    }
-
-    for (i in (order_nb - order_nb + 2):order_nb) {
-
-        assign(paste0("data", i),
-            data1[sample(nrow(data1), replace = replace), ])
-
-    }
-
-    list <- ls(pattern = "data*")
-
-    if (nobs > 1) {
-
-        pair <- function(data) {
-
-            data <-
-                data[order(factor(data$ppt, levels = unique(data$ppt) ) ), ]
-
-            return (data)
-
-        }
-
-        for (i in 1:length(list) ) {
-
-            assign(list[i], pair(get(list[i]) ) )
-
-            }
-
-    }
-
-    startrow <- nmin * nobs
-
-    rand_er <- function(data) {
-
-        endrow <- as.numeric(nrow(data) )
-
-        for (i in seq(startrow, endrow, nobs) ) {
-
-            if ( (class(mod1) == "glmerMod") ) {
-
-                mod1 <- lme4::lmer(formula(mod1),
-                    family = family(mod1)$family, data[1:i, ])
-
-                mod2 <- lme4::lmer(formula(mod2),
-                    family = family(mod2)$family, data[1:i, ])
-
-            }
-
-            if ( (class(mod1) == "lmerMod") ) {
-
-                mod1 <- lme4::lmer(formula(mod1), REML = FALSE, data[1:i, ])
-
-                mod2 <- lme4::lmer(formula(mod2), REML = FALSE, data[1:i, ])
-
-            }
-
-            if ( (class(mod1) == "lm") ) {
-
-                mod1 <- lm(formula(mod1), data[1:i, ])
-
-                mod2 <- lm(formula(mod2), data[1:i, ])
-
-            }
-
-            tabtab <- ictab(ic, mod1, mod2)
-
-            temp_er <-
-                tabtab$ic_wt[tabtab$modnames == "mod2"] /
-                tabtab$ic_wt[tabtab$modnames == "mod1"]
-
-            if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
-
-            rm(temp_er)
-
-        }
-
-        er <-
-            data.frame(
-                cbind(seq(nmin, max(data1$ppt), 1), er),
-                row.names = NULL)
-
-        colnames(er) <- c("ppt", "ER")
-
-        return(er)
 
     }
 
@@ -178,25 +94,57 @@ seqERboot <- function(
 
     for (i in 1:order_nb) {
 
-        assign(paste0("ER", i), rand_er(get(paste0("data", i) ) ) )
+        data_temp <- data[sample(nrow(data), replace = FALSE), ]
+
+        if (nobs > 1) {
+
+            data_temp <-
+                data_temp[order(factor(data_temp$ppt,
+                    levels = unique(data_temp$ppt) ) ), ]
+
+        }
+
+        if ( (class(mod1) == "glmerMod") ) {
+
+            mod1 <- lme4::lmer(formula(mod1),
+                family = family(mod1)$family, data_temp)
+
+            mod2 <- lme4::lmer(formula(mod2),
+                family = family(mod2)$family, data_temp)
+
+        }
+
+        if ( (class(mod1) == "lmerMod") ) {
+
+            mod1 <- lme4::lmer(formula(mod1), REML = FALSE, data_temp)
+
+            mod2 <- lme4::lmer(formula(mod2), REML = FALSE, data_temp)
+
+        }
+
+        if ( (class(mod1) == "lm") ) {
+
+            mod1 <- lm(formula(mod1), data_temp)
+
+            mod2 <- lm(formula(mod2), data_temp)
+
+        }
+
+        temp_erb <-
+            seqER(ic, mod1, mod2, nmin, id) %>%
+            mutate(ERi = rep(paste0("er", i), max(.$ppt) - nmin + 1) ) %>%
+            select_(~ERi, ~ppt, ~ER)
+
+        if (!exists("erb") ) erb <- temp_erb else erb <- rbind(erb, temp_erb)
+
+        rm(temp_erb)
         setTxtProgressBar(pb, i)
 
     }
 
-    for (i in 1:order_nb) {
+    class(erb) <- c("ERboot", "data.frame")
 
-        ERi <- rep(paste0(paste0("ER", i) ), nrow(get(paste0("ER", i) ) ) )
-
-        temp_er <- cbind(get(paste0("ER", i) ), ERi)
-        temp_er <- temp_er[, c(3, 1, 2)]
-
-        if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
-
-    }
-
-    class(er) <- c("ERboot", "data.frame")
-
-    return(er)
+    return(erb)
 
 }
 
@@ -204,7 +152,7 @@ seqERboot <- function(
 
 plot.ERboot <- function(x, ... ) {
 
-    raw <- x[, 2:3][x[, 1] == "ER1", ]
+    raw <- x[, 2:3][x[, 1] == "er", ]
 
     ggplot(x, aes_string(x = "ppt", y = "ER", group = "ERi") ) +
         scale_y_log10() +

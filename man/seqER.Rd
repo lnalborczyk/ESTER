@@ -19,10 +19,12 @@ seqER(ic, mod1, mod2, nmin, id = NULL)
 dataframe, in character string.}
 }
 \description{
-Computes sequential evidence ratios, either based on AIC or BIC. Supported
-models include \code{lm} or \code{merMod} models. When data involve repeated
-measures (and so multiple lines per subject), a column indicating the
-subject "id" should be provided to the \code{id} argument.
+Computes sequential evidence ratios, either based on the AIC or the BIC.
+Supported models currently include \code{lm} or \code{merMod} models.
+When data involve repeated measures (and so multiple lines per subject),
+a column indicating the subject "id" should be provided to the \code{id} argument.
+If nothing is passed to the \code{id} argument, \code{seqER} will suppose
+that there is only one observation (i.e., one line) per subject.
 }
 \examples{
 data(mtcars)
@@ -33,8 +35,8 @@ seq_mtcars <- seqER(ic = aic, mod1, mod2, nmin = 10)
 # Example with repeated measures
 library(lme4)
 data(sleepstudy)
-mod1 <- lm(Reaction ~ Days, sleepstudy)
-mod2 <- lm(Reaction ~ Days + I(Days^2), sleepstudy)
+mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
+mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
 seqER(ic = aic, mod1, mod2, nmin = 10, id = "Subject")
 
 }

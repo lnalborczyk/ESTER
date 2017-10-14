@@ -2,7 +2,7 @@
 % Please edit documentation in R/distER.R
 \name{distER}
 \alias{distER}
-\title{Simulates many sequential ERs to obtain their distribution}
+\title{Simulates many sequential evidence ratios to obtain their distribution}
 \usage{
 distER(cohensd, nmin, n, nsims, ic = bic)
 }
@@ -18,8 +18,8 @@ distER(cohensd, nmin, n, nsims, ic = bic)
 \item{ic}{Indicates whether to use the aic or the bic.}
 }
 \description{
-Simulates many sequential ERs, keeps the last of each simulation,
-and plot their distribution.
+Simulates many sequential evience ratios using \code{simER}, keeps the last
+of each simulation, and plots their distribution.
 }
 \examples{
 \dontrun{distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100, ic = bic)}

@@ -2,9 +2,9 @@
 % Please edit documentation in R/seqERboot.R
 \name{seqERboot}
 \alias{seqERboot}
-\title{Computes sequential evidence ratios for a given data set and bootstrapped samples}
+\title{Computes sequential evidence ratios for a given data set and permutation samples}
 \usage{
-seqERboot(ic, mod1, mod2, nmin, id = NULL, order_nb, replace = FALSE)
+seqERboot(ic, mod1, mod2, nmin, id = NULL, order_nb)
 }
 \arguments{
 \item{ic}{Indicates whether to use the aic or the bic.}
@@ -19,27 +19,27 @@ seqERboot(ic, mod1, mod2, nmin, id = NULL, order_nb, replace = FALSE)
 dataframe, in character string.}
 
 \item{order_nb}{Number of random rearrangments to evaluate.}
-
-\item{replace}{If TRUE, corresponds to bootstrap with replacement.}
 }
 \description{
 Computes sequential evidence ratios for a given data set as well as
 for \code{order_nb} random rearrangments of this dataset. When data involve repeated
 measures (and so multiple lines per subject), a column indicating the
-subject "id" should be provided to the \code{id} argument.
+subject "id" should be provided to the \code{id} argument. If nothing
+is passed to the \code{id} argument, \code{seqERboot} will suppose
+that there is only one observation (i.e., one line) per subject.
 }
 \examples{
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-seq_boot_mtcars <- seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20, replace = FALSE)
+seq_boot_mtcars <- seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20)
 
 # Example with repeated measures
 library(lme4)
 data(sleepstudy)
-mod1 <- lm(Reaction ~ Days, sleepstudy)
-mod2 <- lm(Reaction ~ Days + I(Days^2), sleepstudy)
-seqERboot(ic = bic, mod1, mod2, nmin = 10, id = "Subject", order_nb = 20, replace = TRUE)
+mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
+mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
+seqERboot(ic = bic, mod1, mod2, nmin = 10, id = "Subject", order_nb = 20)
 
 }
 \seealso{

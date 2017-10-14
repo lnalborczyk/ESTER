@@ -1,7 +1,7 @@
-#' Simulates many sequential ERs to obtain their distribution
+#' Simulates many sequential evidence ratios to obtain their distribution
 #'
-#' Simulates many sequential ERs, keeps the last of each simulation,
-#' and plot their distribution.
+#' Simulates many sequential evience ratios using \code{simER}, keeps the last
+#' of each simulation, and plots their distribution.
 #'
 #' @inheritParams simER
 #' @param nsims Number of experiments to simulate.

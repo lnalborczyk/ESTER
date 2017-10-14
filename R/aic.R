@@ -1,4 +1,4 @@
-#' Computes AIC or AICc
+#' Computes the Akaike Information Criterio
 #'
 #' Computes the Akaike Information Criterion of a model. Except when the number
 #' of observations is much larger than the number of parameters (i.e., n / k > 40),
@@ -42,8 +42,6 @@ aic <- function(mod) {
 
         aic <- -2 * ll + 2 * k * (n / (n - k - 1) )
     }
-
-    aic[2] <- k
 
     return(aic)
 

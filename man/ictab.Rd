@@ -2,25 +2,29 @@
 % Please edit documentation in R/ictab.R
 \name{ictab}
 \alias{ictab}
-\title{Returns a table with AICs or BICs, and Akaike weights of a set of models}
+\title{Computes Akaike weights for a set of models}
 \usage{
 ictab(ic, ...)
 }
 \arguments{
-\item{ic}{Indicates whether to use the aic or the bic.}
+\item{ic}{Indicates which information criterion to use.}
 
 \item{...}{A set of models of class \code{lm} or \code{merMod}.}
 }
 \description{
-Returns a table with AICs (or corrected AICcs) or BICs, and Akaike weights of a set of models.
+Returns a table with Akaike weights of a set of models, based on various
+information criteria. Currently, \code{ictab} supports the computation of
+Akaike weights from the \code{aic} or the \code{bic} computed on \code{lm}
+or \code{merMod} models.
 }
 \examples{
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + vs, mtcars)
-mod3 <- lm(mpg ~ cyl * vs, mtcars)
-ictab(aic, mod1, mod2, mod3)
-ictab(bic, mod1, mod2, mod3)
+mod3 <- lm(mpg ~ cyl + vs + I(vs^2), mtcars)
+mod4 <- lm(mpg ~ cyl * vs, mtcars)
+ictab(aic, mod1, mod2, mod3, mod4)
+ictab(bic, mod1, mod2, mod3, mod4)
 
 }
 \references{

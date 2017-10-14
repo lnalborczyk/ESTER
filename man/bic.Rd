@@ -2,7 +2,7 @@
 % Please edit documentation in R/bic.R
 \name{bic}
 \alias{bic}
-\title{Computes BIC}
+\title{Computes the Bayesian Information Criterion}
 \usage{
 bic(mod)
 }
@@ -10,7 +10,7 @@ bic(mod)
 \item{mod}{A fitted model of class \code{lm} or \code{merMod}.}
 }
 \description{
-Computes the Bayesian Information Criterion of a model (Schwarz, 1978).
+Computes the Bayesian Information Criterion of a model.
 }
 \examples{
 data(mtcars)

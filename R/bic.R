@@ -1,6 +1,6 @@
-#' Computes BIC
+#' Computes the Bayesian Information Criterion
 #'
-#' Computes the Bayesian Information Criterion of a model (Schwarz, 1978).
+#' Computes the Bayesian Information Criterion of a model.
 #'
 #' @param mod A fitted model of class \code{lm} or \code{merMod}.
 #'
@@ -27,8 +27,6 @@ bic <- function(mod) {
     k <- attr(logLik(mod), "df")
 
     bic <- -2 * ll + k * log(n)
-
-    bic[2] <- k
 
     return(bic)
 
