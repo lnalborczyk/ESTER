@@ -29,6 +29,7 @@ is passed to the \code{id} argument, \code{seqERboot} will suppose
 that there is only one observation (i.e., one line) per subject.
 }
 \examples{
+\dontrun{
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
@@ -39,7 +40,7 @@ library(lme4)
 data(sleepstudy)
 mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
 mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
-seqERboot(ic = bic, mod1, mod2, nmin = 10, id = "Subject", order_nb = 20)
+seqERboot(ic = bic, mod1, mod2, nmin = 10, id = "Subject", order_nb = 20)}
 
 }
 \seealso{

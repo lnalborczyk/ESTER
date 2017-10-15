@@ -23,7 +23,7 @@ We can outline three general principles guiding model-based inference in science
 
 * **Simplicity and parsimony** (Occam’s razor). Model selection is a classic bias-variance trade-off.
 
-* **Multiple working hypotheses** (Chamberlin, 1890). At any point in time there must be several hypotheses (models) under consideration, but number of alternative should be kept small.
+* **Multiple working hypotheses** (Chamberlin, 1890). At any point in time there must be several hypotheses (models) under consideration, but number of alternatives should be kept small.
 
 * **Strength of evidence**. Providing quantitative information to judge the *strength of evidence* is central to science (e.g., see Royall, 1997).
 
