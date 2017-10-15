@@ -1,6 +1,6 @@
-#' Simulates a sequential testing with evidence ratios for independant two-groups comparisons
+#' Simulates a sequential testing with evidence ratios for independent two-groups comparisons
 #'
-#' Simulates a sequential testing with evidence ratios for independant two-groups
+#' Simulates a sequential testing with evidence ratios for independent two-groups
 #' comparisons, as a function of sample size and standardized mean difference
 #' (Cohen's d).
 #'

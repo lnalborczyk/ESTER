@@ -1,6 +1,6 @@
 #' Simulates many sequential evidence ratios to obtain their distribution
 #'
-#' Simulates many sequential evience ratios using \code{simER}, keeps the last
+#' Simulates many sequential evidence ratios using \code{simER}, keeps the last
 #' of each simulation, and plots their distribution.
 #'
 #' @inheritParams simER

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simER.R
 \name{simER}
 \alias{simER}
-\title{Simulates a sequential testing with evidence ratios for independant two-groups comparisons}
+\title{Simulates a sequential testing with evidence ratios for independent two-groups comparisons}
 \usage{
 simER(cohensd, nmin, n, ic = bic, plot = TRUE)
 }
@@ -18,7 +18,7 @@ simER(cohensd, nmin, n, ic = bic, plot = TRUE)
 \item{plot}{If TRUE, produces a plot of the evolution of the ERs}
 }
 \description{
-Simulates a sequential testing with evidence ratios for independant two-groups
+Simulates a sequential testing with evidence ratios for independent two-groups
 comparisons, as a function of sample size and standardized mean difference
 (Cohen's d).
 }

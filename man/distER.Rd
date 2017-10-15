@@ -18,7 +18,7 @@ distER(cohensd, nmin, n, nsims, ic = bic)
 \item{ic}{Indicates whether to use the aic or the bic.}
 }
 \description{
-Simulates many sequential evience ratios using \code{simER}, keeps the last
+Simulates many sequential evidence ratios using \code{simER}, keeps the last
 of each simulation, and plots their distribution.
 }
 \examples{

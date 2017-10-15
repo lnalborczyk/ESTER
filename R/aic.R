@@ -1,4 +1,4 @@
-#' Computes the Akaike Information Criterio
+#' Computes the Akaike Information Criterion
 #'
 #' Computes the Akaike Information Criterion of a model. Except when the number
 #' of observations is much larger than the number of parameters (i.e., n / k > 40),

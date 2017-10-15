@@ -2,7 +2,7 @@
 % Please edit documentation in R/aic.R
 \name{aic}
 \alias{aic}
-\title{Computes the Akaike Information Criterio}
+\title{Computes the Akaike Information Criterion}
 \usage{
 aic(mod)
 }

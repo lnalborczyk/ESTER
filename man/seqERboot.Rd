@@ -22,7 +22,7 @@ dataframe, in character string.}
 }
 \description{
 Computes sequential evidence ratios for a given data set as well as
-for \code{order_nb} random rearrangments of this dataset. When data involve repeated
+for \code{order_nb} random rearrangements of this dataset. When data involve repeated
 measures (and so multiple lines per subject), a column indicating the
 subject "id" should be provided to the \code{id} argument. If nothing
 is passed to the \code{id} argument, \code{seqERboot} will suppose
