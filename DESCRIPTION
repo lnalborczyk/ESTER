@@ -1,7 +1,7 @@
 Package: ESTER
 Title: Efficient Sequential Testing with Evidence Ratios
 Version: 0.1.0
-Date: 2017-10-16
+Date: 2017-10-15
 Authors@R: as.person("Ladislas Nalborczyk <ladislas.nalborczyk@gmail.com> [aut, cre]")
 Description: An implementation of sequential testing that uses evidence ratios
     computed from the Akaike weights of a set of models. These weights are
