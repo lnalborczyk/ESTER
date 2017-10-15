@@ -1,14 +1,14 @@
 #' Computes sequential evidence ratios for a given data set and permutation samples
 #'
 #' Computes sequential evidence ratios for a given data set as well as
-#' for \code{order_nb} random rearrangements of this dataset. When data involve repeated
+#' for \code{order_nb} random permutations of this dataset. When data involve repeated
 #' measures (and so multiple lines per subject), a column indicating the
 #' subject "id" should be provided to the \code{id} argument. If nothing
 #' is passed to the \code{id} argument, \code{seqERboot} will suppose
 #' that there is only one observation (i.e., one line) per subject.
 #'
 #' @inheritParams seqER
-#' @param order_nb Number of random rearrangments to evaluate.
+#' @param order_nb Number of permutation samples to evaluate.
 #'
 #' @importFrom stats family formula lm
 #' @importFrom lme4 lmer glmer

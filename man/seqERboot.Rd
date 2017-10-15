@@ -18,11 +18,11 @@ seqERboot(ic, mod1, mod2, nmin, id = NULL, order_nb)
 \item{id}{If applicable (i.e., repeated measures), name of the "id" column of your
 dataframe, in character string.}
 
-\item{order_nb}{Number of random rearrangments to evaluate.}
+\item{order_nb}{Number of permutation samples to evaluate.}
 }
 \description{
 Computes sequential evidence ratios for a given data set as well as
-for \code{order_nb} random rearrangements of this dataset. When data involve repeated
+for \code{order_nb} random permutations of this dataset. When data involve repeated
 measures (and so multiple lines per subject), a column indicating the
 subject "id" should be provided to the \code{id} argument. If nothing
 is passed to the \code{id} argument, \code{seqERboot} will suppose
