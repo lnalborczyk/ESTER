@@ -2,18 +2,17 @@
 ESTER: Efficient Sequential Testing with Evidence Ratios
 ========================================================
 
-[![CRAN status](http://www.r-pkg.org/badges/version/ESTER)](https://cran.r-project.org/package=ESTER) [![Build Status](https://travis-ci.org/lnalborczyk/ESTER.svg?branch=master)](https://travis-ci.org/lnalborczyk/ESTER)
+[![CRAN status](http://www.r-pkg.org/badges/version/ESTER)](https://cran.r-project.org/package=ESTER) [![Build Status](https://travis-ci.org/lnalborczyk/ESTER.svg?branch=master)](https://travis-ci.org/lnalborczyk/ESTER) [![downloads](http://cranlogs.r-pkg.org/badges/ESTER)](http://cran.rstudio.com/web/packages/ESTER/index.html)
 
 The `ESTER` package implements sequential testing based on evidence ratios computed from the Akaike weights of a set of models. These weights are being computed using either the Akaike Information Criterion (AIC) or the Bayesian Information Criterion (BIC).
 
 Installation
 ------------
 
-You can install ESTER from github with:
+You can install ESTER from the console with:
 
 ``` r
-if(!require(devtools)){install.packages("devtools")}
-devtools::install_github("lnalborczyk/ESTER")
+install.packages("ESTER")
 ```
 
 Different questions
