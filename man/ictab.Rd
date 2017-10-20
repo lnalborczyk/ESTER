@@ -2,20 +2,25 @@
 % Please edit documentation in R/ictab.R
 \name{ictab}
 \alias{ictab}
-\title{Computes Akaike weights for a set of models}
+\title{Computes Akaike weights or pseudo-BMA weights for a set of models}
 \usage{
 ictab(ic, ...)
 }
 \arguments{
-\item{ic}{Indicates which information criterion to use.}
+\item{ic}{Indicates which information criterion to use. Current supported
+information criteria include \code{aic} and \code{bic} for \code{lm} and
+\code{merMod} models, as well as \code{WAIC} and \code{LOO} for
+\code{brmsfit} models.}
 
-\item{...}{A set of models of class \code{lm} or \code{merMod}.}
+\item{...}{A set of models of class \code{lm}, \code{merMod} or
+\code{brmsfit}.}
 }
 \description{
-Returns a table with Akaike weights of a set of models, based on various
+Returns a table with weights of a set of models, based on various
 information criteria. Currently, \code{ictab} supports the computation of
 Akaike weights from the \code{aic} or the \code{bic} computed on \code{lm}
-or \code{merMod} models.
+or \code{merMod} models, as well as the computation of pseudo-BMA weights,
+computed from the WAIC or LOOIC of \code{brmsfit} models.
 }
 \examples{
 data(mtcars)
@@ -26,6 +31,12 @@ mod4 <- lm(mpg ~ cyl * vs, mtcars)
 ictab(aic, mod1, mod2, mod3, mod4)
 ictab(bic, mod1, mod2, mod3, mod4)
 
+\dontrun{
+mod1 <- brm(mpg ~ cyl, mtcars)
+mod2 <- brm(mpg ~ cyl + vs, mtcars)
+ictab(LOO, mod1, mod2)
+}
+
 }
 \references{
 Burnham, K. P., \& Anderson, D. R. (2002). Model Selection
@@ -35,6 +46,9 @@ and Multimodel Inference: A Practical Information-Theoretical Approach.
 Burnham, K. P., \& Anderson, D. R. (2004). Multimodel
 inference: Understanding AIC and BIC in model selection. Sociological
 Methods and Research, 33(2), 261-304.
+
+Yao, Y. P., Vehtari, A., Simpson, D., \& Gelman, A. (2017).
+Using stacking to average Bayesian predictive distributions.
 }
 \seealso{
 \code{\link{aic}}, \code{\link{bic}}

@@ -9,7 +9,7 @@ The `ESTER` package implements sequential testing based on evidence ratios compu
 Installation
 ------------
 
-You can install ESTER from the console with:
+You can install `ESTER` from the console with:
 
 ``` r
 install.packages("ESTER")

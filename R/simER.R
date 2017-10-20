@@ -11,7 +11,8 @@
 #' @param plot If TRUE, produces a plot of the evolution of the ERs
 #'
 #' @importFrom magrittr %>% set_names
-#' @importFrom stats lm rnorm
+#' @importFrom stats lm rnorm update
+#' @importFrom brms brm WAIC LOO
 #' @import ggplot2
 #' @import dplyr
 #'
@@ -57,16 +58,44 @@ simER <- function(cohensd, nmin, n, ic = bic, plot = TRUE) {
 
     ER_comp <- numeric()
 
-    for (i in nmin:n) {
+    if (identical(ic, aic) | identical(ic, bic) ) {
 
-        mod1 <- lm(value ~ 1, data = df_pop[1:i, ] )
-        mod2 <- lm(value ~ group, data = df_pop[1:i, ] )
+        for (i in nmin:n) {
+
+            mod1 <- lm(value ~ 1, data = df_pop[1:i, ] )
+            mod2 <- lm(value ~ group, data = df_pop[1:i, ] )
+
+            model_comp <- ictab(ic, mod1, mod2)
+
+            ER_comp[i] <-
+                model_comp$ic_wt[model_comp$modnames == "mod2"] /
+                model_comp$ic_wt[model_comp$modnames == "mod1"]
+
+        }
+
+    } else if (identical(ic, WAIC) | identical(ic, LOO) ) {
+
+        mod1 <- brm(value ~ 1, data = df_pop[1:nmin, ] )
+        mod2 <- brm(value ~ group, data = df_pop[1:nmin, ] )
 
         model_comp <- ictab(ic, mod1, mod2)
 
-        ER_comp[i] <-
+        ER_comp[nmin] <-
             model_comp$ic_wt[model_comp$modnames == "mod2"] /
             model_comp$ic_wt[model_comp$modnames == "mod1"]
+
+        for (i in nmin+1:n) {
+
+            mod1 <- update(mod1, newdata = df_pop[1:i, ] )
+            mod2 <- update(mod1, newdata = df_pop[1:i, ] )
+
+            model_comp <- ictab(ic, mod1, mod2)
+
+            ER_comp[i] <-
+                model_comp$ic_wt[model_comp$modnames == "mod2"] /
+                model_comp$ic_wt[model_comp$modnames == "mod1"]
+
+        }
 
     }
 
