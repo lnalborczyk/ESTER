@@ -20,6 +20,8 @@
 #' simER(cohensd = 0.6, nmin = 20, n = 200, ic = aic, plot = TRUE)
 #' simER(cohensd = 0, nmin = 20, n = 200, ic = bic, plot = TRUE)
 #'
+#' \dontrun{simER(cohensd = 0, nmin = 20, n = 60, ic = LOO, plot = TRUE)}
+#'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
 #' @seealso \code{\link{distER}}
@@ -84,10 +86,10 @@ simER <- function(cohensd, nmin, n, ic = bic, plot = TRUE) {
             model_comp$ic_wt[model_comp$modnames == "mod2"] /
             model_comp$ic_wt[model_comp$modnames == "mod1"]
 
-        for (i in nmin+1:n) {
+        for (i in (nmin + 1):n) {
 
             mod1 <- update(mod1, newdata = df_pop[1:i, ] )
-            mod2 <- update(mod1, newdata = df_pop[1:i, ] )
+            mod2 <- update(mod2, newdata = df_pop[1:i, ] )
 
             model_comp <- ictab(ic, mod1, mod2)
 

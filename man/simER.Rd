@@ -26,6 +26,8 @@ comparisons, as a function of sample size and standardized mean difference
 simER(cohensd = 0.6, nmin = 20, n = 200, ic = aic, plot = TRUE)
 simER(cohensd = 0, nmin = 20, n = 200, ic = bic, plot = TRUE)
 
+\dontrun{simER(cohensd = 0, nmin = 20, n = 60, ic = LOO, plot = TRUE)}
+
 }
 \seealso{
 \code{\link{distER}}
