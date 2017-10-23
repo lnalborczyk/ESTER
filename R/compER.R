@@ -16,12 +16,10 @@
 #' @param B Number of bootstrap samples (should be dividable by getDoParWorkers())
 #' @param cores number of parallel processes. If cores==1, no parallel framework is used.
 #'
-# @importFrom brms brm set_prior hypothesis
-# @importFrom bridgesampling bridge_sampler bf
 #' @importFrom stats lm rnorm update runif
 # @importFrom Rcpp cpp_object_initializer
 #' @importFrom magrittr %>%
-#' @importFrom tidyr gather_
+#' @importFrom tidyr gather
 #' @import doParallel
 #' @import foreach
 #' @import ggplot2
@@ -76,18 +74,24 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
         set_prior("normal(0, 5)", class = "b")
     )
 
-    mod1 <- brm(value ~ 1, data = df_pop, prior = prior1,
-        save_all_pars = TRUE, chains = 2, cores = cores, seed = sample(1e6, size = 1) )
+    mod1 <-
+        brm(value ~ 1, data = df_pop, prior = prior1,
+            save_all_pars = TRUE, chains = 2, cores = cores,
+            seed = sample(1e6, size = 1), refresh = 0)
 
-    mod2.1 <- brm(value ~ group, data = df_pop, prior = prior2,
-        save_all_pars = TRUE, chains = 2, cores = cores, seed = sample(1e6, size = 1) )
+    mod2.1 <-
+        brm(value ~ group, data = df_pop, prior = prior2,
+        save_all_pars = TRUE, chains = 2, cores = cores,
+            seed = sample(1e6, size = 1), refresh = 0)
 
-    mod2.2 <- brm(value ~ group, data = df_pop, prior = prior2,
-        sample_prior = TRUE, chains = 2, cores = cores, seed = sample(1e6, size = 1) )
+    mod2.2 <-
+        brm(value ~ group, data = df_pop, prior = prior2,
+        sample_prior = TRUE, chains = 2, cores = cores,
+            seed = sample(1e6, size = 1), refresh = 0)
 
     registerDoParallel(cores = cores)
 
-    rm(df_pop)
+    # rm(df_pop)
 
     ################################################
     # THE simulation
@@ -156,13 +160,13 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
                     1 / hypothesis(mod2.2, "group = 0",
                         seed = sample(1e6, size = 1) )$hypothesis$Evid.Ratio
 
-                #bridge1 <- bridge_sampler(mod1)
-                #bridge2 <- bridge_sampler(mod2.1)
+                # resetting the seed fixed by "bayes_factor"
+                set.seed(NULL) # set.seed(Sys.time() )
 
-                #BF_BS <- bridgesampling::bf(bridge1, bridge2, log = FALSE)[[1]]
+                BF_BS <- bayes_factor(mod2.1, mod1, silent = TRUE)$bf
 
-                BF_BS <- BF_SD + runif(1)
-                #BF_BS <- bayes_factor(mod2.1, mod1, silent = TRUE)$bf
+                # resetting the seed fixed by "bayes_factor"
+                set.seed(NULL) # set.seed(Sys.time() )
 
                 res0[which(nmin:nmax == i), ] <-
                     c(
@@ -193,7 +197,7 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
 
         } # end of %dopar%
 
-    res <- data.frame(sim) # %>% filter(!is.na(true.ES) )
+    res <- data.frame(sim)
     class(res) <- c("compER", "data.frame")
 
     return(res)
@@ -206,8 +210,8 @@ plot.compER <- function(x, ... ) {
 
     x <- gather(x, index, value, WAIC_ER, LOO_ER, BF_SD, BF_BS)
 
-    ggplot(x, aes(x = n, y = value,
-            group = interaction(id, index), colour = index) ) +
+    ggplot(x,
+        aes(x = n, y = value, group = interaction(id, index), colour = index) ) +
         geom_line(alpha = 0.6, size = 0.6) +
         theme_bw(base_size = 12)
 

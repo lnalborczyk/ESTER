@@ -14,8 +14,7 @@
 #' \code{brmsfit}.
 #'
 #' @importFrom stats as.formula logLik
-#' @importFrom rlang dots_list f_lhs
-#' @importFrom dplyr n_distinct
+#' @importFrom rlang dots_list
 #' @importFrom brms WAIC LOO
 #'
 #' @examples
@@ -56,9 +55,10 @@ ictab <- function(ic, ... ) {
     modnames <- unlist(lapply(eval(substitute(alist(...) ) ), deparse) )
 
     check.resp <-
-        lapply(mods, FUN = function(x) f_lhs(as.formula(formula(x) ) ) )
+        lapply(mods, FUN = function(x) as.formula(formula(x) )[[2]] )
 
-    if (n_distinct(check.resp) > 1)
+    if (length(unique(check.resp) ) > 1)
+
         stop("\n All models should be fitted on the same data \n")
 
     res <- data.frame(modnames = modnames)
