@@ -6,20 +6,21 @@
 #' from WAIC or LOOIC with pseudo-BMA weights or Bayes Factors, for an independent
 #' two-groups comparison as a function of sample size and standardized mean
 #' difference (Cohen's d). Bayes Factors are computed either via the Savage-Dickey
-#' method or via bridge sampling.
+#' method (BF_SD) or via bridge sampling (BF_BS).
 #'
 #' @param cohensd Expected effect size
 #' @param nmin Minimum sample size from which start computing ERs
-#' @param nmax Total sample size
+#' @param nmax Maximum sample size
 #' @param boundary The Evidence Ratio or the Bayes Factor (resp. its reciprocal)
 #' where the run is stopped as well.
-#' @param B Number of bootstrap samples (should be dividable by getDoParWorkers())
-#' @param cores number of parallel processes. If cores==1, no parallel framework is used.
+#' @param B Number of bootstrap samples (should be dividable by cores)
+#' @param cores number of parallel processes. If cores is set tp 1, no parallel framework is used.
 #'
 #' @importFrom stats lm rnorm update runif
 # @importFrom Rcpp cpp_object_initializer
+#' @importFrom utils setTxtProgressBar
 #' @importFrom magrittr %>%
-#' @importFrom tidyr gather
+#' @importFrom tidyr gather_
 #' @import doParallel
 #' @import foreach
 #' @import ggplot2
@@ -28,7 +29,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' sim <- compER(cohensd = 0, nmin = 20, nmax = 30, boundary = 20, B = 8, cores = 4)
+#' sim <- compER(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 20, cores = 4)
 #' plot(sim)
 #' }
 #'
@@ -91,11 +92,11 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
 
     registerDoParallel(cores = cores)
 
-    # rm(df_pop)
-
     ################################################
     # THE simulation
     ##############################
+
+    pb <- txtProgressBar(0, round(B / getDoParWorkers() ), style = 3)
 
     sim <-
         foreach(batch = 1:getDoParWorkers(), .combine = rbind,
@@ -112,6 +113,8 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
 
         # run max_b iterations in each parallel worker
         for (b in 1:max_b) {
+
+            setTxtProgressBar(pb, b)
 
             # Draw a new maximum sample at each step
             x <- cbind(rnorm(nmax / 2, 0, 1), rep(-0.5, nmax / 2) )
@@ -208,10 +211,11 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
 
 plot.compER <- function(x, ... ) {
 
-    x <- gather(x, index, value, WAIC_ER, LOO_ER, BF_SD, BF_BS)
-
-    ggplot(x,
-        aes(x = n, y = value, group = interaction(id, index), colour = index) ) +
+    x %>%
+        gather_("index", "value", names(x)[5:8]) %>%
+        ggplot(aes_string(
+            x = "n", y = "value",
+            group = "interaction(id, index)", colour = "index") ) +
         geom_line(alpha = 0.6, size = 0.6) +
         theme_bw(base_size = 12)
 

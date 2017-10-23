@@ -1,7 +1,7 @@
 Package: ESTER
 Title: Efficient Sequential Testing with Evidence Ratios
 Version: 0.1.1
-Date: 2017-10-20
+Date: 2017-10-23
 Authors@R: person("Ladislas", "Nalborczyk", email = "ladislas.nalborczyk@gmail.com",
   role = c("aut", "cre"))
 Description: An implementation of sequential testing that uses evidence ratios
@@ -15,7 +15,7 @@ License: MIT + file LICENSE
 LazyData: yes
 RoxygenNote: 6.0.1
 Depends: R (>= 3.3.0)
-Imports: brms, lme4, dplyr, magrittr, ggplot2, rlang, foreach, doParallel, Rcpp, tidyr
+Imports: brms, lme4, dplyr, magrittr, tidyr, ggplot2, rlang, foreach, doParallel
 URL: https://github.com/lnalborczyk/ESTER
 BugReports: https://github.com/lnalborczyk/ESTER/issues
 Suggests: knitr, rmarkdown

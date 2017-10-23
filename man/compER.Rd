@@ -14,25 +14,25 @@ compER(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12,
 
 \item{nmin}{Minimum sample size from which start computing ERs}
 
-\item{nmax}{Total sample size}
+\item{nmax}{Maximum sample size}
 
 \item{boundary}{The Evidence Ratio or the Bayes Factor (resp. its reciprocal)
 where the run is stopped as well.}
 
-\item{B}{Number of bootstrap samples (should be dividable by getDoParWorkers())}
+\item{B}{Number of bootstrap samples (should be dividable by cores)}
 
-\item{cores}{number of parallel processes. If cores==1, no parallel framework is used.}
+\item{cores}{number of parallel processes. If cores is set tp 1, no parallel framework is used.}
 }
 \description{
 Simulates sequential testing procedures, using either evidence ratios computed
 from WAIC or LOOIC with pseudo-BMA weights or Bayes Factors, for an independent
 two-groups comparison as a function of sample size and standardized mean
 difference (Cohen's d). Bayes Factors are computed either via the Savage-Dickey
-method or via bridge sampling.
+method (BF_SD) or via bridge sampling (BF_BS).
 }
 \examples{
 \dontrun{
-sim <- compER(cohensd = 0, nmin = 20, nmax = 30, boundary = 20, B = 8, cores = 4)
+sim <- compER(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 20, cores = 4)
 plot(sim)
 }
 
