@@ -18,7 +18,6 @@
 #'
 #' @importFrom stats lm rnorm update runif
 # @importFrom Rcpp cpp_object_initializer
-#' @importFrom utils setTxtProgressBar
 #' @importFrom magrittr %>%
 #' @importFrom tidyr gather_
 #' @import doParallel
@@ -96,8 +95,6 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
     # THE simulation
     ##############################
 
-    pb <- txtProgressBar(0, round(B / getDoParWorkers() ), style = 3)
-
     sim <-
         foreach(batch = 1:getDoParWorkers(), .combine = rbind,
             .packages = c("brms", "Rcpp", "dplyr", "magrittr", "rstan", "stats") ) %dopar% {
@@ -113,8 +110,6 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
 
         # run max_b iterations in each parallel worker
         for (b in 1:max_b) {
-
-            setTxtProgressBar(pb, b)
 
             # Draw a new maximum sample at each step
             x <- cbind(rnorm(nmax / 2, 0, 1), rep(-0.5, nmax / 2) )
@@ -184,10 +179,10 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
                         BF_BS = BF_BS
                         )
 
-                # if boundary is hit: stop sampling in this trajectory
-                # if (abs(logBF) >= log(boundary) ) {break;}
-
             } # end of i
+
+            # analysing boundary hits...
+            # if (abs(log(WAIC_ER) ) >= log(boundary) ) {break;}
 
             res[res.counter:(res.counter + nrow(res0) - 1), ] <- res0
             res.counter <- res.counter + nrow(res0)

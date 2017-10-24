@@ -71,7 +71,7 @@ ictab <- function(ic, ... ) {
         res$mod_lik <- exp(-0.5 * res$delta_ic)
         res$ic_wt <- res$mod_lik / sum(res$mod_lik)
 
-    } else if (identical(ic, WAIC) | identical(ic, LOO) ) {
+    } else {
 
         res$ic <- unlist(lapply(mods, function(x) ic(x)[[3]]) )
         res$p_ic <- unlist(lapply(mods, function(x) ic(x)[[2]]) )
