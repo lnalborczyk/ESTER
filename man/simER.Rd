@@ -4,14 +4,14 @@
 \alias{simER}
 \title{Simulates a sequential testing with evidence ratios for independent two-groups comparisons}
 \usage{
-simER(cohensd, nmin, n, ic = bic, plot = TRUE)
+simER(cohensd, nmin, nmax, ic = bic, plot = TRUE)
 }
 \arguments{
 \item{cohensd}{Expected effect size}
 
 \item{nmin}{Minimum sample size from which start computing ERs}
 
-\item{n}{Total sample size}
+\item{nmax}{Total sample size}
 
 \item{ic}{Indicates whether to use the aic or the bic.}
 
@@ -23,10 +23,10 @@ comparisons, as a function of sample size and standardized mean difference
 (Cohen's d).
 }
 \examples{
-simER(cohensd = 0.6, nmin = 20, n = 200, ic = aic, plot = TRUE)
-simER(cohensd = 0, nmin = 20, n = 200, ic = bic, plot = TRUE)
+simER(cohensd = 0.6, nmin = 20, nmax = 200, ic = aic, plot = TRUE)
+simER(cohensd = 0, nmin = 20, nmax = 200, ic = bic, plot = TRUE)
 
-\dontrun{simER(cohensd = 0, nmin = 20, n = 60, ic = LOO, plot = TRUE)}
+\dontrun{simER(cohensd = 0, nmin = 20, nmax = 60, ic = LOO, plot = TRUE)}
 
 }
 \seealso{

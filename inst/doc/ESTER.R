@@ -1,16 +1,17 @@
 ## ----echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5----
 library(ESTER)
-ER <- simER(cohensd = 0.6, nmin = 20, n = 100, ic = bic, plot = TRUE)
+ER <- simER(cohensd = 0.6, nmin = 20, nmax = 100, ic = bic, plot = TRUE)
 
 ## ----echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 7.5----
-ER <- distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100, ic = bic)
+ER <- distER(cohensd = 0.6, nmin = 20, nmax = 100, nsims = 100, ic = bic)
 
 ## ----echo = TRUE, eval = TRUE--------------------------------------------
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
 mod3 <- lm(mpg ~ cyl * disp, mtcars)
-ictab(aic, mod1, mod2, mod3)
+mods <- list(m1 = mod1, m2 = mod2, m3 = mod3)
+ictab(mods, aic)
 
 ## ----echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"----
 data(mtcars)

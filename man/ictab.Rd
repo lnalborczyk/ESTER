@@ -4,16 +4,19 @@
 \alias{ictab}
 \title{Computes Akaike weights or pseudo-BMA weights for a set of models}
 \usage{
-ictab(ic, ...)
+ictab(mods, ic, ...)
 }
 \arguments{
+\item{mods}{Should be a named list of models, of class \code{lm}, \code{merMod} or
+\code{brmsfit}.}
+
 \item{ic}{Indicates which information criterion to use. Current supported
 information criteria include \code{aic} and \code{bic} for \code{lm} and
 \code{merMod} models, as well as \code{WAIC} and \code{LOO} for
 \code{brmsfit} models.}
 
-\item{...}{A set of models of class \code{lm}, \code{merMod} or
-\code{brmsfit}.}
+\item{...}{Additional parameters to be passed to \code{brms::WAIC} or
+\code{brms::LOO} functions.}
 }
 \description{
 Returns a table with weights of a set of models, based on various
@@ -23,18 +26,20 @@ or \code{merMod} models, as well as the computation of pseudo-BMA weights,
 computed from the WAIC or LOOIC of \code{brmsfit} models.
 }
 \examples{
+library(ESTER)
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + vs, mtcars)
 mod3 <- lm(mpg ~ cyl + vs + I(vs^2), mtcars)
 mod4 <- lm(mpg ~ cyl * vs, mtcars)
-ictab(aic, mod1, mod2, mod3, mod4)
-ictab(bic, mod1, mod2, mod3, mod4)
+mods <- list(mod1 = mod1, mod2 = mod2, mod3 = mod3, mod4 = mod4)
+ictab(mods, aic)
+ictab(mods, bic)
 
 \dontrun{
-mod1 <- brm(mpg ~ cyl, mtcars)
-mod2 <- brm(mpg ~ cyl + vs, mtcars)
-ictab(LOO, mod1, mod2)
+library(brms)
+mods <- list(m1 = mod1, m2 = mod2)
+ictab(mods, LOO, reloo = TRUE, k_threshold = 0.6, cores = 2)
 }
 
 }

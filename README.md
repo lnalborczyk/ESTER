@@ -9,10 +9,17 @@ The `ESTER` package implements sequential testing based on evidence ratios compu
 Installation
 ------------
 
-You can install `ESTER` from the console with:
+To install the latest version from CRAN you can use
 
 ``` r
 install.packages("ESTER")
+```
+
+Or the development version can be installed with
+
+``` r
+if (!require("devtools") ) install.packages("devtools")
+devtools::install_github("lnalborczyk/ESTER", dependencies = TRUE)
 ```
 
 Different questions
@@ -29,13 +36,13 @@ This first function runs a simulated study in which we compare two independant g
 
 ``` r
 library(ESTER)
-simER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, plot = TRUE)
+simER(cohensd = 0.6, nmin = 20, nmax = 100, ic = aic, plot = TRUE)
 ```
 
 We also can study the distribution of evidence ratios for `nSims` simulations ran with the previous function using `distER`.
 
 ``` r
-distER(cohensd = 0.6, nmin = 20, n = 100, ic = aic, nsims = 100)
+distER(cohensd = 0.6, nmin = 20, nmax = 100, ic = aic, nsims = 100)
 ```
 
 Observed data

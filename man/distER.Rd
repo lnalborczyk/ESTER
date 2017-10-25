@@ -4,14 +4,14 @@
 \alias{distER}
 \title{Simulates many sequential evidence ratios to obtain their distribution}
 \usage{
-distER(cohensd, nmin, n, nsims, ic = bic)
+distER(cohensd, nmin, nmax, nsims, ic = bic)
 }
 \arguments{
 \item{cohensd}{Expected effect size}
 
 \item{nmin}{Minimum sample size from which start computing ERs}
 
-\item{n}{Total sample size}
+\item{nmax}{Total sample size}
 
 \item{nsims}{Number of experiments to simulate.}
 
@@ -22,7 +22,7 @@ Simulates many sequential evidence ratios using \code{simER}, keeps the last
 of each simulation, and plots their distribution.
 }
 \examples{
-\dontrun{distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100, ic = bic)}
+\dontrun{distER(cohensd = 0.6, nmin = 20, nmax = 100, nsims = 100, ic = bic)}
 
 }
 \seealso{

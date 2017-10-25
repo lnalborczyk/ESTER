@@ -7,7 +7,7 @@
 #' @param nsims Number of experiments to simulate.
 #'
 #' @examples
-#' \dontrun{distER(cohensd = 0.6, nmin = 20, n = 100, nsims = 100, ic = bic)}
+#' \dontrun{distER(cohensd = 0.6, nmin = 20, nmax = 100, nsims = 100, ic = bic)}
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
@@ -15,13 +15,13 @@
 #'
 #' @export
 
-distER <- function(cohensd, nmin, n, nsims, ic = bic) {
+distER <- function(cohensd, nmin, nmax, nsims, ic = bic) {
 
     ER <- vector(mode = "numeric", length = nsims)
 
     for (i in 1:nsims) {
 
-        ER[i] <- tail(simER(cohensd, nmin, n, ic, plot = FALSE), 1)
+        ER[i] <- tail(simER(cohensd, nmin, nmax, ic, plot = FALSE), 1)
 
     }
 

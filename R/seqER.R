@@ -137,7 +137,7 @@ seqER <- function(ic, mod1, mod2, nmin, id = NULL) {
 
         }
 
-        tabtab <- ictab(ic, mod1, mod2)
+        tabtab <- ictab(list(mod1 = mod1, mod2 = mod2), ic)
 
         temp_er <- data.frame(cbind(data$ppt[i],
             tabtab$ic_wt[tabtab$modnames == "mod2"] /

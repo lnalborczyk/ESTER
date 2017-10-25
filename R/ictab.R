@@ -6,30 +6,34 @@
 #' or \code{merMod} models, as well as the computation of pseudo-BMA weights,
 #' computed from the WAIC or LOOIC of \code{brmsfit} models.
 #'
+#' @param mods Should be a named list of models, of class \code{lm}, \code{merMod} or
+#' \code{brmsfit}.
 #' @param ic Indicates which information criterion to use. Current supported
 #' information criteria include \code{aic} and \code{bic} for \code{lm} and
 #' \code{merMod} models, as well as \code{WAIC} and \code{LOO} for
 #' \code{brmsfit} models.
-#' @param ... A set of models of class \code{lm}, \code{merMod} or
-#' \code{brmsfit}.
+#' @param ... Additional parameters to be passed to \code{brms::WAIC} or
+#' \code{brms::LOO} functions.
 #'
 #' @importFrom stats as.formula logLik
 #' @importFrom rlang dots_list
 #' @importFrom brms WAIC LOO
 #'
 #' @examples
+#' library(ESTER)
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + vs, mtcars)
 #' mod3 <- lm(mpg ~ cyl + vs + I(vs^2), mtcars)
 #' mod4 <- lm(mpg ~ cyl * vs, mtcars)
-#' ictab(aic, mod1, mod2, mod3, mod4)
-#' ictab(bic, mod1, mod2, mod3, mod4)
+#' mods <- list(mod1 = mod1, mod2 = mod2, mod3 = mod3, mod4 = mod4)
+#' ictab(mods, aic)
+#' ictab(mods, bic)
 #'
 #' \dontrun{
-#' mod1 <- brm(mpg ~ cyl, mtcars)
-#' mod2 <- brm(mpg ~ cyl + vs, mtcars)
-#' ictab(LOO, mod1, mod2)
+#' library(brms)
+#' mods <- list(m1 = mod1, m2 = mod2)
+#' ictab(mods, LOO, reloo = TRUE, k_threshold = 0.6, cores = 2)
 #' }
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
@@ -49,10 +53,9 @@
 #'
 #' @export
 
-ictab <- function(ic, ... ) {
+ictab <- function(mods, ic, ... ) {
 
-    mods <- dots_list(...)
-    modnames <- unlist(lapply(eval(substitute(alist(...) ) ), deparse) )
+    modnames <- names(lapply(mods, function(x) deparse(substitute(x) ) ) )
 
     check.resp <-
         lapply(mods, FUN = function(x) as.formula(formula(x) )[[2]] )
@@ -71,17 +74,18 @@ ictab <- function(ic, ... ) {
         res$mod_lik <- exp(-0.5 * res$delta_ic)
         res$ic_wt <- res$mod_lik / sum(res$mod_lik)
 
-    } else {
+    } else if (identical(ic, WAIC) | identical(ic, LOO) ) {
 
-        res$ic <- unlist(lapply(mods, function(x) ic(x)[[3]]) )
-        res$p_ic <- unlist(lapply(mods, function(x) ic(x)[[2]]) )
-        res$elpd <- unlist(lapply(mods, function(x) ic(x)[[1]]) )
+        res$ic <- unlist(lapply(mods, function(x) ic(x, ...)[[3]]) )
+        res$p_ic <- unlist(lapply(mods, function(x) ic(x, ...)[[2]]) )
+        res$elpd <- unlist(lapply(mods, function(x) ic(x, ...)[[1]]) )
         res$un_wt <- exp(res$elpd - max(res$elpd) )
         res$ic_wt <- res$un_wt / sum(res$un_wt)
 
     }
 
     res <- res[rev(order(res$ic_wt) ), ]
+    res[, 2:6] <- sapply(res[, 2:6], round, 4)
 
     return(res[, -5])
 
