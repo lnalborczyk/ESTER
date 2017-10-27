@@ -18,6 +18,13 @@ information criteria include \code{aic} and \code{bic} for \code{lm} and
 \item{...}{Additional parameters to be passed to \code{brms::WAIC} or
 \code{brms::LOO} functions.}
 }
+\value{
+An object of class \code{data.frame}, which contains the value of the
+information criterion (either AIC, BIC, WAIC or LOOIC), the number of parameters
+(k for AIC and BIC or p for WAIC or LOOIC), the delta_IC (for AIC and BIC) or the
+elpd for models compared with WAIC or LOOIC, and the weight of each
+model (Akaike weights for AIC or BIC and pseudo-BMA weight for WAIC or LOOIC).
+}
 \description{
 Returns a table with weights of a set of models, based on various
 information criteria. Currently, \code{ictab} supports the computation of
@@ -38,6 +45,8 @@ ictab(mods, bic)
 
 \dontrun{
 library(brms)
+mod1 <- brm(mpg ~ cyl, mtcars)
+mod2 <- brm(mpg ~ cyl + vs, mtcars)
 mods <- list(m1 = mod1, m2 = mod2)
 ictab(mods, LOO, reloo = TRUE, k_threshold = 0.6, cores = 2)
 }

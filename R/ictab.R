@@ -15,6 +15,12 @@
 #' @param ... Additional parameters to be passed to \code{brms::WAIC} or
 #' \code{brms::LOO} functions.
 #'
+#' @return An object of class \code{data.frame}, which contains the value of the
+#' information criterion (either AIC, BIC, WAIC or LOOIC), the number of parameters
+#' (k for AIC and BIC or p for WAIC or LOOIC), the delta_IC (for AIC and BIC) or the
+#' elpd for models compared with WAIC or LOOIC, and the weight of each
+#' model (Akaike weights for AIC or BIC and pseudo-BMA weight for WAIC or LOOIC).
+#'
 #' @importFrom stats as.formula logLik
 #' @importFrom rlang dots_list
 #' @importFrom brms WAIC LOO
@@ -32,6 +38,8 @@
 #'
 #' \dontrun{
 #' library(brms)
+#' mod1 <- brm(mpg ~ cyl, mtcars)
+#' mod2 <- brm(mpg ~ cyl + vs, mtcars)
 #' mods <- list(m1 = mod1, m2 = mod2)
 #' ictab(mods, LOO, reloo = TRUE, k_threshold = 0.6, cores = 2)
 #' }
@@ -76,9 +84,11 @@ ictab <- function(mods, ic, ... ) {
 
     } else if (identical(ic, WAIC) | identical(ic, LOO) ) {
 
-        res$ic <- unlist(lapply(mods, function(x) ic(x, ...)[[3]]) )
-        res$p_ic <- unlist(lapply(mods, function(x) ic(x, ...)[[2]]) )
-        res$elpd <- unlist(lapply(mods, function(x) ic(x, ...)[[1]]) )
+        res_list <- lapply(mods, function(x) ic(x, ...) )
+
+        res$ic <- unlist(lapply(res_list, function(x) x[[3]]) )
+        res$p_ic <- unlist(lapply(res_list, function(x) x[[2]]) )
+        res$elpd <- unlist(lapply(res_list, function(x) x[[1]]) )
         res$un_wt <- exp(res$elpd - max(res$elpd) )
         res$ic_wt <- res$un_wt / sum(res$un_wt)
 
