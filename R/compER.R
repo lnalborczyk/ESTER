@@ -142,13 +142,15 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
                     update(mod2.2, newdata = samp,
                         chains = 1, cores = 1, seed = sample(1e6, size = 1) )
 
-                model_comp <- ictab(WAIC, mod1, mod2.1)
+                mods1 <- list(mod1 = mod1, mod2.1 = mod2.1)
+                model_comp <- ictab(mods1, WAIC)
 
                 WAIC_ER <-
                     model_comp$ic_wt[model_comp$modnames == "mod2.1"] /
                     model_comp$ic_wt[model_comp$modnames == "mod1"]
 
-                model_comp <- ictab(LOO, mod1, mod2.1)
+                mods2 <- list(mod1 = mod1, mod2.1 = mod2.1)
+                model_comp <- ictab(mods2, LOO)
 
                 LOO_ER <-
                     model_comp$ic_wt[model_comp$modnames == "mod2.1"] /
@@ -181,8 +183,30 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
 
             } # end of i
 
-            # analysing boundary hits...
-            # if (abs(log(WAIC_ER) ) >= log(boundary) ) {break;}
+            bound_hit <- function(x) {
+
+                if (any(x > boundary) ) {
+
+                    first <- which(x > boundary)[1]
+                    x[first:length(x)] <- boundary
+
+                } else if (any(x < (1 / boundary) ) ){
+
+                    first <- which(x < (1 / boundary) )[1]
+                    x[first:length(x)] <- 1 / boundary
+
+                } else{
+
+                    x <- x
+
+                }
+
+                return(x)
+
+            }
+
+            res0[, 5:8] <-
+                apply(res0[, 5:8], 2, function(x) bound_hit(x) )
 
             res[res.counter:(res.counter + nrow(res0) - 1), ] <- res0
             res.counter <- res.counter + nrow(res0)
@@ -204,14 +228,80 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
 
 #' @export
 
-plot.compER <- function(x, ... ) {
+plot.compER <- function(x, log = TRUE, ... ) {
 
-    x %>%
+    boundary <- unique(x$boundary)
+    logBoundary <- log(sort(c(boundary, 1 / boundary) ) )
+
+    bound_na <- function(x) {
+
+        if (any(x == boundary) ) {
+
+            first <- which(x == boundary)[1]
+
+            if(first < length(x) ) {
+
+                x[(first + 1):length(x)] <- NA
+
+            }
+
+        } else if (any(x == 1 / boundary) ) {
+
+            first <- which(x == 1 / boundary)[1]
+
+            if(first < length(x) ) {
+
+                x[(first + 1):length(x)] <- NA
+
+            }
+
+        } else {
+
+            x <- x
+
+        }
+
+        return(x)
+
+    }
+
+    y <-
+        x %>%
+        group_by(id) %>%
+        mutate_(
+            "WAIC_ER" = "bound_na(WAIC_ER)",
+            "LOO_ER" = "bound_na(LOO_ER)",
+            "BF_SD" = "bound_na(BF_SD)",
+            "BF_BS" = "bound_na(BF_BS)" ) %>%
+        ungroup()
+
+    .dots <- list(~log_value == abs(logBoundary[1]) )
+
+    final_point_boundary <-
+        y %>%
+        group_by(id) %>%
+        gather_("index", "value", names(x)[5:8]) %>%
+        mutate_("log_value" = "log(value)" ) %>%
+        #filter(log_value %in% logBoundary)
+        filter_(.dots = list(~log_value %in% logBoundary) )
+
+    y %>%
         gather_("index", "value", names(x)[5:8]) %>%
         ggplot(aes_string(
             x = "n", y = "value",
             group = "interaction(id, index)", colour = "index") ) +
-        geom_line(alpha = 0.6, size = 0.6) +
-        theme_bw(base_size = 12)
+        geom_line(alpha = 0.6, size = 0.6, na.rm = TRUE) +
+        geom_point(data = final_point_boundary,
+            aes_string(
+                x = "n", y = "value",
+                group = "interaction(id, index)", colour = "index"),
+            alpha = 0.6) +
+        {if(log) scale_y_log10()} +
+        {if(log) annotation_logticks(sides = "l")} +
+        theme_bw(base_size = 12) +
+        theme(panel.grid.minor.x = element_blank(), legend.title = element_blank() ) +
+        xlab("sample size") +
+        ylab(expression(ER[10] ~ - ~ BF[10]) ) +
+        scale_x_continuous(breaks = c(min(y$n):max(y$n) ) )
 
 }
