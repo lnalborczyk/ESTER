@@ -16,8 +16,11 @@
 #' @param B Number of bootstrap samples (should be dividable by cores)
 #' @param cores number of parallel processes. If cores is set tp 1, no parallel framework is used.
 #'
+#' @return An object of class \code{data.frame}, which contains the value of the
+#' evidence ratio (either WAIC_ER or LOO_ER) or the Bayes Factor (either DF_SD or BF_BS),
+#' at a specific sample size n, for each simulation id.
+#'
 #' @importFrom stats lm rnorm update runif
-# @importFrom Rcpp cpp_object_initializer
 #' @importFrom magrittr %>%
 #' @importFrom tidyr gather_
 #' @import doParallel
@@ -28,7 +31,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' sim <- compER(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 20, cores = 4)
+#' sim <- compER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, B = 20, cores = 4)
 #' plot(sim)
 #' }
 #'
@@ -233,6 +236,28 @@ plot.compER <- function(x, log = TRUE, ... ) {
     boundary <- unique(x$boundary)
     logBoundary <- log(sort(c(boundary, 1 / boundary) ) )
 
+    bound_hit <- function(x) {
+
+        if (any(x > boundary) ) {
+
+            first <- which(x > boundary)[1]
+            x[first:length(x)] <- boundary
+
+        } else if (any(x < (1 / boundary) ) ){
+
+            first <- which(x < (1 / boundary) )[1]
+            x[first:length(x)] <- 1 / boundary
+
+        } else{
+
+            x <- x
+
+        }
+
+        return(x)
+
+    }
+
     bound_na <- function(x) {
 
         if (any(x == boundary) ) {
@@ -269,10 +294,10 @@ plot.compER <- function(x, log = TRUE, ... ) {
         x %>%
         group_by(id) %>%
         mutate_(
-            "WAIC_ER" = "bound_na(WAIC_ER)",
-            "LOO_ER" = "bound_na(LOO_ER)",
-            "BF_SD" = "bound_na(BF_SD)",
-            "BF_BS" = "bound_na(BF_BS)" ) %>%
+            "WAIC_ER" = "bound_na(bound_hit(WAIC_ER))",
+            "LOO_ER" = "bound_na(bound_hit(LOO_ER))",
+            "BF_SD" = "bound_na(bound_hit(BF_SD))",
+            "BF_BS" = "bound_na(bound_hit(BF_BS))" ) %>%
         ungroup()
 
     .dots <- list(~log_value == abs(logBoundary[1]) )
@@ -282,7 +307,6 @@ plot.compER <- function(x, log = TRUE, ... ) {
         group_by(id) %>%
         gather_("index", "value", names(x)[5:8]) %>%
         mutate_("log_value" = "log(value)" ) %>%
-        #filter(log_value %in% logBoundary)
         filter_(.dots = list(~log_value %in% logBoundary) )
 
     y %>%
@@ -290,7 +314,7 @@ plot.compER <- function(x, log = TRUE, ... ) {
         ggplot(aes_string(
             x = "n", y = "value",
             group = "interaction(id, index)", colour = "index") ) +
-        geom_line(alpha = 0.6, size = 0.6, na.rm = TRUE) +
+        geom_line(alpha = 0.4, size = 0.6, na.rm = TRUE) +
         geom_point(data = final_point_boundary,
             aes_string(
                 x = "n", y = "value",
@@ -302,6 +326,17 @@ plot.compER <- function(x, log = TRUE, ... ) {
         theme(panel.grid.minor.x = element_blank(), legend.title = element_blank() ) +
         xlab("sample size") +
         ylab(expression(ER[10] ~ - ~ BF[10]) ) +
-        scale_x_continuous(breaks = c(min(y$n):max(y$n) ) )
+        #scale_x_continuous(breaks = c(min(y$n):max(y$n) ) )
+        scale_x_continuous(breaks = seq(min(y$n), max(y$n), 10 ) ) +
+        annotate(
+            "text",
+            x = max(y$n), y = boundary,
+            label = paste0(sum(final_point_boundary$value == boundary) /
+                (length(unique(y$id) ) * 4) * 100, "%") ) +
+        annotate(
+            "text",
+            x = max(y$n), y = (1 / boundary),
+            label = paste0(sum(final_point_boundary$value == (1 / boundary) ) /
+                    (length(unique(y$id) ) * 4) * 100, "%") )
 
 }

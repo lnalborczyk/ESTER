@@ -23,6 +23,11 @@ where the run is stopped as well.}
 
 \item{cores}{number of parallel processes. If cores is set tp 1, no parallel framework is used.}
 }
+\value{
+An object of class \code{data.frame}, which contains the value of the
+evidence ratio (either WAIC_ER or LOO_ER) or the Bayes Factor (either DF_SD or BF_BS),
+at a specific sample size n, for each simulation id.
+}
 \description{
 Simulates sequential testing procedures, using either evidence ratios computed
 from WAIC or LOOIC with pseudo-BMA weights or Bayes Factors, for an independent
@@ -32,7 +37,7 @@ method (BF_SD) or via bridge sampling (BF_BS).
 }
 \examples{
 \dontrun{
-sim <- compER(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 20, cores = 4)
+sim <- compER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, B = 20, cores = 4)
 plot(sim)
 }
 
