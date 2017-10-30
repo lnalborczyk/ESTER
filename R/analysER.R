@@ -14,7 +14,7 @@
 #' of the upper boundary, and the percentage of trajectories that did not hit
 #' none of the boundaries.
 #'
-#' @importFrom stats sd
+#' @importFrom stats sd na.omit
 #' @import dplyr
 #'
 #' @examples
@@ -105,17 +105,33 @@ analysER <- function(sim) {
             "BF_BS" = "bound_na(bound_hit(BF_BS))" ) %>%
         ungroup()
 
-    .dots <- list(~log_value == abs(logBoundary[1]) )
-
-    final_point_boundary <-
+    nmax.hit <-
         sim2 %>%
         group_by(id) %>%
         gather_("index", "value", names(sim2)[5:8]) %>%
         mutate_("log_value" = "log(value)" ) %>%
-        filter_(.dots = list(~log_value %in% logBoundary) )
+        #filter(n == max(n),
+        #    max(log_value, na.rm = TRUE) <= logBoundary[2] &
+        #        min(log_value, na.rm = TRUE) >= logBoundary[1]) %>%
+        filter_(.dots = list(~n == max(n) ) ) %>%
+            #~(max(log_value, na.rm = TRUE) <= logBoundary[2] &
+            #    min(log_value, na.rm = TRUE) >= logBoundary[1]) ) ) %>%
+        mutate(hitCondition = "nmax") %>%
+        na.omit()
+
+    boundary.hit <-
+        sim2 %>%
+        group_by(id) %>%
+        gather_("index", "value", names(sim2)[5:8]) %>%
+        mutate_("log_value" = "log(value)" ) %>%
+        filter_(.dots = list(~log_value %in% logBoundary) ) %>%
+        mutate(hitCondition = "boundary") %>%
+        na.omit()
+
+    endpoint <- bind_rows(nmax.hit, boundary.hit)
 
     res <-
-        final_point_boundary %>%
+        endpoint %>%
         group_by_("index") %>%
         summarise_(
             "ASN" = "mean(n)",
