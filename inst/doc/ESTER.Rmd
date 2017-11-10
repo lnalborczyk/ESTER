@@ -91,7 +91,7 @@ On the other hand, `ESTER` is also designed to run sequential analyses on observ
 
 This `simER` function runs a simulated study in which we compare two independant groups, for various effect size and sample size. The `nmin` argument serves to specify from which participant we want to start doing sequential testing (we usually recommend to avoid `nmin` < 10).
 
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5}
+```{r echo = TRUE, eval = TRUE, message = FALSE, fig.align = "center", fig.height = 5, fig.width = 5}
 library(ESTER)
 sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic, cores = 2)
 plot(sim, log = TRUE, hist = TRUE)

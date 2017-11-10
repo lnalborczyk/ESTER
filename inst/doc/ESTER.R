@@ -1,4 +1,4 @@
-## ----echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5----
+## ----echo = TRUE, eval = TRUE, message = FALSE, fig.align = "center", fig.height = 5, fig.width = 5----
 library(ESTER)
 sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic, cores = 2)
 plot(sim, log = TRUE, hist = TRUE)

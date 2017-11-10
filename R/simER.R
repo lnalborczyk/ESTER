@@ -18,13 +18,13 @@
 #'
 #' @return An object of class \code{data.frame}, which contains...
 #'
+#' @importFrom cowplot ggdraw insert_xaxis_grob insert_yaxis_grob
 #' @importFrom magrittr %>% set_names
 #' @importFrom stats lm rnorm runif
 #' @importFrom tidyr gather_
 #' @import doParallel
 #' @import foreach
 #' @import ggplot2
-#' @import cowplot
 #' @import dplyr
 #'
 #' @examples
@@ -296,11 +296,12 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
                 limits = c(n_xlim[1] - 2, n_xlim[2]), expand = c(0.025, 0)
                 )
 
-        pLow <-
-            ggplot(lower_boundary_hit, aes_string(x = "n") ) +
-            geom_density() +
-            coord_flip() +
-            theme_bw(base_size = 12)
+        # pLow <-
+        #     ggplot(lower_boundary_hit, aes_string(x = "n") ) +
+        # geom_histogram() +
+        #     scale_x_continuous(
+        #        limits = c(n_xlim[1] - 2, n_xlim[2]), expand = c(0.025, 0)
+        #     )
 
         pRight <-
             ggplot(nmax, aes_string(x = "ER") ) +
@@ -311,26 +312,26 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
         if (nrow(upper_boundary_hit) > 0 & nrow(nmax) > 0 ) {
 
             p1 <-
-                cowplot::insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
 
             p2 <-
-                cowplot::insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
+                insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
 
         ggdraw(p2)
 
         } else if (nrow(upper_boundary_hit) > 0) {
 
             p1 <-
-                cowplot::insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
 
-            cowplot::ggdraw(p1)
+            ggdraw(p1)
 
         } else if (nrow(nmax) > 0 ) {
 
             p1 <-
-                cowplot::insert_yaxis_grob(pMain, pRight, unit(.2, "null"), position = "right")
+                insert_yaxis_grob(pMain, pRight, unit(.2, "null"), position = "right")
 
-            cowplot::ggdraw(p1)
+            ggdraw(p1)
 
         }
 
