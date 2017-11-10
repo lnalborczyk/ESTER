@@ -36,13 +36,7 @@ This first function runs a simulated study in which we compare two independant g
 
 ``` r
 library(ESTER)
-simER(cohensd = 0.6, nmin = 20, nmax = 100, ic = aic, plot = TRUE)
-```
-
-We also can study the distribution of evidence ratios for `nSims` simulations ran with the previous function using `distER`.
-
-``` r
-distER(cohensd = 0.6, nmin = 20, nmax = 100, ic = aic, nsims = 100)
+simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic)
 ```
 
 Observed data

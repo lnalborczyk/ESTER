@@ -93,16 +93,11 @@ This `simER` function runs a simulated study in which we compare two independant
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5}
 library(ESTER)
-ER <- simER(cohensd = 0.6, nmin = 20, nmax = 100, ic = bic, plot = TRUE)
+sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic, cores = 2)
+plot(sim, log = TRUE, hist = TRUE)
 ```
 
-We also can study the distribution of evidence ratios for `nsims` simulations ran with the previous function using `distER`.
-
-```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 7.5}
-ER <- distER(cohensd = 0.6, nmin = 20, nmax = 100, nsims = 100, ic = bic)
-```
-
-Under the hood, `simER` and `distER` use the `ictab` function, which allows to compare a set of models fitted to the same data. This function returns either the AIC or the BIC of each model, along with the number of parameters $k$ and the Akaike weights^[Bonus: `ictab` can also be used to compare `brmsfit` models with pseudo-BMA weights, based on the `brms::WAIC` and `brms::LOO` functions.].
+Under the hood, `simER` uses the `ictab` function, which allows to compare a set of models fitted to the same data. This function returns either the AIC or the BIC of each model, along with the number of parameters $k$ and the Akaike weights^[Bonus: `ictab` can also be used to compare `brmsfit` models with pseudo-BMA weights, based on the `brms::WAIC` and `brms::LOO` functions.].
 
 ```{r echo = TRUE, eval = TRUE}
 data(mtcars)

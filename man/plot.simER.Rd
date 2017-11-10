@@ -7,10 +7,14 @@
 \method{plot}{simER}(x, log = TRUE, hist = FALSE, ...)
 }
 \arguments{
+\item{x}{Should be a simER object}
+
 \item{log}{Should the y-axis be log-transformed ?}
 
 \item{hist}{Should plot the histogram of simulations hitting either the upper
 boundary or stopping at nmax ?}
+
+\item{...}{Additional parameters to be passed to plot}
 }
 \description{
 Plotting the results of \code{simER}...

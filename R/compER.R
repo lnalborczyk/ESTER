@@ -39,7 +39,7 @@
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
-#' @seealso \code{\link{simER}}, \code{\link{distER}}
+#' @seealso \code{\link{simER}}
 #'
 #' @export
 

@@ -18,25 +18,26 @@
 #'
 #' @return An object of class \code{data.frame}, which contains...
 #'
+#' @importFrom magrittr %>% set_names
 #' @importFrom stats lm rnorm runif
-#' @importFrom magrittr %>%
 #' @importFrom tidyr gather_
 #' @import doParallel
 #' @import foreach
 #' @import ggplot2
+#' @import cowplot
 #' @import dplyr
 #'
 #' @examples
+#' \dontrun{
 #' sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic)
 #' plot(sim, log = TRUE, hist = TRUE)
+#' }
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
-#' @seealso \code{\link{distER}}
+#' @seealso \code{\link{ictab}}
 #'
 #' @export
-
-#devtools::install_github("wilkelab/cowplot")
 
 simER <- function(
     cohensd = 0, nmin = 20, nmax = 100, boundary = 10,
@@ -157,9 +158,11 @@ simER <- function(
 #'
 #' Plotting the results of \code{simER}...
 #'
+#' @param x Should be a simER object
 #' @param log Should the y-axis be log-transformed ?
 #' @param hist Should plot the histogram of simulations hitting either the upper
 #' boundary or stopping at nmax ?
+#' @param ... Additional parameters to be passed to plot
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
@@ -277,14 +280,6 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
         theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank(),
             legend.title = element_blank() ) +
-        # {if (nrow(final_point_boundary) > 0) annotate(
-        #     "text", x = max(y$n) + 2, y = boundary,
-        #     label = paste0(sum(final_point_boundary$ER == boundary) /
-        #             (length(unique(y$id) ) ) * 100, "%") )} +
-        # {if (nrow(final_point_boundary) > 0) annotate(
-        #     "text", x = max(y$n) + 2, y = (1 / boundary),
-        #     label = paste0(sum(final_point_boundary$ER == (1 / boundary) ) /
-        #             (length(unique(y$id) ) ) * 100, "%") )} +
         {if (nrow(final_point_boundary) > 0) geom_hline(yintercept = boundary, lty = 2)} +
         {if (nrow(final_point_boundary) > 0) geom_hline(yintercept = 1 / boundary, lty = 2)} +
         xlab("Sample size") +
@@ -295,47 +290,48 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
         n_xlim <- layer_scales(pMain)$x$range$range
 
         pTop <-
-            ggplot(upper_boundary_hit, aes(x = n) ) +
+            ggplot(upper_boundary_hit, aes_string(x = "n") ) +
             geom_histogram() +
             scale_x_continuous(
                 limits = c(n_xlim[1] - 2, n_xlim[2]), expand = c(0.025, 0)
                 )
 
         pLow <-
-            ggplot(lower_boundary_hit, aes(x = n) ) +
+            ggplot(lower_boundary_hit, aes_string(x = "n") ) +
             geom_density() +
             coord_flip() +
             theme_bw(base_size = 12)
 
         pRight <-
-            ggplot(nmax, aes(x = ER) ) +
+            ggplot(nmax, aes_string(x = "ER") ) +
             geom_histogram() +
             coord_flip() +
             scale_x_log10(limits = c(1 / boundary, boundary) )
 
-        if (nrow(upper_boundary_hit) > 0) {
+        if (nrow(upper_boundary_hit) > 0 & nrow(nmax) > 0 ) {
 
             p1 <-
-                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
-
-            ggdraw(p1)
-
-        } else if (nrow(lower_boundary_hit) > 0 ) {
-
-            p1 <-
-                insert_yaxis_grob(pMain, pRight, unit(.2, "null"), position = "right")
-
-            ggdraw(p1)
-
-        } else if (nrow(lower_boundary_hit) > 0 & nrow(upper_boundary_hit) > 0 ) {
-
-            p1 <-
-                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+                cowplot::insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
 
             p2 <-
-                insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
+                cowplot::insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
 
-            ggdraw(p2)
+        ggdraw(p2)
+
+        } else if (nrow(upper_boundary_hit) > 0) {
+
+            p1 <-
+                cowplot::insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+
+            cowplot::ggdraw(p1)
+
+        } else if (nrow(nmax) > 0 ) {
+
+            p1 <-
+                cowplot::insert_yaxis_grob(pMain, pRight, unit(.2, "null"), position = "right")
+
+            cowplot::ggdraw(p1)
+
         }
 
     } else {

@@ -36,12 +36,14 @@ Evidence ratios are computed from the so-called Akaike weights from
 either the Akaike Information Criterior or the Bayesian Information Criterion.
 }
 \examples{
-sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 20, ic = bic)
+\dontrun{
+sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic)
 plot(sim, log = TRUE, hist = TRUE)
+}
 
 }
 \seealso{
-\code{\link{distER}}
+\code{\link{ictab}}
 }
 \author{
 Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>

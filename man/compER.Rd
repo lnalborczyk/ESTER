@@ -46,7 +46,7 @@ plot(sim)
 
 }
 \seealso{
-\code{\link{simER}}, \code{\link{distER}}
+\code{\link{simER}}
 }
 \author{
 Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>
