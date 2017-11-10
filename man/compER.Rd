@@ -6,8 +6,8 @@
 from WAIC or LOOIC with pseudo-BMA weights or Bayes Factors, for an independent
 two-groups comparison}
 \usage{
-compER(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12,
-  cores = 2)
+compER(cohensd = 0, nmin = 20, nmax = 100, boundary = 20,
+  prior = "normal(0, 5)", B = 20, cores = 2)
 }
 \arguments{
 \item{cohensd}{Expected effect size}
@@ -16,12 +16,15 @@ compER(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12,
 
 \item{nmax}{Maximum sample size}
 
-\item{boundary}{The Evidence Ratio or the Bayes Factor (resp. its reciprocal)
-where the run is stopped as well.}
+\item{boundary}{The Evidence Ratio or the Bayes Factor (or its reciprocal)
+to which the run is stopped as well}
+
+\item{prior}{The prior that sould be placed on the slope. This will strongly
+influence the Bayes Factor computed using the Savage-Dickey method (BF_SD).}
 
 \item{B}{Number of bootstrap samples (should be dividable by cores)}
 
-\item{cores}{number of parallel processes. If cores is set tp 1, no parallel framework is used.}
+\item{cores}{Number of parallel processes. If cores is set to 1, no parallel framework is used.}
 }
 \value{
 An object of class \code{data.frame}, which contains the value of the

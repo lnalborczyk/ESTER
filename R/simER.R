@@ -1,26 +1,34 @@
-#' Simulates a sequential testing with evidence ratios for independent two-groups comparisons
+#' Simulates sequential testing with evidence ratios
 #'
-#' Simulates a sequential testing with evidence ratios for independent two-groups
-#' comparisons, as a function of sample size and standardized mean difference
-#' (Cohen's d).
+#' Simulates one or many sequential testing with evidence ratios from independent two-groups
+#' comparisons, as a function of sample size and standardized mean difference.
+#' Evidence ratios are computed from the so-called Akaike weights from
+#' either the Akaike Information Criterior or the Bayesian Information Criterion.
 #'
-#' @param ic Indicates whether to use the aic or the bic.
 #' @param cohensd Expected effect size
 #' @param nmin Minimum sample size from which start computing ERs
-#' @param nmax Total sample size
-#' @param plot If TRUE, produces a plot of the evolution of the ERs
+#' @param nmax Maximum sample size at which stop computing ERs
+#' @param boundary The Evidence Ratio (or its reciprocal) at which
+#' the run is stopped as well
+#' @param nsims Number of simulated samples (should be dividable by cores)
+#' @param ic Indicates whether to use the aic or the bic
+#' @param cores Number of parallel processes. If cores is set to 1, no parallel framework is used.
+#' By default recruits all availble cores with \code{parallel::detectCores()}.
+#' @param verbose Show output about progress
 #'
-#' @importFrom magrittr %>% set_names
-#' @importFrom stats lm rnorm update
-#' @importFrom brms brm WAIC LOO
+#' @return An object of class \code{data.frame}, which contains...
+#'
+#' @importFrom stats lm rnorm runif
+#' @importFrom magrittr %>%
+#' @importFrom tidyr gather_
+#' @import doParallel
+#' @import foreach
 #' @import ggplot2
 #' @import dplyr
 #'
 #' @examples
-#' simER(cohensd = 0.6, nmin = 20, nmax = 200, ic = aic, plot = TRUE)
-#' simER(cohensd = 0, nmin = 20, nmax = 200, ic = bic, plot = TRUE)
-#'
-#' \dontrun{simER(cohensd = 0, nmin = 20, nmax = 60, ic = LOO, plot = TRUE)}
+#' sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic)
+#' plot(sim, log = TRUE, hist = TRUE)
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
@@ -28,7 +36,11 @@
 #'
 #' @export
 
-simER <- function(cohensd, nmin, nmax, ic = bic, plot = TRUE) {
+#devtools::install_github("wilkelab/cowplot")
+
+simER <- function(
+    cohensd = 0, nmin = 20, nmax = 100, boundary = 10,
+    nsims = 20, ic = bic, cores = parallel::detectCores(), verbose = TRUE) {
 
     if (nmin == 0) {
 
@@ -42,78 +54,294 @@ simER <- function(cohensd, nmin, nmax, ic = bic, plot = TRUE) {
 
     }
 
-    if (nmin < 10) {
+    if (nsims %% cores != 0) {
 
-        warning("nmin should usually be set above 10...")
+        stop("nsims should be dividable by cores")
 
     }
 
-    x <- cbind(rnorm(nmax, 0, 1), rep("x", nmax) )
-    y <- cbind(rnorm(nmax, cohensd, 1), rep("y", nmax) )
+    start <- Sys.time()
+    print(paste0("Simulation started at ", start) )
 
-    df_pop <-
-        rbind(y, x) %>%
-        as.data.frame %>%
-        set_names(c("value", "group") ) %>%
-        mutate_(value = ~value %>% as.character %>% as.numeric) %>%
-        sample_n(nrow(.) )
+    flush.console()
+    registerDoParallel(cores = cores)
 
-    ER_comp <- numeric()
+    ################################################
+    # THE simulation
+    ##############################
 
-    if (identical(ic, aic) | identical(ic, bic) ) {
+    sim <-
+        foreach(
+            batch = 1:getDoParWorkers(), .combine = rbind) %dopar% {
+            #.packages = c("Rcpp", "dplyr", "magrittr", "stats")
 
-        for (i in nmin:nmax) {
+            max_b <- round(nsims / getDoParWorkers() )
+            res.counter <- 1
 
-            mod1 <- lm(value ~ 1, data = df_pop[1:i, ] )
-            mod2 <- lm(value ~ group, data = df_pop[1:i, ] )
+            # res saves the statistics at each step
+            res <- matrix(NA, nrow = length(nmin:nmax) * max_b, ncol = 5,
+                dimnames = list(NULL, c("id", "true.ES", "boundary", "n", "ER") ) )
 
-            model_comp <- ictab(list(mod1 = mod1, mod2 = mod2), ic)
+            # run max_b iterations in each parallel worker
+            for (b in 1:max_b) {
 
-            ER_comp[i] <-
-                model_comp$ic_wt[model_comp$modnames == "mod2"] /
-                model_comp$ic_wt[model_comp$modnames == "mod1"]
+                # Draw a new maximum sample at each step
+                x <- cbind(rnorm(nmax / 2, 0, 1), rep(-0.5, nmax / 2) )
+                y <- cbind(rnorm(nmax / 2, cohensd, 1), rep(0.5, nmax / 2) )
+
+                df_pop <-
+                    rbind(y, x) %>%
+                    as.data.frame %>%
+                    set_names(c("value", "group") ) %>%
+                    sample_n(nrow(.) )
+
+                if (verbose == TRUE)
+                    print(paste0(Sys.time(), ": batch = ", batch, "; true.ES = ",
+                        round(cohensd, 2),
+                        "; Rep = ", b, "/", round(nsims / getDoParWorkers() ) ) )
+
+                # res0 keeps the accumulating sample variables from this specific run
+                res0 <- matrix(NA, nrow = length(nmin:nmax), ncol = ncol(res),
+                    dimnames = dimnames(res) )
+
+                # increase sample size up to nmax
+                for (i in nmin:nmax) {
+
+                    samp <- df_pop[1:i, ]
+
+                    mod1 <- lm(value ~ 1, data = samp)
+                    mod2 <- lm(value ~ group, data = samp)
+
+                    mods <- list(mod1 = mod1, mod2 = mod2)
+                    model_comp <- ictab(mods, ic)
+
+                    ER <-
+                        model_comp$ic_wt[model_comp$modnames == "mod2"] /
+                        model_comp$ic_wt[model_comp$modnames == "mod1"]
+
+                    res0[which(nmin:nmax == i), ] <-
+                        c(
+                            # id is a unique id for each trajectory
+                            id = batch * 10^(floor(log(max_b, base = 10) ) + 2) + b,
+                            true.ES	= cohensd,
+                            boundary = boundary,
+                            n = i,
+                            ER = ER
+                        )
+
+                } # end of i
+
+                res[res.counter:(res.counter + nrow(res0) - 1), ] <- res0
+                res.counter <- res.counter + nrow(res0)
+
+            } # end of b's
+
+            batch <- NULL
+            return(res)
+
+        } # end of %dopar%
+
+    res <- data.frame(sim, stringsAsFactors = FALSE)
+    class(res) <- c("simER", "data.frame")
+
+    end <- Sys.time()
+    print(paste0("Simulation finished at ", end) )
+    cat("Duration: ")
+    print(end - start)
+
+    return(res)
+
+}
+
+#' Plotting the results of \code{simER}
+#'
+#' Plotting the results of \code{simER}...
+#'
+#' @param log Should the y-axis be log-transformed ?
+#' @param hist Should plot the histogram of simulations hitting either the upper
+#' boundary or stopping at nmax ?
+#'
+#' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
+#'
+#' @export
+
+plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
+
+    boundary <- unique(x$boundary)
+    logBoundary <- log(sort(c(boundary, 1 / boundary) ) )
+
+    bound_hit <- function(x) {
+
+        if (any(x > boundary) ) {
+
+            first <- which(x > boundary)[1]
+            x[first:length(x)] <- boundary
+
+        } else if (any(x < (1 / boundary) ) ){
+
+            first <- which(x < (1 / boundary) )[1]
+            x[first:length(x)] <- 1 / boundary
+
+        } else{
+
+            x <- x
 
         }
 
-    } else if (identical(ic, WAIC) | identical(ic, LOO) ) {
+        return(x)
 
-        mod1 <- brm(value ~ 1, data = df_pop[1:nmin, ] )
-        mod2 <- brm(value ~ group, data = df_pop[1:nmin, ] )
+    }
 
-        model_comp <- ictab(list(mod1 = mod1, mod2 = mod2), ic)
+    bound_na <- function(x) {
 
-        ER_comp[nmin] <-
-            model_comp$ic_wt[model_comp$modnames == "mod2"] /
-            model_comp$ic_wt[model_comp$modnames == "mod1"]
+        if (any(x == boundary) ) {
 
-        for (i in (nmin + 1):nmax) {
+            first <- which(x == boundary)[1]
 
-            mod1 <- update(mod1, newdata = df_pop[1:i, ] )
-            mod2 <- update(mod2, newdata = df_pop[1:i, ] )
+            if(first < length(x) ) {
 
-            model_comp <- ictab(list(mod1 = mod1, mod2 = mod2), ic)
+                x[(first + 1):length(x)] <- NA
 
-            ER_comp[i] <-
-                model_comp$ic_wt[model_comp$modnames == "mod2"] /
-                model_comp$ic_wt[model_comp$modnames == "mod1"]
+            }
+
+        } else if (any(x == 1 / boundary) ) {
+
+            first <- which(x == 1 / boundary)[1]
+
+            if(first < length(x) ) {
+
+                x[(first + 1):length(x)] <- NA
+
+            }
+
+        } else {
+
+            x <- x
 
         }
 
-    }
-
-    if (plot == TRUE) {
-
-        print(
-            qplot(
-                nmin - 1 + seq_along(ER_comp[nmin:nmax]), ER_comp[nmin:nmax],
-                log = "y", geom = "line",
-                xlab = "Sample size",
-                ylab = expression(Evidence~ ~Ratio~ ~ (ER[10]) ) ) +
-                theme_bw(base_size = 12)
-            )
+        return(x)
 
     }
 
-    return (ER_comp[nmin:nmax])
+    y <-
+        x %>%
+        group_by(id) %>%
+        mutate_(
+            "ER" = "bound_na(bound_hit(ER))") %>%
+        ungroup()
+
+    lower_boundary_hit <-
+        y %>%
+        group_by(id) %>%
+        mutate_("log_ER" = "log(ER)" ) %>%
+        filter_(.dots = list(~log_ER == logBoundary[1]) )
+
+    upper_boundary_hit <-
+        y %>%
+        group_by(id) %>%
+        mutate_("log_ER" = "log(ER)" ) %>%
+        filter_(.dots = list(~log_ER == logBoundary[2]) )
+
+    final_point_boundary <-
+        y %>%
+        group_by(id) %>%
+        mutate_("log_ER" = "log(ER)" ) %>%
+        filter_(.dots = list(~log_ER %in% logBoundary) )
+
+    "%!in%" <-
+        function(x, y) !("%in%"(x, y) )
+
+    nmax <-
+        y %>%
+        group_by(id) %>%
+        mutate_("log_ER" = "log(ER)" ) %>%
+        filter(n == max(n) ) %>%
+        na.omit() %>%
+        filter_(.dots = list(~log_ER %!in% logBoundary) )
+
+    aes_lines <- sqrt(sqrt(1 / n_distinct(y$id) ) )
+
+    pMain <-
+        y %>%
+        ggplot(aes_string(
+            x = "n", y = "ER",
+            group = "id") ) +
+        geom_line(alpha = aes_lines, size = aes_lines, na.rm = TRUE) +
+        geom_point(data = final_point_boundary,
+            aes_string(x = "n", y = "ER", group = "id"),
+            alpha = 0.6) +
+            {if (log) scale_y_log10()} +
+            {if (log) annotation_logticks(sides = "l")} +
+        theme_bw(base_size = 12) +
+        theme(panel.grid.major.x = element_blank(),
+            panel.grid.minor.x = element_blank(),
+            legend.title = element_blank() ) +
+        # {if (nrow(final_point_boundary) > 0) annotate(
+        #     "text", x = max(y$n) + 2, y = boundary,
+        #     label = paste0(sum(final_point_boundary$ER == boundary) /
+        #             (length(unique(y$id) ) ) * 100, "%") )} +
+        # {if (nrow(final_point_boundary) > 0) annotate(
+        #     "text", x = max(y$n) + 2, y = (1 / boundary),
+        #     label = paste0(sum(final_point_boundary$ER == (1 / boundary) ) /
+        #             (length(unique(y$id) ) ) * 100, "%") )} +
+        {if (nrow(final_point_boundary) > 0) geom_hline(yintercept = boundary, lty = 2)} +
+        {if (nrow(final_point_boundary) > 0) geom_hline(yintercept = 1 / boundary, lty = 2)} +
+        xlab("Sample size") +
+        ylab(expression(Evidence~ ~Ratio~ ~ (ER[10]) ) )
+
+    if (hist) {
+
+        n_xlim <- layer_scales(pMain)$x$range$range
+
+        pTop <-
+            ggplot(upper_boundary_hit, aes(x = n) ) +
+            geom_histogram() +
+            scale_x_continuous(
+                limits = c(n_xlim[1] - 2, n_xlim[2]), expand = c(0.025, 0)
+                )
+
+        pLow <-
+            ggplot(lower_boundary_hit, aes(x = n) ) +
+            geom_density() +
+            coord_flip() +
+            theme_bw(base_size = 12)
+
+        pRight <-
+            ggplot(nmax, aes(x = ER) ) +
+            geom_histogram() +
+            coord_flip() +
+            scale_x_log10(limits = c(1 / boundary, boundary) )
+
+        if (nrow(upper_boundary_hit) > 0) {
+
+            p1 <-
+                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+
+            ggdraw(p1)
+
+        } else if (nrow(lower_boundary_hit) > 0 ) {
+
+            p1 <-
+                insert_yaxis_grob(pMain, pRight, unit(.2, "null"), position = "right")
+
+            ggdraw(p1)
+
+        } else if (nrow(lower_boundary_hit) > 0 & nrow(upper_boundary_hit) > 0 ) {
+
+            p1 <-
+                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+
+            p2 <-
+                insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
+
+            ggdraw(p2)
+        }
+
+    } else {
+
+        pMain
+
+    }
 
 }

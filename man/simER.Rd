@@ -2,31 +2,42 @@
 % Please edit documentation in R/simER.R
 \name{simER}
 \alias{simER}
-\title{Simulates a sequential testing with evidence ratios for independent two-groups comparisons}
+\title{Simulates sequential testing with evidence ratios}
 \usage{
-simER(cohensd, nmin, nmax, ic = bic, plot = TRUE)
+simER(cohensd = 0, nmin = 20, nmax = 100, boundary = 10, nsims = 20,
+  ic = bic, cores = parallel::detectCores(), verbose = TRUE)
 }
 \arguments{
 \item{cohensd}{Expected effect size}
 
 \item{nmin}{Minimum sample size from which start computing ERs}
 
-\item{nmax}{Total sample size}
+\item{nmax}{Maximum sample size at which stop computing ERs}
 
-\item{ic}{Indicates whether to use the aic or the bic.}
+\item{boundary}{The Evidence Ratio (or its reciprocal) at which
+the run is stopped as well}
 
-\item{plot}{If TRUE, produces a plot of the evolution of the ERs}
+\item{nsims}{Number of simulated samples (should be dividable by cores)}
+
+\item{ic}{Indicates whether to use the aic or the bic}
+
+\item{cores}{Number of parallel processes. If cores is set to 1, no parallel framework is used.
+By default recruits all availble cores with \code{parallel::detectCores()}.}
+
+\item{verbose}{Show output about progress}
+}
+\value{
+An object of class \code{data.frame}, which contains...
 }
 \description{
-Simulates a sequential testing with evidence ratios for independent two-groups
-comparisons, as a function of sample size and standardized mean difference
-(Cohen's d).
+Simulates one or many sequential testing with evidence ratios from independent two-groups
+comparisons, as a function of sample size and standardized mean difference.
+Evidence ratios are computed from the so-called Akaike weights from
+either the Akaike Information Criterior or the Bayesian Information Criterion.
 }
 \examples{
-simER(cohensd = 0.6, nmin = 20, nmax = 200, ic = aic, plot = TRUE)
-simER(cohensd = 0, nmin = 20, nmax = 200, ic = bic, plot = TRUE)
-
-\dontrun{simER(cohensd = 0, nmin = 20, nmax = 60, ic = LOO, plot = TRUE)}
+sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 20, ic = bic)
+plot(sim, log = TRUE, hist = TRUE)
 
 }
 \seealso{

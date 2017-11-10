@@ -114,8 +114,6 @@ analysER <- function(sim) {
         #    max(log_value, na.rm = TRUE) <= logBoundary[2] &
         #        min(log_value, na.rm = TRUE) >= logBoundary[1]) %>%
         filter_(.dots = list(~n == max(n) ) ) %>%
-            #~(max(log_value, na.rm = TRUE) <= logBoundary[2] &
-            #    min(log_value, na.rm = TRUE) >= logBoundary[1]) ) ) %>%
         mutate(hitCondition = "nmax") %>%
         na.omit()
 
@@ -154,6 +152,7 @@ print.analysER <- function(x, digits = 2, ... ) {
     x %>%
         lapply(function(y) if (is.numeric(y) ) round(y, digits) else y) %>%
         data.frame %>%
+        mutate_at(.vars = 4:6, .funs = funs(paste0(. * 100, "%") ) ) %>%
         print
 
 }

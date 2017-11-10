@@ -11,10 +11,12 @@
 #' @param cohensd Expected effect size
 #' @param nmin Minimum sample size from which start computing ERs
 #' @param nmax Maximum sample size
-#' @param boundary The Evidence Ratio or the Bayes Factor (resp. its reciprocal)
-#' where the run is stopped as well.
+#' @param boundary The Evidence Ratio or the Bayes Factor (or its reciprocal)
+#' to which the run is stopped as well
+#' @param prior The prior that sould be placed on the slope. This will strongly
+#' influence the Bayes Factor computed using the Savage-Dickey method (BF_SD).
 #' @param B Number of bootstrap samples (should be dividable by cores)
-#' @param cores number of parallel processes. If cores is set tp 1, no parallel framework is used.
+#' @param cores Number of parallel processes. If cores is set to 1, no parallel framework is used.
 #'
 #' @return An object of class \code{data.frame}, which contains the value of the
 #' evidence ratio (either WAIC_ER or LOO_ER) or the Bayes Factor (either DF_SD or BF_BS),
@@ -41,7 +43,9 @@
 #'
 #' @export
 
-compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, cores = 2) {
+compER <- function(
+    cohensd = 0, nmin = 20, nmax = 100, boundary = 20, prior = "normal(0, 5)",
+    B = 20, cores = 2) {
 
     if (nmin == 0) {
 
@@ -74,7 +78,7 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
 
     prior2 <- c(
         set_prior("normal(0, 5)", class = "Intercept"),
-        set_prior("normal(0, 5)", class = "b")
+        set_prior(prior, class = "b")
     )
 
     mod1 <-
@@ -99,16 +103,18 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
     ##############################
 
     sim <-
-        foreach(batch = 1:getDoParWorkers(), .combine = rbind,
-            .packages = c("brms", "Rcpp", "dplyr", "magrittr", "rstan", "stats") ) %dopar% {
+        foreach(
+            batch = 1:getDoParWorkers(), .combine = rbind,
+            .packages = c("brms", "Rcpp", "dplyr", "magrittr", "rstan", "stats")
+            ) %dopar% {
 
         max_b <- round(B / getDoParWorkers() )
         res.counter <- 1
 
         # res saves the statistics at each step
-        res <- matrix(NA, nrow = length(nmin:nmax) * max_b, ncol = 8,
+        res <- matrix(NA, nrow = length(nmin:nmax) * max_b, ncol = 9,
             dimnames = list(NULL,
-                c("id", "true.ES", "boundary", "n",
+                c("id", "true.ES", "boundary", "prior", "n",
                     "WAIC_ER", "LOO_ER", "BF_SD", "BF_BS") ) )
 
         # run max_b iterations in each parallel worker
@@ -145,15 +151,15 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
                     update(mod2.2, newdata = samp,
                         chains = 1, cores = 1, seed = sample(1e6, size = 1) )
 
-                mods1 <- list(mod1 = mod1, mod2.1 = mod2.1)
-                model_comp <- ictab(mods1, WAIC)
+                mods <- list(mod1 = mod1, mod2.1 = mod2.1)
+
+                model_comp <- ictab(mods, WAIC)
 
                 WAIC_ER <-
                     model_comp$ic_wt[model_comp$modnames == "mod2.1"] /
                     model_comp$ic_wt[model_comp$modnames == "mod1"]
 
-                mods2 <- list(mod1 = mod1, mod2.1 = mod2.1)
-                model_comp <- ictab(mods2, LOO)
+                model_comp <- ictab(mods, LOO)
 
                 LOO_ER <-
                     model_comp$ic_wt[model_comp$modnames == "mod2.1"] /
@@ -177,6 +183,7 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
                         id = batch * 10^(floor(log(max_b, base = 10) ) + 2) + b,
                         true.ES	= cohensd,
                         boundary = boundary,
+                        prior = prior,
                         n = i,
                         WAIC_ER	= WAIC_ER,
                         LOO_ER = LOO_ER,
@@ -208,8 +215,8 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
 
             }
 
-            res0[, 5:8] <-
-                apply(res0[, 5:8], 2, function(x) bound_hit(x) )
+            res0[, 6:9] <-
+                apply(res0[, 6:9], 2, function(x) bound_hit(x) )
 
             res[res.counter:(res.counter + nrow(res0) - 1), ] <- res0
             res.counter <- res.counter + nrow(res0)
@@ -222,7 +229,7 @@ compER <- function(cohensd = 0, nmin = 20, nmax = 100, boundary = 20, B = 12, co
 
         } # end of %dopar%
 
-    res <- data.frame(sim)
+    res <- data.frame(sim, stringsAsFactors = FALSE)
     class(res) <- c("compER", "data.frame")
 
     return(res)
@@ -305,12 +312,12 @@ plot.compER <- function(x, log = TRUE, ... ) {
     final_point_boundary <-
         y %>%
         group_by(id) %>%
-        gather_("index", "value", names(x)[5:8]) %>%
+        gather_("index", "value", names(x)[6:9]) %>%
         mutate_("log_value" = "log(value)" ) %>%
         filter_(.dots = list(~log_value %in% logBoundary) )
 
     y %>%
-        gather_("index", "value", names(x)[5:8]) %>%
+        gather_("index", "value", names(x)[6:9]) %>%
         ggplot(aes_string(
             x = "n", y = "value",
             group = "interaction(id, index)", colour = "index") ) +
@@ -326,7 +333,6 @@ plot.compER <- function(x, log = TRUE, ... ) {
         theme(panel.grid.minor.x = element_blank(), legend.title = element_blank() ) +
         xlab("sample size") +
         ylab(expression(ER[10] ~ - ~ BF[10]) ) +
-        #scale_x_continuous(breaks = c(min(y$n):max(y$n) ) )
         scale_x_continuous(breaks = seq(min(y$n), max(y$n), 10 ) ) +
         annotate(
             "text",
