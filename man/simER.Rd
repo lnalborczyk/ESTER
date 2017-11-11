@@ -5,7 +5,7 @@
 \title{Simulates sequential testing with evidence ratios}
 \usage{
 simER(cohensd = 0, nmin = 20, nmax = 100, boundary = 10, nsims = 20,
-  ic = bic, cores = parallel::detectCores(), verbose = TRUE)
+  ic = bic, cores = detectCores(), verbose = FALSE)
 }
 \arguments{
 \item{cohensd}{Expected effect size}
@@ -33,11 +33,12 @@ An object of class \code{data.frame}, which contains...
 Simulates one or many sequential testing with evidence ratios from independent two-groups
 comparisons, as a function of sample size and standardized mean difference.
 Evidence ratios are computed from the so-called Akaike weights from
-either the Akaike Information Criterior or the Bayesian Information Criterion.
+either the Akaike Information Criterion or the Bayesian Information Criterion.
 }
 \examples{
 \dontrun{
-sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic)
+sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
+nsims = 100, ic = bic, cores = 2, verbose = TRUE)
 plot(sim, log = TRUE, hist = TRUE)
 }
 

@@ -3,7 +3,7 @@
 #' Simulates one or many sequential testing with evidence ratios from independent two-groups
 #' comparisons, as a function of sample size and standardized mean difference.
 #' Evidence ratios are computed from the so-called Akaike weights from
-#' either the Akaike Information Criterior or the Bayesian Information Criterion.
+#' either the Akaike Information Criterion or the Bayesian Information Criterion.
 #'
 #' @param cohensd Expected effect size
 #' @param nmin Minimum sample size from which start computing ERs
@@ -19,6 +19,7 @@
 #' @return An object of class \code{data.frame}, which contains...
 #'
 #' @importFrom cowplot ggdraw insert_xaxis_grob insert_yaxis_grob
+#' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom magrittr %>% set_names
 #' @importFrom stats lm rnorm runif
 #' @importFrom tidyr gather_
@@ -29,7 +30,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic)
+#' sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
+#' nsims = 100, ic = bic, cores = 2, verbose = TRUE)
 #' plot(sim, log = TRUE, hist = TRUE)
 #' }
 #'
@@ -41,7 +43,7 @@
 
 simER <- function(
     cohensd = 0, nmin = 20, nmax = 100, boundary = 10,
-    nsims = 20, ic = bic, cores = parallel::detectCores(), verbose = TRUE) {
+    nsims = 20, ic = bic, cores = detectCores(), verbose = FALSE) {
 
     if (nmin == 0) {
 
@@ -61,11 +63,13 @@ simER <- function(
 
     }
 
+    cl <- makeCluster(cores, outfile = "")
+    registerDoParallel(cl, cores)
+
     start <- Sys.time()
     print(paste0("Simulation started at ", start) )
 
     flush.console()
-    registerDoParallel(cores = cores)
 
     ################################################
     # THE simulation
@@ -74,14 +78,14 @@ simER <- function(
     sim <-
         foreach(
             batch = 1:getDoParWorkers(), .combine = rbind) %dopar% {
-            #.packages = c("Rcpp", "dplyr", "magrittr", "stats")
 
             max_b <- round(nsims / getDoParWorkers() )
             res.counter <- 1
 
-            # res saves the statistics at each step
-            res <- matrix(NA, nrow = length(nmin:nmax) * max_b, ncol = 5,
-                dimnames = list(NULL, c("id", "true.ES", "boundary", "n", "ER") ) )
+            res <-
+                matrix(NA, nrow = length(nmin:nmax) * max_b, ncol = 5,
+                    dimnames = list(NULL,
+                        c("id", "true.ES", "boundary", "n", "ER") ) )
 
             # run max_b iterations in each parallel worker
             for (b in 1:max_b) {
@@ -97,13 +101,17 @@ simER <- function(
                     sample_n(nrow(.) )
 
                 if (verbose == TRUE)
-                    print(paste0(Sys.time(), ": batch = ", batch, "; true.ES = ",
-                        round(cohensd, 2),
-                        "; Rep = ", b, "/", round(nsims / getDoParWorkers() ) ) )
+                    print(
+                        paste0(
+                            Sys.time(), ": batch = ", batch,
+                            "; Rep = ", b, "/",
+                            round(nsims / getDoParWorkers() ) ) )
 
                 # res0 keeps the accumulating sample variables from this specific run
-                res0 <- matrix(NA, nrow = length(nmin:nmax), ncol = ncol(res),
-                    dimnames = dimnames(res) )
+                res0 <-
+                    matrix(
+                        NA, nrow = length(nmin:nmax), ncol = ncol(res),
+                        dimnames = dimnames(res) )
 
                 # increase sample size up to nmax
                 for (i in nmin:nmax) {
@@ -150,19 +158,21 @@ simER <- function(
     cat("Duration: ")
     print(end - start)
 
+    stopCluster(cl)
+
     return(res)
 
 }
 
 #' Plotting the results of \code{simER}
 #'
-#' Plotting the results of \code{simER}...
+#' Plotting the results of \code{simER}.
 #'
-#' @param x Should be a simER object
+#' @param x Should be a \code{simER} object
 #' @param log Should the y-axis be log-transformed ?
-#' @param hist Should plot the histogram of simulations hitting either the upper
-#' boundary or stopping at nmax ?
-#' @param ... Additional parameters to be passed to plot
+#' @param hist Should plot the histogram of simulations hitting either the lower,
+#' the upper boundary or stopping at nmax ?
+#' @param ... Additional parameters
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
@@ -291,25 +301,24 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
 
         pTop <-
             ggplot(upper_boundary_hit, aes_string(x = "n") ) +
-            geom_histogram() +
+            geom_histogram(aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
             scale_x_continuous(
-                limits = c(n_xlim[1] - 2, n_xlim[2]), expand = c(0.025, 0)
-                )
+                limits = c(NA, n_xlim[2]) )
 
-        # pLow <-
-        #     ggplot(lower_boundary_hit, aes_string(x = "n") ) +
-        # geom_histogram() +
-        #     scale_x_continuous(
-        #        limits = c(n_xlim[1] - 2, n_xlim[2]), expand = c(0.025, 0)
-        #     )
+        pLow <-
+            ggplot(lower_boundary_hit, aes_string(x = "n") ) +
+            geom_histogram(aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
+            scale_x_continuous(
+               limits = c(n_xlim[1], n_xlim[2]) ) + #, expand = c(0.025, 0) ) +
+            scale_y_reverse()
 
         pRight <-
             ggplot(nmax, aes_string(x = "ER") ) +
-            geom_histogram() +
+            geom_histogram(aes_string(y = "..count.."), na.rm = TRUE, binwidth = 0.05) +
             coord_flip() +
             scale_x_log10(limits = c(1 / boundary, boundary) )
 
-        if (nrow(upper_boundary_hit) > 0 & nrow(nmax) > 0 ) {
+        if (nrow(lower_boundary_hit) > 0 & nrow(upper_boundary_hit) > 0 & nrow(nmax) > 0 ) {
 
             p1 <-
                 insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
@@ -317,7 +326,47 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
             p2 <-
                 insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
 
-        ggdraw(p2)
+            p3 <-
+                insert_xaxis_grob(p2, pLow, unit(.2, "null"), position = "bottom")
+
+        ggdraw(p3)
+
+        } else if (nrow(lower_boundary_hit) > 0 & nrow(upper_boundary_hit) > 0) {
+
+            p1 <-
+                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+
+            p2 <-
+                insert_xaxis_grob(p1, pLow, unit(.2, "null"), position = "bottom")
+
+            ggdraw(p2)
+
+        } else if (nrow(lower_boundary_hit) > 0 & nrow(nmax) > 0) {
+
+            p1 <-
+                insert_xaxis_grob(pMain, pLow, unit(.2, "null"), position = "bottom")
+
+            p2 <-
+                insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
+
+            ggdraw(p2)
+
+        } else if (nrow(upper_boundary_hit) > 0 & nrow(nmax) > 0) {
+
+            p1 <-
+                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+
+            p2 <-
+                insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
+
+            ggdraw(p2)
+
+        } else if (nrow(lower_boundary_hit) > 0) {
+
+            p1 <-
+                insert_xaxis_grob(pMain, pLow, unit(.2, "null"), position = "bottom")
+
+            ggdraw(p1)
 
         } else if (nrow(upper_boundary_hit) > 0) {
 
