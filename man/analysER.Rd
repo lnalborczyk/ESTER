@@ -2,37 +2,37 @@
 % Please edit documentation in R/analysER.R
 \name{analysER}
 \alias{analysER}
-\title{Analyse the results of simulations ran with compER}
+\title{Analysing the results of simulations ran with \code{simER} or \code{compER}}
 \usage{
 analysER(sim)
 }
 \arguments{
-\item{sim}{A compER object.}
+\item{sim}{A \code{simER} or a \code{compER} object.}
 }
 \value{
 An object of class \code{data.frame}, which contains the average
 sample number (ASN) at which the boundary is attained (either the lower or
 the upper one), the percentage of hits of the lower boundary as well as hits
 of the upper boundary, and the percentage of trajectories that did not hit
-none of the boundaries.
+none of the boundaries (and thus end at nmax).
 }
 \description{
-Analyse the results of simulations ran with compER. It computes the average
-sample number (ASN) at which the boundary is attained (either the lower or
-the upper one), the percentage of hits of the lower boundary as well as hits
-of the upper boundary, and the percentage of trajectories that did not hit
-none of the boundaries.
+Analysing the results of simulations ran with \code{simER} or \code{compER}.
+It computes the average sample number (ASN) at which the boundary is attained
+(either the lower or the upper one), the percentage of hits of the lower
+boundary as well as hits of the upper boundary, and the percentage of
+trajectories that did not hit none of the boundaries.
 }
 \examples{
 \dontrun{
 library(ESTER)
-sim <- compER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, B = 20, cores = 4)
+sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic)
 analysER(sim)
 }
 
 }
 \seealso{
-\code{\link{compER}}
+\code{\link{simER}}, \code{\link{compER}}
 }
 \author{
 Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>

@@ -12,14 +12,14 @@
 #' the run is stopped as well
 #' @param nsims Number of simulated samples (should be dividable by cores)
 #' @param ic Indicates whether to use the aic or the bic
-#' @param cores Number of parallel processes. If cores is set to 1, no parallel framework is used.
-#' By default recruits all availble cores with \code{parallel::detectCores()}.
+#' @param cores Number of parallel processes. If cores is set to 1, no parallel framework is used
+#' (default is two cores).
 #' @param verbose Show output about progress
 #'
 #' @return An object of class \code{data.frame}, which contains...
 #'
 #' @importFrom cowplot ggdraw insert_xaxis_grob insert_yaxis_grob
-#' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom parallel makeCluster stopCluster
 #' @importFrom magrittr %>% set_names
 #' @importFrom stats lm rnorm runif
 #' @importFrom tidyr gather_
@@ -43,7 +43,7 @@
 
 simER <- function(
     cohensd = 0, nmin = 20, nmax = 100, boundary = 10,
-    nsims = 20, ic = bic, cores = detectCores(), verbose = FALSE) {
+    nsims = 20, ic = bic, cores = 2, verbose = FALSE) {
 
     if (nmin == 0) {
 
@@ -71,10 +71,6 @@ simER <- function(
 
     flush.console()
 
-    ################################################
-    # THE simulation
-    ##############################
-
     sim <-
         foreach(
             batch = 1:getDoParWorkers(), .combine = rbind) %dopar% {
@@ -87,10 +83,8 @@ simER <- function(
                     dimnames = list(NULL,
                         c("id", "true.ES", "boundary", "n", "ER") ) )
 
-            # run max_b iterations in each parallel worker
             for (b in 1:max_b) {
 
-                # Draw a new maximum sample at each step
                 x <- cbind(rnorm(nmax / 2, 0, 1), rep(-0.5, nmax / 2) )
                 y <- cbind(rnorm(nmax / 2, cohensd, 1), rep(0.5, nmax / 2) )
 
@@ -107,13 +101,11 @@ simER <- function(
                             "; Rep = ", b, "/",
                             round(nsims / getDoParWorkers() ) ) )
 
-                # res0 keeps the accumulating sample variables from this specific run
                 res0 <-
                     matrix(
                         NA, nrow = length(nmin:nmax), ncol = ncol(res),
                         dimnames = dimnames(res) )
 
-                # increase sample size up to nmax
                 for (i in nmin:nmax) {
 
                     samp <- df_pop[1:i, ]
@@ -309,7 +301,7 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
             ggplot(lower_boundary_hit, aes_string(x = "n") ) +
             geom_histogram(aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
             scale_x_continuous(
-               limits = c(n_xlim[1], n_xlim[2]) ) + #, expand = c(0.025, 0) ) +
+               limits = c(n_xlim[1], n_xlim[2]) ) +
             scale_y_reverse()
 
         pRight <-

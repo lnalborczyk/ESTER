@@ -5,7 +5,7 @@
 \title{Simulates sequential testing with evidence ratios}
 \usage{
 simER(cohensd = 0, nmin = 20, nmax = 100, boundary = 10, nsims = 20,
-  ic = bic, cores = detectCores(), verbose = FALSE)
+  ic = bic, cores = 2, verbose = FALSE)
 }
 \arguments{
 \item{cohensd}{Expected effect size}
@@ -21,8 +21,8 @@ the run is stopped as well}
 
 \item{ic}{Indicates whether to use the aic or the bic}
 
-\item{cores}{Number of parallel processes. If cores is set to 1, no parallel framework is used.
-By default recruits all availble cores with \code{parallel::detectCores()}.}
+\item{cores}{Number of parallel processes. If cores is set to 1, no parallel framework is used
+(default is two cores).}
 
 \item{verbose}{Show output about progress}
 }

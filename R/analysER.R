@@ -1,18 +1,18 @@
-#' Analyse the results of simulations ran with compER
+#' Analysing the results of simulations ran with \code{simER} or \code{compER}
 #'
-#' Analyse the results of simulations ran with compER. It computes the average
-#' sample number (ASN) at which the boundary is attained (either the lower or
-#' the upper one), the percentage of hits of the lower boundary as well as hits
-#' of the upper boundary, and the percentage of trajectories that did not hit
-#' none of the boundaries.
+#' Analysing the results of simulations ran with \code{simER} or \code{compER}.
+#' It computes the average sample number (ASN) at which the boundary is attained
+#' (either the lower or the upper one), the percentage of hits of the lower
+#' boundary as well as hits of the upper boundary, and the percentage of
+#' trajectories that did not hit none of the boundaries.
 #'
-#' @param sim A compER object.
+#' @param sim A \code{simER} or a \code{compER} object.
 #'
 #' @return An object of class \code{data.frame}, which contains the average
 #' sample number (ASN) at which the boundary is attained (either the lower or
 #' the upper one), the percentage of hits of the lower boundary as well as hits
 #' of the upper boundary, and the percentage of trajectories that did not hit
-#' none of the boundaries.
+#' none of the boundaries (and thus end at nmax).
 #'
 #' @importFrom stats sd na.omit
 #' @import dplyr
@@ -20,25 +20,25 @@
 #' @examples
 #' \dontrun{
 #' library(ESTER)
-#' sim <- compER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, B = 20, cores = 4)
+#' sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic)
 #' analysER(sim)
 #' }
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
-#' @seealso \code{\link{compER}}
+#' @seealso \code{\link{simER}}, \code{\link{compER}}
 #'
 #' @export
 
 analysER <- function(sim) {
 
-    if (!any(class(sim) == "compER") ) {
+    if (!any(class(sim) %in% c("simER", "compER") ) ) {
 
-        stop("sim should be a compER object")
+        stop("sim should be a simER or a compER object")
 
     }
 
-    boundary <- unique(sim$boundary)
+    boundary <- as.numeric(unique(sim$boundary) )
     logBoundary <- log(sort(c(boundary, 1 / boundary) ) )
 
     bound_hit <- function(x) {
@@ -98,21 +98,25 @@ analysER <- function(sim) {
     sim2 <-
         sim %>%
         group_by(id) %>%
-        mutate_(
-            "WAIC_ER" = "bound_na(bound_hit(WAIC_ER))",
-            "LOO_ER" = "bound_na(bound_hit(LOO_ER))",
-            "BF_SD" = "bound_na(bound_hit(BF_SD))",
-            "BF_BS" = "bound_na(bound_hit(BF_BS))" ) %>%
+        mutate_at(
+            .vars = vars( - (1:3) ),
+            .funs = funs(bound_hit) ) %>%
+        mutate_at(
+            .vars = vars( - (1:3) ),
+            .funs = funs(bound_na) ) %>%
+        ungroup()
+
+    sim2 <-
+        sim %>%
+        group_by(id) %>%
+        mutate_("ER" = "bound_na(bound_hit(ER) )" ) %>%
         ungroup()
 
     nmax.hit <-
         sim2 %>%
         group_by(id) %>%
-        gather_("index", "value", names(sim2)[5:8]) %>%
+        gather_("index", "value", names(sim2[, - c(1:4)]) ) %>%
         mutate_("log_value" = "log(value)" ) %>%
-        #filter(n == max(n),
-        #    max(log_value, na.rm = TRUE) <= logBoundary[2] &
-        #        min(log_value, na.rm = TRUE) >= logBoundary[1]) %>%
         filter_(.dots = list(~n == max(n) ) ) %>%
         mutate(hitCondition = "nmax") %>%
         na.omit()
@@ -120,7 +124,7 @@ analysER <- function(sim) {
     boundary.hit <-
         sim2 %>%
         group_by(id) %>%
-        gather_("index", "value", names(sim2)[5:8]) %>%
+        gather_("index", "value", names(sim2[, - c(1:4)]) ) %>%
         mutate_("log_value" = "log(value)" ) %>%
         filter_(.dots = list(~log_value %in% logBoundary) ) %>%
         mutate(hitCondition = "boundary") %>%
@@ -137,22 +141,9 @@ analysER <- function(sim) {
             "Lower_hit" = "sum(value == 1 / boundary) / n_distinct(sim$id)",
             "Upper_hit" = "sum(value == boundary) / n_distinct(sim$id)",
             "Inconclusive" = "1 - (Lower_hit + Upper_hit)" ) %>%
-        data.frame
-
-    class(res) <- c("analysER", "data.frame")
+        data.frame %>%
+        mutate_at(.vars = 4:6, .funs = funs(paste0(. * 100, "%") ) )
 
     return(res)
-
-}
-
-#' @export
-
-print.analysER <- function(x, digits = 2, ... ) {
-
-    x %>%
-        lapply(function(y) if (is.numeric(y) ) round(y, digits) else y) %>%
-        data.frame %>%
-        mutate_at(.vars = 4:6, .funs = funs(paste0(. * 100, "%") ) ) %>%
-        print
 
 }

@@ -19,7 +19,7 @@
 #' information criterion (either AIC, BIC, WAIC or LOOIC), the number of parameters
 #' (k for AIC and BIC or p for WAIC or LOOIC), the delta_IC (for AIC and BIC) or the
 #' elpd for models compared with WAIC or LOOIC, and the weight of each
-#' model (Akaike weights for AIC or BIC and pseudo-BMA weight for WAIC or LOOIC).
+#' model (Akaike weights for AIC or BIC and pseudo-BMA weights for WAIC or LOOIC).
 #'
 #' @importFrom stats as.formula logLik
 #' @importFrom rlang dots_list

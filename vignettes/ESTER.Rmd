@@ -79,9 +79,9 @@ The term *sequential analysis* simply refers to the process by which one collect
 
 # Sequential testing with evidence ratios
 
-`ESTER` aims to address at least two different questions. On the first hand, it allows the exploration of the characteristics of the evidence ratios computed from the Akaike weights, when these are used in a sequential way. To this end, the `simER` and `distER` functions allow exploration of these characteristics for evidence ratios computed from the AIC (or AICc) and the BIC.
+`ESTER` aims to address at least two different questions. On the first hand, it allows the exploration of the characteristics of the evidence ratios computed from the Akaike weights, when these are used in a sequential way. To this end, the `simER` function allows exploration of these characteristics for evidence ratios computed from the AIC (or AICc) and the BIC.
 
-On the other hand, `ESTER` is also designed to run sequential analyses on observed data, which is implemented in the `seqER` and `seqERboot` functions. To sum, two main questions are adressed.
+On the other hand, `ESTER` is also designed to run sequential analyses on observed data, which is implemented in the `seqER` function. To sum, two main questions are adressed.
 
 * **Simulation**. Given an effect size and a sample size, what should I reasonnably expect ?
 
@@ -89,11 +89,13 @@ On the other hand, `ESTER` is also designed to run sequential analyses on observ
 
 ## Simulation
 
-This `simER` function runs a simulated study in which we compare two independant groups, for various effect size and sample size. The `nmin` argument serves to specify from which participant we want to start doing sequential testing (we usually recommend to avoid `nmin` < 10).
+This `simER` function runs a simulated study in which we compare two independant groups, for various effect size (`cohensd`) and sample size (`nmax`). The `nmin` argument serves to specify from which participant we want to start doing sequential testing (we usually recommend to avoid `nmin` < 10). We can define a `boundary` at which we would like to stop the sequential testing, as well as how many simulations we want to evaluate (`nsims`).
 
 ```{r echo = TRUE, eval = TRUE, message = FALSE, fig.align = "center", fig.height = 5, fig.width = 5}
 library(ESTER)
-sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic, cores = 2)
+sim <-
+    simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
+        nsims = 100, ic = bic, cores = 2, verbose = FALSE)
 plot(sim, log = TRUE, hist = TRUE)
 ```
 
@@ -105,10 +107,12 @@ mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
 mod3 <- lm(mpg ~ cyl * disp, mtcars)
 mods <- list(m1 = mod1, m2 = mod2, m3 = mod3)
-ictab(mods, aic)
+ictab(mods, bic)
 ```
 
-Note that in these three functions, the information criterion has to be passed in lowercase, as `aic` and `bic` refer to functions from `ESTER`.
+Note that in these two functions, the information criterion has to be passed in lowercase, as `aic` and `bic` refer to functions from `ESTER`.
+
+NB: for now, we recommend using BIC-based rather than AIC-based evidence ratios for sequential testing.
 
 ## Observed data
 
@@ -121,10 +125,10 @@ mod2 <- lm(mpg ~ cyl + disp, mtcars)
 plot(seqER(ic = bic, mod1, mod2, nmin = 10) )
 ```
 
-In addition, `seqERboot` allows you to study the behavior of sequential ERs computed on your own data, along with sequential ERs computed on permutation samples. This feature might be useful to study to what extent the evolution of evidence ratios you observed on the original sample was dependant to the order of the observations.
+In addition, `seqER` allows you to study the behavior of sequential ERs computed on your own data, along with sequential ERs computed on permutation samples. This feature might be useful to study to what extent the evolution of evidence ratios you observed on the original sample was dependant to the order of the observations.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
-plot(seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20) )
+plot(seqER(ic = bic, mod1, mod2, nmin = 10, nsims = 10) )
 ```
 
 When data involve repeated measures (and so multiple lines by subject), it is important to help `ESTER` to figure out how the data is structured by indicating in which column are stored subject or observations numbers. For instance, below we use data from `lme4`, and indicate that the subject number is stored in the `"Subject"` column of the dataframe, by passing it to the `id` argument of `seqERboot`.
@@ -134,14 +138,14 @@ library(lme4)
 data(sleepstudy)
 mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
 mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
-plot(seqERboot(ic = bic, mod1, mod2, nmin = 10, id = "Subject", order_nb = 20) )
+plot(seqER(ic = bic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10) )
 ```
 
-If no information is passed to the `id` argument, `seqER` and `seqERboot` will suppose that there is only one observation (i.e., one line) per subject.
+If no information is passed to the `id` argument, `seqER` will suppose that there is only one observation (i.e., one line) per subject.
 
 # Author note
 
-Note that this package is only intended to be used as a toolbox for exploring the possibilites offered by sequential testing with evidence ratios computed from the Akaike weights of a set of models. We do not provide neither guidelines nor long-term error rates as others did using Bayes Factors (e.g., see Schonbrodt & Wagenmakers, 2017).
+Note that this package is mainly intended to be used as a toolbox for exploring the possibilites offered by sequential testing with evidence ratios computed from the Akaike weights of a set of models. We do not provide neither guidelines nor long-term error rates as others did using Bayes Factors (e.g., see Schonbrodt & Wagenmakers, 2017).
 
 The characteristics of sequential evidence ratios computed from information criteria should be studied properly (preferably using `ESTER`), but this study is outside the scope of this package.
 

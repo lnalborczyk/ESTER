@@ -4,7 +4,8 @@
 \alias{seqER}
 \title{Computes sequential evidence ratios}
 \usage{
-seqER(ic, mod1, mod2, nmin, id = NULL)
+seqER(ic = bic, mod1, mod2, nmin = 10, id = NULL, boundary = Inf,
+  blind = FALSE, nsims = NULL)
 }
 \arguments{
 \item{ic}{Indicates whether to use the aic or the bic.}
@@ -17,6 +18,13 @@ seqER(ic, mod1, mod2, nmin, id = NULL)
 
 \item{id}{If applicable (i.e., repeated measures), name of the "id" column of your
 dataframe, in character string.}
+
+\item{boundary}{The Evidence Ratio (or its reciprocal) at which
+the run is stopped as well}
+
+\item{blind}{If true, the function only returns a "continue or stop" message}
+
+\item{nsims}{Number of permutation samples to evaluate (is ignored if blind = TRUE)}
 }
 \description{
 Computes sequential evidence ratios, either based on the AIC or the BIC.
@@ -30,14 +38,26 @@ that there is only one observation (i.e., one line) per subject.
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-seq_mtcars <- seqER(ic = aic, mod1, mod2, nmin = 10)
+seqER(ic = bic, mod1, mod2, nmin = 10)
+
+# Example with permutation samples
+data(mtcars)
+mod1 <- lm(mpg ~ cyl, mtcars)
+mod2 <- lm(mpg ~ cyl + disp, mtcars)
+seqER(ic = bic, mod1, mod2, nmin = 10, nsims = 10)
+
+# Example with blinding
+data(mtcars)
+mod1 <- lm(mpg ~ cyl, mtcars)
+mod2 <- lm(mpg ~ cyl + disp, mtcars)
+seqER(ic = bic, mod1, mod2, nmin = 10, boundary = 10, blind = TRUE)
 
 # Example with repeated measures
 library(lme4)
 data(sleepstudy)
 mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
 mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
-seqER(ic = aic, mod1, mod2, nmin = 10, id = "Subject")
+seqER(ic = bic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
 
 }
 \seealso{

@@ -13,11 +13,16 @@
 #' @param nmin Minimum sample size from which start to compute sequential evidence ratios.
 #' @param id If applicable (i.e., repeated measures), name of the "id" column of your
 #' dataframe, in character string.
+#' @param boundary The Evidence Ratio (or its reciprocal) at which
+#' the run is stopped as well
+#' @param blind If true, the function only returns a "continue or stop" message
+#' @param nsims Number of permutation samples to evaluate (is ignored if blind = TRUE)
 #'
 #' @importFrom stats family formula lm
 #' @importFrom lme4 lmer glmer
 #' @importFrom magrittr %>%
 #' @importFrom rlang f_lhs
+#' @importFrom dplyr n_distinct
 #' @import ggplot2
 #' @import utils
 #'
@@ -25,14 +30,26 @@
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seq_mtcars <- seqER(ic = aic, mod1, mod2, nmin = 10)
+#' seqER(ic = bic, mod1, mod2, nmin = 10)
+#'
+#' # Example with permutation samples
+#' data(mtcars)
+#' mod1 <- lm(mpg ~ cyl, mtcars)
+#' mod2 <- lm(mpg ~ cyl + disp, mtcars)
+#' seqER(ic = bic, mod1, mod2, nmin = 10, nsims = 10)
+#'
+#' # Example with blinding
+#' data(mtcars)
+#' mod1 <- lm(mpg ~ cyl, mtcars)
+#' mod2 <- lm(mpg ~ cyl + disp, mtcars)
+#' seqER(ic = bic, mod1, mod2, nmin = 10, boundary = 10, blind = TRUE)
 #'
 #' # Example with repeated measures
 #' library(lme4)
 #' data(sleepstudy)
 #' mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
 #' mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
-#' seqER(ic = aic, mod1, mod2, nmin = 10, id = "Subject")
+#' seqER(ic = bic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
@@ -40,7 +57,15 @@
 #'
 #' @export
 
-seqER <- function(ic, mod1, mod2, nmin, id = NULL) {
+#data(mtcars)
+#mod1 <- lm(mpg ~ cyl, mtcars)
+#mod2 <- lm(mpg ~ cyl + disp, mtcars)
+#ic = bic; mod1 = mod1; mod2 = mod2; nmin = 10; nsims = 10; id = "Subject";
+
+seqER <-
+    function(
+        ic = bic, mod1, mod2, nmin = 10, id = NULL, boundary = Inf,
+        blind = FALSE, nsims = NULL) {
 
     if (!class(mod1) == class(mod2) ) {
 
@@ -145,14 +170,121 @@ seqER <- function(ic, mod1, mod2, nmin, id = NULL) {
 
         if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
 
+        # if (abs(log(temp_er[,2]) ) >= log(boundary) ) {break;}
+
         rm(temp_er)
 
     }
 
     colnames(er) <- c("ppt", "ER")
-    class(er) <- c("seqER", "data.frame")
+    # class(er) <- c("seqER", "data.frame")
 
-    return(er)
+    if (blind == TRUE) {
+
+        if (tail(abs(log(er$ER) ), 1) >= log(boundary) ) {
+
+            return("stop the recruitment")
+
+        } else {
+
+            return("continue the recruitment")
+
+        }
+    }
+
+    erb <-
+        er %>%
+        mutate(ERi = rep("er", max(.$ppt) - nmin + 1) ) %>%
+        select_(~ERi, ~ppt, ~ER)
+
+    if (!is.null(nsims) ) {
+
+        for (i in 1:nsims) {
+
+            data_temp <- data[sample(nrow(data), replace = FALSE), ]
+            data_temp$ppt <- data$ppt
+
+            if (nobs > 1) {
+
+                data_temp <-
+                    data_temp[order(factor(data_temp$ppt,
+                        levels = unique(data_temp$ppt) ) ), ]
+
+            }
+
+            # startrow <- min(which(as.numeric(as.character(data_temp$ppt) ) == nmin) )
+            # endrow <- nrow(data_temp)
+
+            for (j in seq(startrow, endrow, nobs) ) {
+
+                maxrow <- j - 1 + nobs
+
+                if ( (class(mod1) == "glmerMod") ) {
+
+                    mod1 <- glmer(formula(mod1),
+                        family = family(mod1)$family, data_temp[1:maxrow, ])
+
+                    mod2 <- glmer(formula(mod2),
+                        family = family(mod2)$family, data_temp[1:maxrow, ])
+
+                }
+
+                if ( (class(mod1) == "lmerMod") ) {
+
+                    mod1 <- lmer(formula(mod1),
+                        REML = FALSE, data_temp[1:maxrow, ])
+
+                    mod2 <- lmer(formula(mod2),
+                        REML = FALSE, data_temp[1:maxrow, ])
+
+                }
+
+                if ( (class(mod1) == "lm") ) {
+
+                    mod1 <- lm(formula(mod1), data_temp[1:maxrow, ])
+
+                    mod2 <- lm(formula(mod2), data_temp[1:maxrow, ])
+
+                }
+
+                tabtab <- ictab(list(mod1 = mod1, mod2 = mod2), ic)
+
+                temp_temp_erb <-
+                    data.frame(
+                        cbind(data_temp$ppt[j],
+                            tabtab$ic_wt[tabtab$modnames == "mod2"] /
+                                tabtab$ic_wt[tabtab$modnames == "mod1"]) )
+
+                if (!exists("temp_erb") ) {
+
+                    temp_erb <- temp_temp_erb
+
+                    } else {
+
+                        temp_erb <- rbind(temp_erb, temp_temp_erb)
+
+                    }
+
+                rm(temp_temp_erb)
+
+            }
+
+            temp_erb <-
+                temp_erb %>%
+                mutate(ERi = rep(paste0("er", i), nrow(.) ) ) %>%
+                select(3, 1, 2) %>%
+                set_names(c("ERi", "ppt", "ER") )
+
+            erb <- rbind(erb, temp_erb)
+
+            rm(temp_erb)
+
+        }
+
+    }
+
+    class(erb) <- c("seqER", "data.frame")
+    return(erb)
 
 }
 
@@ -160,10 +292,16 @@ seqER <- function(ic, mod1, mod2, nmin, id = NULL) {
 
 plot.seqER <- function(x, ... ) {
 
-    qplot(x$ppt, x$ER,
-        log = "y", geom = "line",
-        xlab = "Sample size",
-        ylab = expression(Evidence~ ~Ratio~ ~ (ER[10]) ) ) +
-        theme_bw(base_size = 12)
+    aes_lines <- sqrt(1 / n_distinct(x$ERi) )
+
+    ggplot(x, aes_string(x = "ppt", y = "ER", group = "ERi") ) +
+        scale_y_log10() +
+        geom_line(alpha = aes_lines, size = aes_lines) +
+        geom_line(
+            aes_string(x = "ppt", y = "ER", group = NULL),
+            data = x[x$ERi=="er",], size = 1) +
+        theme_bw(base_size = 12) +
+        xlab("Sample size") +
+        ylab(expression(Evidence~ ~Ratio~ ~ (ER[10]) ) )
 
 }

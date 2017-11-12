@@ -21,14 +21,7 @@
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seq_boot_mtcars <- seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20)
-#'
-#' # Example with repeated measures
-#' library(lme4)
-#' data(sleepstudy)
-#' mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
-#' mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
-#' seqERboot(ic = bic, mod1, mod2, nmin = 10, id = "Subject", order_nb = 20)}
+#' seq_boot_mtcars <- seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20)}
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
@@ -38,6 +31,8 @@
 
 seqERboot <- function(
     ic, mod1, mod2, nmin, id = NULL, order_nb) {
+
+    .Deprecated("seqER")
 
     if (class(mod1) == "lm") {
 
