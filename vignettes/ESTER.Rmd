@@ -131,7 +131,7 @@ In addition, `seqER` allows you to study the behavior of sequential ERs computed
 plot(seqER(ic = bic, mod1, mod2, nmin = 10, nsims = 10) )
 ```
 
-When data involve repeated measures (and so multiple lines by subject), it is important to help `ESTER` to figure out how the data is structured by indicating in which column are stored subject or observations numbers. For instance, below we use data from `lme4`, and indicate that the subject number is stored in the `"Subject"` column of the dataframe, by passing it to the `id` argument of `seqERboot`.
+When data involve repeated measures (and so multiple lines by subject), it is important to help `ESTER` to figure out how the data is structured by indicating in which column are stored subject or observations numbers. For instance, below we use data from `lme4`, and indicate that the subject number is stored in the `"Subject"` column of the dataframe, by passing it to the `id` argument of `seqER`.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
 library(lme4)

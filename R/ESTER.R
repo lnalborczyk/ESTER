@@ -10,8 +10,7 @@
 #' @author Ladislas Nalborczyk \cr
 #' Maintainer: Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
-#' @seealso \code{\link{ictab}}, \code{\link{simER}},
-#' \code{\link{seqER}}, \code{\link{seqERboot}}
+#' @seealso \code{\link{ictab}}, \code{\link{simER}}, \code{\link{seqER}}
 #'
 #' @docType package
 #' @name ESTER

@@ -6,7 +6,7 @@
 from WAIC or LOOIC with pseudo-BMA weights or Bayes Factors, for an independent
 two-groups comparison}
 \usage{
-compER(cohensd = 0, nmin = 20, nmax = 100, boundary = 20,
+compER(cohensd = 0, nmin = 20, nmax = 100, boundary = 10,
   prior = "normal(0, 5)", B = 20, cores = 2)
 }
 \arguments{
@@ -40,7 +40,7 @@ method (BF_SD) or via bridge sampling (BF_BS).
 }
 \examples{
 \dontrun{
-sim <- compER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, B = 20, cores = 4)
+sim <- compER(cohensd = 0.8, nmin = 20, nmax = 100, B = 20, cores = 4)
 plot(sim)
 }
 

@@ -40,7 +40,7 @@ mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
 seqER(ic = bic, mod1, mod2, nmin = 10)
 
-# Example with permutation samples
+# Example with ten permutation samples
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
@@ -61,7 +61,7 @@ seqER(ic = bic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
 
 }
 \seealso{
-\code{\link{seqERboot}}
+\code{\link{simER}}
 }
 \author{
 Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>

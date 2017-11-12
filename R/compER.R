@@ -33,7 +33,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' sim <- compER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, B = 20, cores = 4)
+#' sim <- compER(cohensd = 0.8, nmin = 20, nmax = 100, B = 20, cores = 4)
 #' plot(sim)
 #' }
 #'
@@ -43,8 +43,10 @@
 #'
 #' @export
 
+#cohensd = 0.8; nmin = 20; nmax = 22; B = 8; cores = 4; boundary = 20; prior = "normal(0, 5)";
+
 compER <- function(
-    cohensd = 0, nmin = 20, nmax = 100, boundary = 20, prior = "normal(0, 5)",
+    cohensd = 0, nmin = 20, nmax = 100, boundary = 10, prior = "normal(0, 5)",
     B = 20, cores = 2) {
 
     if (nmin == 0) {
@@ -229,7 +231,10 @@ compER <- function(
 
         } # end of %dopar%
 
-    res <- data.frame(sim, stringsAsFactors = FALSE)
+    res <-
+        data.frame(sim, stringsAsFactors = FALSE) %>%
+        mutate_at(vars(-prior), funs(as.numeric) )
+
     class(res) <- c("compER", "data.frame")
 
     return(res)
@@ -333,16 +338,6 @@ plot.compER <- function(x, log = TRUE, ... ) {
         theme(panel.grid.minor.x = element_blank(), legend.title = element_blank() ) +
         xlab("sample size") +
         ylab(expression(ER[10] ~ - ~ BF[10]) ) +
-        scale_x_continuous(breaks = seq(min(y$n), max(y$n), 10 ) ) +
-        annotate(
-            "text",
-            x = max(y$n), y = boundary,
-            label = paste0(sum(final_point_boundary$value == boundary) /
-                (length(unique(y$id) ) * 4) * 100, "%") ) +
-        annotate(
-            "text",
-            x = max(y$n), y = (1 / boundary),
-            label = paste0(sum(final_point_boundary$value == (1 / boundary) ) /
-                    (length(unique(y$id) ) * 4) * 100, "%") )
+        scale_x_continuous(breaks = seq(min(y$n), max(y$n), 10 ) )
 
 }

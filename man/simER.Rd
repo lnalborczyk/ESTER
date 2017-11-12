@@ -44,7 +44,7 @@ plot(sim, log = TRUE, hist = TRUE)
 
 }
 \seealso{
-\code{\link{ictab}}
+\code{\link{ictab}}, \code{\link{analysER}}
 }
 \author{
 Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>

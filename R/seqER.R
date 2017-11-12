@@ -32,7 +32,7 @@
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
 #' seqER(ic = bic, mod1, mod2, nmin = 10)
 #'
-#' # Example with permutation samples
+#' # Example with ten permutation samples
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
@@ -53,15 +53,9 @@
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
-#' @seealso \code{\link{seqERboot}}
+#' @seealso \code{\link{simER}}
 #'
 #' @export
-
-#solve nsims repeated measures with nsims
-#data(mtcars)
-#mod1 <- lm(mpg ~ cyl, mtcars)
-#mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#ic = bic; mod1 = mod1; mod2 = mod2; nmin = 10; nsims = 10; id = "Subject";
 
 seqER <-
     function(
@@ -178,7 +172,6 @@ seqER <-
     }
 
     colnames(er) <- c("ppt", "ER")
-    # class(er) <- c("seqER", "data.frame")
 
     if (blind == TRUE) {
 
@@ -203,7 +196,6 @@ seqER <-
         for (i in 1:nsims) {
 
             data_temp <- data[sample(nrow(data), replace = FALSE), ]
-            data_temp$ppt <- data$ppt
 
             if (nobs > 1) {
 
@@ -211,10 +203,13 @@ seqER <-
                     data_temp[order(factor(data_temp$ppt,
                         levels = unique(data_temp$ppt) ) ), ]
 
-            }
+                data_temp$ppt <- data$ppt
 
-            # startrow <- min(which(as.numeric(as.character(data_temp$ppt) ) == nmin) )
-            # endrow <- nrow(data_temp)
+            } else {
+
+                data_temp$ppt <- data$ppt
+
+            }
 
             for (j in seq(startrow, endrow, nobs) ) {
 
@@ -293,14 +288,14 @@ seqER <-
 
 plot.seqER <- function(x, ... ) {
 
-    aes_lines <- sqrt(1 / n_distinct(x$ERi) )
+    aes_lines <- sqrt(0.75 / n_distinct(x$ERi) )
 
     ggplot(x, aes_string(x = "ppt", y = "ER", group = "ERi") ) +
         scale_y_log10() +
         geom_line(alpha = aes_lines, size = aes_lines) +
         geom_line(
             aes_string(x = "ppt", y = "ER", group = NULL),
-            data = x[x$ERi=="er",], size = 1) +
+            data = x[x$ERi == "er", ], size = 0.75) +
         theme_bw(base_size = 12) +
         xlab("Sample size") +
         ylab(expression(Evidence~ ~Ratio~ ~ (ER[10]) ) )

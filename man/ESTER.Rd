@@ -15,8 +15,7 @@ Bayesian Information Criterion (BIC).
 See \code{vignette("ESTER")} for a general introduction and overview.
 }
 \seealso{
-\code{\link{ictab}}, \code{\link{simER}},
-\code{\link{seqER}}, \code{\link{seqERboot}}
+\code{\link{ictab}}, \code{\link{simER}}, \code{\link{seqER}}
 }
 \author{
 Ladislas Nalborczyk \cr

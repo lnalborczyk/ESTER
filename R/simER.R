@@ -37,7 +37,7 @@
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
-#' @seealso \code{\link{ictab}}
+#' @seealso \code{\link{ictab}}, \code{\link{analysER}}
 #'
 #' @export
 
@@ -79,9 +79,12 @@ simER <- function(
             res.counter <- 1
 
             res <-
-                matrix(NA, nrow = length(nmin:nmax) * max_b, ncol = 5,
-                    dimnames = list(NULL,
-                        c("id", "true.ES", "boundary", "n", "ER") ) )
+                matrix(NA,
+                    nrow = length(nmin:nmax) * max_b, ncol = 5,
+                    dimnames =
+                        list(
+                            NULL,
+                            c("id", "true.ES", "boundary", "n", "ER") ) )
 
             for (b in 1:max_b) {
 
@@ -123,7 +126,7 @@ simER <- function(
                     res0[which(nmin:nmax == i), ] <-
                         c(
                             # id is a unique id for each trajectory
-                            id = batch * 10^(floor(log(max_b, base = 10) ) + 2) + b,
+                            id = batch * 10 ^ (floor(log(max_b, base = 10) ) + 2) + b,
                             true.ES	= cohensd,
                             boundary = boundary,
                             n = i,
@@ -160,11 +163,11 @@ simER <- function(
 #'
 #' Plotting the results of \code{simER}.
 #'
-#' @param x Should be a \code{simER} object
+#' @param x A \code{simER} object
 #' @param log Should the y-axis be log-transformed ?
 #' @param hist Should plot the histogram of simulations hitting either the lower,
-#' the upper boundary or stopping at nmax ?
-#' @param ... Additional parameters
+#' the upper boundary, or stopping at nmax ?
+#' @param ... Further arguments passed to \code{plot.default}
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
@@ -173,7 +176,7 @@ simER <- function(
 plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
 
     boundary <- unique(x$boundary)
-    logBoundary <- log(sort(c(boundary, 1 / boundary) ) )
+    logboundary <- log(sort(c(boundary, 1 / boundary) ) )
 
     bound_hit <- function(x) {
 
@@ -203,7 +206,7 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
 
             first <- which(x == boundary)[1]
 
-            if(first < length(x) ) {
+            if (first < length(x) ) {
 
                 x[(first + 1):length(x)] <- NA
 
@@ -213,7 +216,7 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
 
             first <- which(x == 1 / boundary)[1]
 
-            if(first < length(x) ) {
+            if (first < length(x) ) {
 
                 x[(first + 1):length(x)] <- NA
 
@@ -240,22 +243,22 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
         y %>%
         group_by(id) %>%
         mutate_("log_ER" = "log(ER)" ) %>%
-        filter_(.dots = list(~log_ER == logBoundary[1]) )
+        filter_(.dots = list(~log_ER == logboundary[1]) )
 
     upper_boundary_hit <-
         y %>%
         group_by(id) %>%
         mutate_("log_ER" = "log(ER)" ) %>%
-        filter_(.dots = list(~log_ER == logBoundary[2]) )
+        filter_(.dots = list(~log_ER == logboundary[2]) )
 
     final_point_boundary <-
         y %>%
         group_by(id) %>%
         mutate_("log_ER" = "log(ER)" ) %>%
-        filter_(.dots = list(~log_ER %in% logBoundary) )
+        filter_(.dots = list(~log_ER %in% logboundary) )
 
     "%!in%" <-
-        function(x, y) !("%in%"(x, y) )
+        function(x, y) !("%in%" (x, y) )
 
     nmax <-
         y %>%
@@ -263,7 +266,7 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
         mutate_("log_ER" = "log(ER)" ) %>%
         filter(n == max(n) ) %>%
         na.omit() %>%
-        filter_(.dots = list(~log_ER %!in% logBoundary) )
+        filter_(.dots = list(~log_ER %!in% logboundary) )
 
     aes_lines <- sqrt(sqrt(1 / n_distinct(y$id) ) )
 
@@ -308,7 +311,8 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
 
         pRight <-
             ggplot(nmax, aes_string(x = "ER") ) +
-            geom_histogram(aes_string(y = "..count.."), na.rm = TRUE, binwidth = 0.05) +
+            geom_histogram(
+                aes_string(y = "..count.."), na.rm = TRUE, binwidth = 0.05) +
             coord_flip() +
             scale_x_log10(limits = c(1 / boundary, boundary) ) +
             theme_nothing()
@@ -316,64 +320,76 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
         if (nrow(lower_boundary_hit) > 0 & nrow(upper_boundary_hit) > 0 & nrow(nmax) > 0 ) {
 
             p1 <-
-                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+                insert_xaxis_grob(
+                    pMain, pTop, unit(.2, "null"), position = "top")
 
             p2 <-
-                insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
+                insert_yaxis_grob(
+                    p1, pRight, unit(.2, "null"), position = "right")
 
             p3 <-
-                insert_xaxis_grob(p2, pLow, unit(.2, "null"), position = "bottom")
+                insert_xaxis_grob(
+                    p2, pLow, unit(.2, "null"), position = "bottom")
 
         ggdraw(p3)
 
         } else if (nrow(lower_boundary_hit) > 0 & nrow(upper_boundary_hit) > 0) {
 
             p1 <-
-                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+                insert_xaxis_grob(
+                    pMain, pTop, unit(.2, "null"), position = "top")
 
             p2 <-
-                insert_xaxis_grob(p1, pLow, unit(.2, "null"), position = "bottom")
+                insert_xaxis_grob(
+                    p1, pLow, unit(.2, "null"), position = "bottom")
 
             ggdraw(p2)
 
         } else if (nrow(lower_boundary_hit) > 0 & nrow(nmax) > 0) {
 
             p1 <-
-                insert_xaxis_grob(pMain, pLow, unit(.2, "null"), position = "bottom")
+                insert_xaxis_grob(
+                    pMain, pLow, unit(.2, "null"), position = "bottom")
 
             p2 <-
-                insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
+                insert_yaxis_grob(
+                    p1, pRight, unit(.2, "null"), position = "right")
 
             ggdraw(p2)
 
         } else if (nrow(upper_boundary_hit) > 0 & nrow(nmax) > 0) {
 
             p1 <-
-                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+                insert_xaxis_grob(
+                    pMain, pTop, unit(.2, "null"), position = "top")
 
             p2 <-
-                insert_yaxis_grob(p1, pRight, unit(.2, "null"), position = "right")
+                insert_yaxis_grob(
+                    p1, pRight, unit(.2, "null"), position = "right")
 
             ggdraw(p2)
 
         } else if (nrow(lower_boundary_hit) > 0) {
 
             p1 <-
-                insert_xaxis_grob(pMain, pLow, unit(.2, "null"), position = "bottom")
+                insert_xaxis_grob(
+                    pMain, pLow, unit(.2, "null"), position = "bottom")
 
             ggdraw(p1)
 
         } else if (nrow(upper_boundary_hit) > 0) {
 
             p1 <-
-                insert_xaxis_grob(pMain, pTop, unit(.2, "null"), position = "top")
+                insert_xaxis_grob(
+                    pMain, pTop, unit(.2, "null"), position = "top")
 
             ggdraw(p1)
 
         } else if (nrow(nmax) > 0 ) {
 
             p1 <-
-                insert_yaxis_grob(pMain, pRight, unit(.2, "null"), position = "right")
+                insert_yaxis_grob(
+                    pMain, pRight, unit(.2, "null"), position = "right")
 
             ggdraw(p1)
 

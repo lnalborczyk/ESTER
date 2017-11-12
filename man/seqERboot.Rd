@@ -33,7 +33,7 @@ that there is only one observation (i.e., one line) per subject.
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-seq_boot_mtcars <- seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20)}
+seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20)}
 
 }
 \seealso{

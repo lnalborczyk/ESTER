@@ -3,16 +3,16 @@
 ## Major updates
 
 * deprecating distER.R (will be removed in the next release)
-* merging seqER and seqERboot into seqER, by adding a "nsims" argument in seqER
-* deprecating seqERboot (will be removed in the next release)
-* simER: parallelisation and update of the plot method, to plot distributions of ERs at each boundary (lower, upper, and nmax)
-* introducing the compER function to compare the behaviour of different evidence ratios
-* introducing the analysER function which allow to analyse the results of simulations ran with simER or compER
+* merging seqER.R and seqERboot.R into seqER.R, by adding a "nsims" argument in seqER.R
+* deprecating seqERboot.R (will be removed in the next release)
+* simER.R: parallelisation and update of the plot method
+* introducing the compER.R function to compare the behaviour of different evidence ratios
+* introducing the analysER.R function which allow to analyse the results of simulations ran with simER.R or compER.R
 
 ## Minor updates
 
 * doc updates
 * adding pseudo-BMA weights computations for brmsfit models in ictab.R
-* adding a "blind" argument to seqER to conduct triple blind analyses, with a "bondary argument" at which the sequential testing is stopped
+* adding a "blind" argument to seqER.R to conduct triple blind analyses, with a "bondary argument" at which the sequential testing is stopped
 
-NB: we recommend using BIC-based rather than AIC-based evidence ratios for sequential testing
+NB: for now, we recommend using BIC-based rather than AIC-based evidence ratios for sequential testing
