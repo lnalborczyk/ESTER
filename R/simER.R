@@ -18,7 +18,7 @@
 #'
 #' @return An object of class \code{data.frame}, which contains...
 #'
-#' @importFrom cowplot ggdraw insert_xaxis_grob insert_yaxis_grob
+#' @importFrom cowplot ggdraw insert_xaxis_grob insert_yaxis_grob theme_nothing
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom magrittr %>% set_names
 #' @importFrom stats lm rnorm runif
@@ -295,20 +295,23 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
             ggplot(upper_boundary_hit, aes_string(x = "n") ) +
             geom_histogram(aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
             scale_x_continuous(
-                limits = c(NA, n_xlim[2]) )
+                limits = c(NA, n_xlim[2]) ) +
+            theme_nothing()
 
         pLow <-
             ggplot(lower_boundary_hit, aes_string(x = "n") ) +
             geom_histogram(aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
             scale_x_continuous(
                limits = c(n_xlim[1], n_xlim[2]) ) +
-            scale_y_reverse()
+            scale_y_reverse() +
+            theme_nothing()
 
         pRight <-
             ggplot(nmax, aes_string(x = "ER") ) +
             geom_histogram(aes_string(y = "..count.."), na.rm = TRUE, binwidth = 0.05) +
             coord_flip() +
-            scale_x_log10(limits = c(1 / boundary, boundary) )
+            scale_x_log10(limits = c(1 / boundary, boundary) ) +
+            theme_nothing()
 
         if (nrow(lower_boundary_hit) > 0 & nrow(upper_boundary_hit) > 0 & nrow(nmax) > 0 ) {
 

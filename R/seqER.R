@@ -57,6 +57,7 @@
 #'
 #' @export
 
+#solve nsims repeated measures with nsims
 #data(mtcars)
 #mod1 <- lm(mpg ~ cyl, mtcars)
 #mod2 <- lm(mpg ~ cyl + disp, mtcars)
