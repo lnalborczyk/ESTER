@@ -43,8 +43,6 @@
 #'
 #' @export
 
-#cohensd = 0.8; nmin = 20; nmax = 22; B = 8; cores = 4; boundary = 20; prior = "normal(0, 5)";
-
 compER <- function(
     cohensd = 0, nmin = 20, nmax = 100, boundary = 10, prior = "normal(0, 5)",
     B = 20, cores = 2) {
@@ -132,11 +130,9 @@ compER <- function(
                 set_names(c("value", "group") ) %>%
                 sample_n(nrow(.) )
 
-            # res0 keeps the accumulating sample variables from this specific run
             res0 <- matrix(NA, nrow = length(nmin:nmax), ncol = ncol(res),
                 dimnames = dimnames(res) )
 
-            # increase sample size up to nmax
             for (i in nmin:nmax) {
 
                 samp <- df_pop[1:i, ]
@@ -172,17 +168,17 @@ compER <- function(
                         seed = sample(1e6, size = 1) )$hypothesis$Evid.Ratio
 
                 # resetting the seed fixed by "bayes_factor"
-                set.seed(NULL) # set.seed(Sys.time() )
+                set.seed(NULL)
 
                 BF_BS <- bayes_factor(mod2.1, mod1, silent = TRUE)$bf
 
                 # resetting the seed fixed by "bayes_factor"
-                set.seed(NULL) # set.seed(Sys.time() )
+                set.seed(NULL)
 
                 res0[which(nmin:nmax == i), ] <-
                     c(
                         # id is a unique id for each trajectory
-                        id = batch * 10^(floor(log(max_b, base = 10) ) + 2) + b,
+                        id = batch * 10 ^ (floor(log(max_b, base = 10) ) + 2) + b,
                         true.ES	= cohensd,
                         boundary = boundary,
                         prior = prior,
@@ -246,7 +242,7 @@ compER <- function(
 plot.compER <- function(x, log = TRUE, ... ) {
 
     boundary <- unique(x$boundary)
-    logBoundary <- log(sort(c(boundary, 1 / boundary) ) )
+    logboundary <- log(sort(c(boundary, 1 / boundary) ) )
 
     bound_hit <- function(x) {
 
@@ -276,7 +272,7 @@ plot.compER <- function(x, log = TRUE, ... ) {
 
             first <- which(x == boundary)[1]
 
-            if(first < length(x) ) {
+            if (first < length(x) ) {
 
                 x[(first + 1):length(x)] <- NA
 
@@ -286,7 +282,7 @@ plot.compER <- function(x, log = TRUE, ... ) {
 
             first <- which(x == 1 / boundary)[1]
 
-            if(first < length(x) ) {
+            if (first < length(x) ) {
 
                 x[(first + 1):length(x)] <- NA
 
@@ -312,14 +308,12 @@ plot.compER <- function(x, log = TRUE, ... ) {
             "BF_BS" = "bound_na(bound_hit(BF_BS))" ) %>%
         ungroup()
 
-    .dots <- list(~log_value == abs(logBoundary[1]) )
-
     final_point_boundary <-
         y %>%
         group_by(id) %>%
         gather_("index", "value", names(x)[6:9]) %>%
         mutate_("log_value" = "log(value)" ) %>%
-        filter_(.dots = list(~log_value %in% logBoundary) )
+        filter_(.dots = list(~log_value %in% logboundary) )
 
     y %>%
         gather_("index", "value", names(x)[6:9]) %>%
@@ -332,10 +326,12 @@ plot.compER <- function(x, log = TRUE, ... ) {
                 x = "n", y = "value",
                 group = "interaction(id, index)", colour = "index"),
             alpha = 0.6) +
-        {if(log) scale_y_log10()} +
-        {if(log) annotation_logticks(sides = "l")} +
+        {if (log) scale_y_log10()} +
+        {if (log) annotation_logticks(sides = "l")} +
         theme_bw(base_size = 12) +
-        theme(panel.grid.minor.x = element_blank(), legend.title = element_blank() ) +
+        theme(
+            panel.grid.minor.x = element_blank(),
+            legend.title = element_blank() ) +
         xlab("sample size") +
         ylab(expression(ER[10] ~ - ~ BF[10]) ) +
         scale_x_continuous(breaks = seq(min(y$n), max(y$n), 10 ) )

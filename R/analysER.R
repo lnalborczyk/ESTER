@@ -77,7 +77,7 @@ analysER.simER <- function(sim) {
 
             first <- which(x == boundary)[1]
 
-            if(first < length(x) ) {
+            if (first < length(x) ) {
 
                 x[(first + 1):length(x)] <- NA
 
@@ -87,7 +87,7 @@ analysER.simER <- function(sim) {
 
             first <- which(x == 1 / boundary)[1]
 
-            if(first < length(x) ) {
+            if (first < length(x) ) {
 
                 x[(first + 1):length(x)] <- NA
 
@@ -197,7 +197,7 @@ analysER.compER <- function(sim) {
 
             first <- which(x == boundary)[1]
 
-            if(first < length(x) ) {
+            if (first < length(x) ) {
 
                 x[(first + 1):length(x)] <- NA
 
@@ -207,7 +207,7 @@ analysER.compER <- function(sim) {
 
             first <- which(x == 1 / boundary)[1]
 
-            if(first < length(x) ) {
+            if (first < length(x) ) {
 
                 x[(first + 1):length(x)] <- NA
 

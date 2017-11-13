@@ -296,14 +296,16 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
 
         pTop <-
             ggplot(upper_boundary_hit, aes_string(x = "n") ) +
-            geom_histogram(aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
+            geom_histogram(
+                aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
             scale_x_continuous(
                 limits = c(NA, n_xlim[2]) ) +
             theme_nothing()
 
         pLow <-
             ggplot(lower_boundary_hit, aes_string(x = "n") ) +
-            geom_histogram(aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
+            geom_histogram(
+                aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
             scale_x_continuous(
                limits = c(n_xlim[1], n_xlim[2]) ) +
             scale_y_reverse() +

@@ -32,7 +32,7 @@ Different questions
 Simulation
 ----------
 
-This first function runs many simulated studies in which we compare two independant groups, as a function of effect size and sample size. The `nmin` argument serves to specify from which participant we want to start doing sequential testing (we usually recommand to avoid `nmin` &lt; 10) and the `boundary` argument specifies the value of ER10 at which the sequential testing should be terminated.
+The `simER` function runs a simulated study in which we compare two independant groups, for various effect size (`cohensd`) and sample size (`nmax`). The `nmin` argument serves to specify from which participant we want to start doing sequential testing (we usually recommend to avoid `nmin` &lt; 10). We can define a `boundary` at which we would like to stop the sequential testing, as well as how many simulations we want to evaluate (`nsims`).
 
 ``` r
 library(ESTER)
@@ -51,13 +51,10 @@ mod2 <- lm(mpg ~ cyl + disp, mtcars)
 seqER(ic = bic, mod1, mod2, nmin = 10)
 ```
 
-In addition, `seqERboot` allows you to study the behavior of sequential ERs computed on your own data, along with sequential ERs computed on permutation samples. This feature might be useful to study to what extent the evolution of evidence ratios you observed on the original sample is dependent to the order of the observations.
+In addition, `seqER` allows you to study the behavior of sequential ERs computed on your own data, along with sequential ERs computed on permutation samples. This feature might be useful to study to what extent the evolution of evidence ratios you observed on the original sample is dependent to the order of the observations.
 
 ``` r
-data(mtcars)
-mod1 <- lm(mpg ~ cyl, mtcars)
-mod2 <- lm(mpg ~ cyl + disp, mtcars)
-seqERboot(ic = bic, mod1, mod2, nmin = 10, order_nb = 20)
+seqER(ic = bic, mod1, mod2, nmin = 10, nsims = 10)
 ```
 
 More detailed information can be found in the main vignette, available online [here](https://rawgit.com/lnalborczyk/ESTER/master/inst/doc/ESTER.html), or by typing `vignette("ESTER")` in the console.
