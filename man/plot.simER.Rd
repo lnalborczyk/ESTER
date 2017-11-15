@@ -4,7 +4,7 @@
 \alias{plot.simER}
 \title{Plotting the results of \code{simER}}
 \usage{
-\method{plot}{simER}(x, log = TRUE, hist = FALSE, ...)
+\method{plot}{simER}(x, log = TRUE, hist = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{simER} object}

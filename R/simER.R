@@ -63,13 +63,21 @@ simER <- function(
 
     }
 
-    cl <- makeCluster(cores, outfile = "")
-    registerDoParallel(cl, cores)
+    if (verbose) {
 
-    start <- Sys.time()
-    print(paste0("Simulation started at ", start) )
+        cl <- makeCluster(cores, outfile = "")
+        registerDoParallel(cl, cores)
 
-    flush.console()
+        start <- Sys.time()
+        print(paste0("Simulation started at ", start) )
+
+        flush.console()
+
+    } else {
+
+        registerDoParallel(cores)
+
+    }
 
     sim <-
         foreach(
@@ -133,6 +141,8 @@ simER <- function(
                             ER = ER
                         )
 
+                    if (ER >= boundary | ER <= 1 / boundary) {break;}
+
                 } # end of i
 
                 res[res.counter:(res.counter + nrow(res0) - 1), ] <- res0
@@ -148,12 +158,16 @@ simER <- function(
     res <- data.frame(sim, stringsAsFactors = FALSE)
     class(res) <- c("simER", "data.frame")
 
-    end <- Sys.time()
-    print(paste0("Simulation finished at ", end) )
-    cat("Duration: ")
-    print(end - start)
+    if (verbose) {
 
-    stopCluster(cl)
+        end <- Sys.time()
+        print(paste0("Simulation finished at ", end) )
+        cat("Duration: ")
+        print(end - start)
+
+        stopCluster(cl)
+
+    }
 
     return(res)
 
@@ -173,7 +187,9 @@ simER <- function(
 #'
 #' @export
 
-plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
+plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
+
+    x <- na.omit(x)
 
     boundary <- unique(x$boundary)
     logboundary <- log(sort(c(boundary, 1 / boundary) ) )
@@ -257,8 +273,7 @@ plot.simER <- function(x, log = TRUE, hist = FALSE, ... ) {
         mutate_("log_ER" = "log(ER)" ) %>%
         filter_(.dots = list(~log_ER %in% logboundary) )
 
-    "%!in%" <-
-        function(x, y) !("%in%" (x, y) )
+    "%!in%" <- function(x, y) !("%in%" (x, y) )
 
     nmax <-
         y %>%

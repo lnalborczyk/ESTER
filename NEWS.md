@@ -14,3 +14,7 @@
 * doc updates
 * adding pseudo-BMA weights computations for brmsfit models in ictab.R
 * adding a "blind" argument to seqER.R to conduct triple blind analyses, with a "bondary argument" at which the sequential testing is stopped
+
+## TO-DO
+
+* normalise size of histograms in plot.simER so that the height represents the number of trajectories (in each of the three histograms)...

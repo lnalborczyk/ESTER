@@ -46,10 +46,9 @@ analysER.simER <- function(sim) {
 
     }
 
-    boundary <- as.numeric(unique(sim$boundary) )
-    logboundary <- log(sort(c(boundary, 1 / boundary) ) )
+    sim <- na.omit(sim)
 
-    bound_hit <- function(x) {
+    bound_hit <- function(x, boundary) {
 
         if (any(x > boundary) ) {
 
@@ -71,7 +70,7 @@ analysER.simER <- function(sim) {
 
     }
 
-    bound_na <- function(x) {
+    bound_na <- function(x, boundary) {
 
         if (any(x == boundary) ) {
 
@@ -105,49 +104,44 @@ analysER.simER <- function(sim) {
 
     sim2 <-
         sim %>%
-        group_by(id) %>%
-        mutate_at(
-            .vars = vars( - (1:3) ),
-            .funs = funs(bound_hit) ) %>%
-        mutate_at(
-            .vars = vars( - (1:3) ),
-            .funs = funs(bound_na) ) %>%
-        ungroup()
-
-    sim2 <-
-        sim %>%
-        group_by(id) %>%
-        mutate_("ER" = "bound_na(bound_hit(ER) )" ) %>%
+        group_by_("id", "true.ES", "boundary") %>%
+        mutate_("ER" = "bound_na(bound_hit(ER, boundary), boundary )" ) %>%
         ungroup()
 
     nmax.hit <-
         sim2 %>%
-        group_by(id) %>%
-        gather_("index", "value", names(sim2[, - c(1:4)]) ) %>%
-        mutate_("log_value" = "log(value)" ) %>%
-        filter_(.dots = list(~n == max(n) ) ) %>%
+        group_by_("id", "true.ES", "boundary") %>%
+        mutate_("log_ER" = "log(ER)" ) %>%
+        #filter(n == max(n) & ER < boundary & ER > 1 / boundary) %>%
+        #filter_(lazyeval::interp("n == max(n) & ER < boundary & ER > 1 / boundary") ) %>%
+        filter_(.dots = list("n == max(n) & ER < boundary & ER > 1 / boundary") ) %>%
         mutate(hitCondition = "nmax") %>%
         na.omit()
 
     boundary.hit <-
         sim2 %>%
-        group_by(id) %>%
-        gather_("index", "value", names(sim2[, - c(1:4)]) ) %>%
-        mutate_("log_value" = "log(value)" ) %>%
-        filter_(.dots = list(~log_value %in% logboundary) ) %>%
+        group_by_("id", "true.ES", "boundary") %>%
+        mutate_("log_ER" = "log(ER)" ) %>%
+        filter_(.dots = list(~ER %in% c(boundary, 1 / boundary) ) ) %>%
         mutate(hitCondition = "boundary") %>%
         na.omit()
 
     endpoint <- bind_rows(nmax.hit, boundary.hit)
+    total <- length(unique(sim$id) ) * length(unique(sim$true.ES) ) * length(unique(sim$boundary) )
+
+    if(!total == nrow(endpoint) ) {
+
+        stop("number of detected endpoints is not equal to number of trajectories...")
+
+    }
 
     res <-
         endpoint %>%
-        group_by_("index") %>%
+        group_by_("true.ES", "boundary") %>%
         summarise_(
             "ASN" = "mean(n)",
-            "ASN_sd" = "sd(n)",
-            "Lower_hit" = "sum(value == 1 / boundary) / n_distinct(sim$id)",
-            "Upper_hit" = "sum(value == boundary) / n_distinct(sim$id)",
+            "Lower_hit" = "sum(ER == 1 / boundary) / n_distinct(sim$id)",
+            "Upper_hit" = "sum(ER == boundary) / n_distinct(sim$id)",
             "Inconclusive" = "1 - (Lower_hit + Upper_hit)" ) %>%
         data.frame %>%
         mutate_at(.vars = 4:6, .funs = funs(paste0(. * 100, "%") ) )
