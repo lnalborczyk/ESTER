@@ -13,4 +13,4 @@
 * doc updates
 * adding pseudo-BMA weights computations for brmsfit models in ictab.R
 * seqER.R now accepts brmsfit models
-* adding a "blind" argument to seqER.R to conduct triple blind analyses, with a "bondary argument" at which the sequential testing is stopped
+* adding a "blind" argument to seqER.R to conduct triple blind analyses, with a "boundary" argument at which the sequential testing is stopped

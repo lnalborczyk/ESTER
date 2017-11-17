@@ -53,10 +53,12 @@
 #' seqER(ic = bic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
 #'
 #' # Example with brmsfit models
+#' \dontrun{
 #' library(brms)
 #' mod1 <- brm(Reaction ~ Days + (1|Subject), sleepstudy)
 #' mod2 <- brm(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
 #' seqER(ic = WAIC, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
+#' }
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
