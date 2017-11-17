@@ -284,6 +284,7 @@ plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
         filter_(.dots = list(~log_ER %!in% logboundary) )
 
     aes_lines <- sqrt(sqrt(1 / n_distinct(y$id) ) )
+    total <- max(n_distinct(final_point_boundary$id), n_distinct(nmax$id) )
 
     pMain <-
         y %>%
@@ -315,6 +316,8 @@ plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
                 aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
             scale_x_continuous(
                 limits = c(NA, n_xlim[2]) ) +
+            scale_y_continuous(
+                    limits = c(NA, total) ) +
             theme_nothing()
 
         pLow <-
@@ -323,7 +326,7 @@ plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
                 aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
             scale_x_continuous(
                limits = c(n_xlim[1], n_xlim[2]) ) +
-            scale_y_reverse() +
+            scale_y_reverse(limits = c(NA, total) ) +
             theme_nothing()
 
         pRight <-
@@ -332,6 +335,8 @@ plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
                 aes_string(y = "..count.."), na.rm = TRUE, binwidth = 0.05) +
             coord_flip() +
             scale_x_log10(limits = c(1 / boundary, boundary) ) +
+            scale_y_continuous(
+                limits = c(NA, total) ) +
             theme_nothing()
 
         if (nrow(lower_boundary_hit) > 0 & nrow(upper_boundary_hit) > 0 & nrow(nmax) > 0 ) {

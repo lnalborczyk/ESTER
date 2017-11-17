@@ -1,7 +1,7 @@
 #' Computes sequential evidence ratios
 #'
 #' Computes sequential evidence ratios, either based on the AIC or the BIC.
-#' Supported models currently include \code{lm} or \code{merMod} models.
+#' Supported models currently include \code{lm}, \code{merMod}, or \code{brmsfit} models.
 #' When data involve repeated measures (and so multiple lines per subject),
 #' a column indicating the subject "id" should be provided to the \code{id} argument.
 #' If nothing is passed to the \code{id} argument, \code{seqER} will suppose
@@ -18,13 +18,14 @@
 #' @param blind If true, the function only returns a "continue or stop" message
 #' @param nsims Number of permutation samples to evaluate (is ignored if blind = TRUE)
 #'
-#' @importFrom stats family formula lm
+#' @importFrom stats family formula lm update
 #' @importFrom lme4 lmer glmer
 #' @importFrom magrittr %>%
 #' @importFrom rlang f_lhs
 #' @importFrom dplyr n_distinct
 #' @import ggplot2
 #' @import utils
+#' @import brms
 #'
 #' @examples
 #' data(mtcars)
@@ -50,6 +51,12 @@
 #' mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
 #' mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
 #' seqER(ic = bic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
+#'
+#' # Example with brmsfit models
+#' library(brms)
+#' mod1 <- brm(Reaction ~ Days + (1|Subject), sleepstudy)
+#' mod2 <- brm(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
+#' seqER(ic = WAIC, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
@@ -83,6 +90,12 @@ seqER <-
     if (class(mod1) == "glmerMod" | class(mod1) == "lmerMod") {
 
         data <- data.frame(eval(mod1@call$data, envir = parent.frame() ) )
+
+    }
+
+    if (class(mod1) == "brmsfit") {
+
+        data <- data.frame(eval(mod1$data, envir = parent.frame() ) )
 
     }
 
@@ -157,6 +170,14 @@ seqER <-
 
         }
 
+        if ( (class(mod1) == "brmsfit") ) {
+
+            mod1 <- update(mod1, newdata = data[1:maxrow, ])
+
+            mod2 <- update(mod2, newdata = data[1:maxrow, ])
+
+        }
+
         tabtab <- ictab(list(mod1 = mod1, mod2 = mod2), ic)
 
         temp_er <- data.frame(cbind(data$ppt[i],
@@ -164,8 +185,6 @@ seqER <-
                 tabtab$ic_wt[tabtab$modnames == "mod1"]) )
 
         if (!exists("er") ) er <- temp_er else er <- rbind(er, temp_er)
-
-        # if (abs(log(temp_er[,2]) ) >= log(boundary) ) {break;}
 
         rm(temp_er)
 
@@ -243,6 +262,14 @@ seqER <-
 
                 }
 
+                if ( (class(mod1) == "brmsfit") ) {
+
+                    mod1 <- update(mod1, newdata = data_temp[1:maxrow, ])
+
+                    mod2 <- update(mod2, newdata = data_temp[1:maxrow, ])
+
+                }
+
                 tabtab <- ictab(list(mod1 = mod1, mod2 = mod2), ic)
 
                 temp_temp_erb <-
@@ -272,8 +299,9 @@ seqER <-
                 set_names(c("ERi", "ppt", "ER") )
 
             erb <- rbind(erb, temp_erb)
-
             rm(temp_erb)
+
+            set.seed(NULL)
 
         }
 

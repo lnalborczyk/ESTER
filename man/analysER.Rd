@@ -2,7 +2,7 @@
 % Please edit documentation in R/analysER.R
 \name{analysER}
 \alias{analysER}
-\title{Analysing the results of simulations ran with \code{simER} or \code{compER}}
+\title{Analysing the results of simulations ran with \code{simER}}
 \usage{
 analysER(sim)
 }
@@ -17,7 +17,7 @@ of the upper boundary, and the percentage of trajectories that did not hit
 none of the boundaries (and thus end at nmax).
 }
 \description{
-Analysing the results of simulations ran with \code{simER} or \code{compER}.
+Analysing the results of simulations ran with \code{simER}.
 It computes the average sample number (ASN) at which the boundary is attained
 (either the lower or the upper one), the percentage of hits of the lower
 boundary as well as hits of the upper boundary, and the percentage of
@@ -32,7 +32,7 @@ analysER(sim)
 
 }
 \seealso{
-\code{\link{simER}}, \code{\link{compER}}
+\code{\link{simER}}
 }
 \author{
 Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>

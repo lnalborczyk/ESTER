@@ -6,15 +6,11 @@
 * merging seqER.R and seqERboot.R into seqER.R, by adding a "nsims" argument in seqER.R
 * deprecating seqERboot.R (will be removed in the next release)
 * simER.R: parallelisation and update of the plot method
-* introducing the compER.R function to compare the behaviour of different evidence ratios computed from brmsfit models
-* introducing the analysER.R function which allow to analyse the results of simulations ran with simER.R or compER.R
+* introducing the analysER.R function which allow to analyse the results of simulations ran with simER.R
 
 ## Minor updates
 
 * doc updates
 * adding pseudo-BMA weights computations for brmsfit models in ictab.R
+* seqER.R now accepts brmsfit models
 * adding a "blind" argument to seqER.R to conduct triple blind analyses, with a "bondary argument" at which the sequential testing is stopped
-
-## TO-DO
-
-* normalise size of histograms in plot.simER so that the height represents the number of trajectories (in each of the three histograms)...
