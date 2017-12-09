@@ -35,6 +35,7 @@ If nothing is passed to the \code{id} argument, \code{seqER} will suppose
 that there is only one observation (i.e., one line) per subject.
 }
 \examples{
+\dontrun{
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
@@ -60,7 +61,6 @@ mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
 seqER(ic = bic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
 
 # Example with brmsfit models
-\dontrun{
 library(brms)
 mod1 <- brm(Reaction ~ Days + (1|Subject), sleepstudy)
 mod2 <- brm(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
