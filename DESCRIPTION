@@ -1,9 +1,9 @@
 Package: ESTER
 Title: Efficient Sequential Testing with Evidence Ratios
 Version: 0.2.0
-Date: 2017-11-26
+Date: 2017-12-09
 Authors@R: person("Ladislas", "Nalborczyk", email = "ladislas.nalborczyk@gmail.com",
-  role = c("aut", "cre"))
+  role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7419-9855"))
 Description: An implementation of sequential testing that uses evidence ratios
     computed from the weights of a set of models. These weights correspond either
     to Akaike weights computed from the Akaike Information Criterion (AIC) or the
