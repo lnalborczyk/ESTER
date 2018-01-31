@@ -1,3 +1,15 @@
+# ESTER version 0.3.0
+
+## Major updates
+
+* removing distER.R and seqERboot.R (deprecated in the last release)
+* ...
+
+## Minor updates
+
+* doc updates
+* ...
+
 # ESTER version 0.2.0
 
 ## Major updates

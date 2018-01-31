@@ -55,12 +55,12 @@ analysER.simER <- function(sim) {
             first <- which(x > boundary)[1]
             x[first:length(x)] <- boundary
 
-        } else if (any(x < (1 / boundary) ) ){
+        } else if (any(x < (1 / boundary) ) ) {
 
             first <- which(x < (1 / boundary) )[1]
             x[first:length(x)] <- 1 / boundary
 
-        } else{
+        } else {
 
             x <- x
 

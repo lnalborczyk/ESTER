@@ -1,6 +1,6 @@
 ## Resubmission
 This is a resubmission. In this version I have:
-- used https links instead of http links in the readme file
+- removed https links from the readme file
 - removed Rd markup from the description file
 
 ## Test environments
