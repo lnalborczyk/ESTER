@@ -15,7 +15,19 @@ License: MIT + file LICENSE
 LazyData: yes
 RoxygenNote: 6.0.1
 Depends: R (>= 3.3.0)
-Imports: brms, lme4, dplyr, magrittr, tidyr, ggplot2, rlang, foreach, doParallel, cowplot
+Imports: 
+    brms,
+    lme4,
+    dplyr,
+    magrittr,
+    tidyr,
+    ggplot2,
+    rlang,
+    foreach,
+    doParallel,
+    cowplot,
+    RColorBrewer,
+    lazyeval
 URL: https://github.com/lnalborczyk/ESTER
 BugReports: https://github.com/lnalborczyk/ESTER/issues
 Suggests: knitr, rmarkdown

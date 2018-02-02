@@ -2,7 +2,7 @@
 
 ## Major updates
 
-* ...
+* adding the bayes.R function
 * removing distER.R and seqERboot.R (both deprecated in the last release)
 
 ## Minor updates

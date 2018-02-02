@@ -28,7 +28,7 @@
 #'
 #' @export
 
-aic <- function(mod, correction = TRUE) {
+aic <- function(mod, correction = FALSE) {
 
     n <- nobs(mod)
     ll <- logLik(mod)[1]
