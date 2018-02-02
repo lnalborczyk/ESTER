@@ -1,11 +1,11 @@
 #' Computes the Akaike Information Criterion
 #'
-#' Computes the Akaike Information Criterion of a model. Except when the number
-#' of observations is much larger than the number of parameters (i.e., n / k > 40),
-#' we apply the second-order bias correction for small samples (AICc), as suggested by
+#' Computes the Akaike Information Criterion (AIC) of a model, or the second-order
+#' bias correction for small samples (AICc), as suggested by
 #' Burnham & Anderson (2002, 2004).
 #'
 #' @param mod A fitted model of class \code{lm} or \code{merMod}.
+#' @param correction Should we apply the second-order correction ?
 #'
 #' @importFrom stats logLik nobs
 #'
@@ -28,19 +28,19 @@
 #'
 #' @export
 
-aic <- function(mod) {
+aic <- function(mod, correction = TRUE) {
 
     n <- nobs(mod)
     ll <- logLik(mod)[1]
     k <- attr(logLik(mod), "df")
 
-    if (n / k > 40) {
+    if (correction) {
 
-        aic <- -2 * ll + 2 * k
+        aic <- -2 * ll + 2 * k * (n / (n - k - 1) )
 
     } else {
 
-        aic <- -2 * ll + 2 * k * (n / (n - k - 1) )
+        aic <- -2 * ll + 2 * k
     }
 
     return(aic)

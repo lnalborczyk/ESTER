@@ -14,7 +14,6 @@
 #' @param ic Indicates whether to use the aic or the bic
 #' @param cores Number of parallel processes. If cores is set to 1, no parallel framework is used
 #' (default is two cores).
-#' @param verbose Show output about progress
 #'
 #' @return An object of class \code{data.frame}, which contains...
 #'
@@ -31,7 +30,7 @@
 #' @examples
 #' \dontrun{
 #' sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
-#' nsims = 100, ic = bic, cores = 2, verbose = TRUE)
+#' nsims = 100, ic = bic, cores = 2)
 #' plot(sim, log = TRUE, hist = TRUE)
 #' }
 #'
@@ -43,7 +42,7 @@
 
 simER <- function(
     cohensd = 0, nmin = 20, nmax = 100, boundary = 10,
-    nsims = 20, ic = bic, cores = 2, verbose = FALSE) {
+    nsims = 20, ic = bic, cores = 2) {
 
     if (nmin == 0) {
 
@@ -63,21 +62,10 @@ simER <- function(
 
     }
 
-    if (verbose) {
+    start <- Sys.time()
+    print(paste0("Simulation started at ", start) )
 
-        cl <- makeCluster(cores, outfile = "")
-        registerDoParallel(cl, cores)
-
-        start <- Sys.time()
-        print(paste0("Simulation started at ", start) )
-
-        flush.console()
-
-    } else {
-
-        registerDoParallel(cores)
-
-    }
+    registerDoParallel(cores)
 
     sim <-
         foreach(
@@ -104,13 +92,6 @@ simER <- function(
                     as.data.frame %>%
                     set_names(c("value", "group") ) %>%
                     sample_n(nrow(.) )
-
-                if (verbose == TRUE)
-                    print(
-                        paste0(
-                            Sys.time(), ": batch = ", batch,
-                            "; Rep = ", b, "/",
-                            round(nsims / getDoParWorkers() ) ) )
 
                 res0 <-
                     matrix(
@@ -141,7 +122,8 @@ simER <- function(
                             ER = ER
                         )
 
-                    if (ER >= boundary | ER <= 1 / boundary) {break;}
+                    if (ER > boundary | ER < 1 / boundary) {break;}
+                    #if (ER >= boundary | ER <= 1 / boundary) {break;}
 
                 } # end of i
 
@@ -158,16 +140,10 @@ simER <- function(
     res <- data.frame(sim, stringsAsFactors = FALSE)
     class(res) <- c("simER", "data.frame")
 
-    if (verbose) {
-
-        end <- Sys.time()
-        print(paste0("Simulation finished at ", end) )
-        cat("Duration: ")
-        print(end - start)
-
-        stopCluster(cl)
-
-    }
+    end <- Sys.time()
+    print(paste0("Simulation finished at ", end) )
+    cat("Duration: ")
+    print(end - start)
 
     return(res)
 

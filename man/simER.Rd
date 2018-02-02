@@ -5,7 +5,7 @@
 \title{Simulates sequential testing with evidence ratios}
 \usage{
 simER(cohensd = 0, nmin = 20, nmax = 100, boundary = 10, nsims = 20,
-  ic = bic, cores = 2, verbose = FALSE)
+  ic = bic, cores = 2)
 }
 \arguments{
 \item{cohensd}{Expected effect size}
@@ -23,8 +23,6 @@ the run is stopped as well}
 
 \item{cores}{Number of parallel processes. If cores is set to 1, no parallel framework is used
 (default is two cores).}
-
-\item{verbose}{Show output about progress}
 }
 \value{
 An object of class \code{data.frame}, which contains...
@@ -38,7 +36,7 @@ either the Akaike Information Criterion or the Bayesian Information Criterion.
 \examples{
 \dontrun{
 sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
-nsims = 100, ic = bic, cores = 2, verbose = TRUE)
+nsims = 100, ic = bic, cores = 2)
 plot(sim, log = TRUE, hist = TRUE)
 }
 

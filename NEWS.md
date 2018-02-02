@@ -2,13 +2,14 @@
 
 ## Major updates
 
-* removing distER.R and seqERboot.R (deprecated in the last release)
 * ...
+* removing distER.R and seqERboot.R (both deprecated in the last release)
 
 ## Minor updates
 
 * doc updates
-* ...
+* remove verbose argument in simER.R
+* adding the "correction" argument to aic.R for second-order bias correction
 
 # ESTER version 0.2.0
 
