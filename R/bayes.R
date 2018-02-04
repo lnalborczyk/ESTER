@@ -27,22 +27,22 @@
 #'
 #' @examples
 #' \dontrun{
-#' library(ESTER)
 #' # loading some simulated data
-#' load(url("https://github.com/lnalborczyk/shiny/blob/master/sims_ERs.RData?raw=true") )
-#' # plotting the posterior probability
-#' bayes(sims, type = "posterior", threshold = ER > 10)
+#' load(url("https://github.com/lnalborczyk/shiny/blob/master/sims.RData?raw=true") )
 #'
 #' # plotting the likelihood
-#' bayes(sims, type = "likelihood", threshold = ER > 10)
+#' bayes(sim, type = "likelihood", threshold = ER > 10)
+#'
+#' # plotting the posterior probability
+#' bayes(sim, type = "posterior", threshold = ER > 10)
 #'
 #' # changing priors
-#' pr <- c(0.2, 0.2, 0.4, 0.2)
-#' bayes(sims, type = "posterior", threshold = ER > 10, prior = pr)
+#' pr <- c(0.1, 0.1, 0.1, 0.2, 0.2, 0.15, 0.05, 0.05, 0.025, 0.025)
+#' bayes(sim, type = "posterior", threshold = ER > 10, prior = pr)
 #'
 #' # obtaining the posterior probability of observing an ER > 10 if the
 #' # population effect size is equal to 0 and n = 113 (with uniform priors)
-#' bayes(sims, type = "table", threshold = ER > 10) %>%
+#' bayes(sim, type = "table", threshold = ER > 10) %>%
 #' filter(n == 113 & true.ES == 0)
 #' }
 #'
@@ -94,6 +94,7 @@ bayes.simER <- function(
     #####################################################
 
     cond <- expr_text(threshold)
+    nsims <- n_distinct(sim$id) %>% as.numeric
 
     bayesER <-
         sim %>%
@@ -103,13 +104,12 @@ bayes.simER <- function(
             # computing the likelihood of being above a particular boundary
             "likelihood" = "sum(eval(parse(text = cond) ) ) / length(ER) ") %>%
         data.frame %>%
-        # there will be a problem with cases for which the likelihood is 0
+        # what do do with cases for which the likelihood is 0
         # (i.e., no simulation above the threshold) or 1 (i.e., all simulations
-        # abova the threshold)... maybe replace it by very low and very high
-        # probabilitites... ?
+        # above the threshold) ? replacing by 1 / nsims and 1 - 1 / nsims
         mutate_(
-            "likelihood" = "ifelse(likelihood == 0, 0.0001, likelihood)",
-            "likelihood" = "ifelse(likelihood == 1, 0.9999, likelihood)",
+            "likelihood" = "ifelse(likelihood == 0, 1 / nsims, likelihood)",
+            "likelihood" = "ifelse(likelihood == 1, 1 - 1 / nsims, likelihood)",
             "true.ES" = "factor(true.ES)" ) %>%
         mutate_(
             "prior" = "rep_len(priors, nrow(.) )",

@@ -33,22 +33,22 @@ sample size (and prior probability).
 }
 \examples{
 \dontrun{
-library(ESTER)
 # loading some simulated data
-load(url("https://github.com/lnalborczyk/shiny/blob/master/sims_ERs.RData?raw=true") )
-# plotting the posterior probability
-bayes(sims, type = "posterior", threshold = ER > 10)
+load(url("https://github.com/lnalborczyk/shiny/blob/master/sims.RData?raw=true") )
 
 # plotting the likelihood
-bayes(sims, type = "likelihood", threshold = ER > 10)
+bayes(sim, type = "likelihood", threshold = ER > 10)
+
+# plotting the posterior probability
+bayes(sim, type = "posterior", threshold = ER > 10)
 
 # changing priors
-pr <- c(0.2, 0.2, 0.4, 0.2)
-bayes(sims, type = "posterior", threshold = ER > 10, prior = pr)
+pr <- c(0.1, 0.1, 0.1, 0.2, 0.2, 0.15, 0.05, 0.05, 0.025, 0.025)
+bayes(sim, type = "posterior", threshold = ER > 10, prior = pr)
 
 # obtaining the posterior probability of observing an ER > 10 if the
 # population effect size is equal to 0 and n = 113 (with uniform priors)
-bayes(sims, type = "table", threshold = ER > 10) \%>\%
+bayes(sim, type = "table", threshold = ER > 10) \%>\%
 filter(n == 113 & true.ES == 0)
 }
 
