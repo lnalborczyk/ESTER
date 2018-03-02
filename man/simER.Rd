@@ -4,11 +4,11 @@
 \alias{simER}
 \title{Simulates sequential testing with evidence ratios}
 \usage{
-simER(cohensd = 0, nmin = 20, nmax = 100, boundary = 10, nsims = 20,
-  ic = bic, cores = 2)
+simER(cohensd = 0, nmin = 20, nmax = 200, boundary = 10, nsims = 20,
+  ic = aic, cores = 2)
 }
 \arguments{
-\item{cohensd}{Expected effect size}
+\item{cohensd}{Population effect size}
 
 \item{nmin}{Minimum sample size from which start computing ERs}
 
@@ -29,14 +29,14 @@ An object of class \code{data.frame}, which contains...
 }
 \description{
 Simulates one or many sequential testing with evidence ratios from independent two-groups
-comparisons, as a function of sample size and standardized mean difference.
+comparisons, as a function of sample size and standardised mean difference.
 Evidence ratios are computed from the so-called Akaike weights from
 either the Akaike Information Criterion or the Bayesian Information Criterion.
 }
 \examples{
 \dontrun{
-sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
-nsims = 100, ic = bic, cores = 2)
+sim <- simER(cohensd = 0.8, nmin = 20, nmax = 500, boundary = 10,
+nsims = 100, ic = aic, cores = 2)
 plot(sim, log = TRUE, hist = TRUE)
 }
 

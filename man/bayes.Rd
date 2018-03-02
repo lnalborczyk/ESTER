@@ -25,7 +25,7 @@ and sample size.
 }
 \description{
 Computing the likelihood of observing an evidence ratio above or below
-a certain threshold, given a certin effect size and a sample size
+a certain threshold, given a certain effect size and a sample size,
 from simulations ran with \code{simER}. Then, using Bayes theorem, we
 can compute the inverse probability (the posterior probability) of
 the population effect size given a certain evidence ratio and
@@ -46,7 +46,7 @@ bayes(sim, type = "posterior", threshold = ER > 10)
 pr <- c(0.1, 0.1, 0.1, 0.2, 0.2, 0.15, 0.05, 0.05, 0.025, 0.025)
 bayes(sim, type = "posterior", threshold = ER > 10, prior = pr)
 
-# obtaining the posterior probability of observing an ER > 10 if the
+# obtaining the probability of observing an ER > 10 if the
 # population effect size is equal to 0 and n = 113 (with uniform priors)
 bayes(sim, type = "table", threshold = ER > 10) \%>\%
 filter(n == 113 & true.ES == 0)

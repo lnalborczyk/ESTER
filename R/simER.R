@@ -1,11 +1,11 @@
 #' Simulates sequential testing with evidence ratios
 #'
 #' Simulates one or many sequential testing with evidence ratios from independent two-groups
-#' comparisons, as a function of sample size and standardized mean difference.
+#' comparisons, as a function of sample size and standardised mean difference.
 #' Evidence ratios are computed from the so-called Akaike weights from
 #' either the Akaike Information Criterion or the Bayesian Information Criterion.
 #'
-#' @param cohensd Expected effect size
+#' @param cohensd Population effect size
 #' @param nmin Minimum sample size from which start computing ERs
 #' @param nmax Maximum sample size at which stop computing ERs
 #' @param boundary The Evidence Ratio (or its reciprocal) at which
@@ -29,8 +29,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
-#' nsims = 100, ic = bic, cores = 2)
+#' sim <- simER(cohensd = 0.8, nmin = 20, nmax = 500, boundary = 10,
+#' nsims = 100, ic = aic, cores = 2)
 #' plot(sim, log = TRUE, hist = TRUE)
 #' }
 #'
@@ -41,8 +41,8 @@
 #' @export
 
 simER <- function(
-    cohensd = 0, nmin = 20, nmax = 100, boundary = 10,
-    nsims = 20, ic = bic, cores = 2) {
+    cohensd = 0, nmin = 20, nmax = 200, boundary = 10,
+    nsims = 20, ic = aic, cores = 2) {
 
     if (nmin == 0) {
 
@@ -137,7 +137,9 @@ simER <- function(
 
         } # end of %dopar%
 
+    #type <- as.character(match.call()$ic)
     res <- data.frame(sim, stringsAsFactors = FALSE)
+
     class(res) <- c("simER", "data.frame")
 
     end <- Sys.time()
@@ -166,7 +168,6 @@ simER <- function(
 plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
 
     x <- na.omit(x)
-
     boundary <- unique(x$boundary)
     logboundary <- log(sort(c(boundary, 1 / boundary) ) )
 
@@ -177,12 +178,12 @@ plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
             first <- which(x > boundary)[1]
             x[first:length(x)] <- boundary
 
-        } else if (any(x < (1 / boundary) ) ){
+        } else if (any(x < (1 / boundary) ) ) {
 
             first <- which(x < (1 / boundary) )[1]
             x[first:length(x)] <- 1 / boundary
 
-        } else{
+        } else {
 
             x <- x
 
@@ -228,7 +229,7 @@ plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
         x %>%
         group_by(id) %>%
         mutate_(
-            "ER" = "bound_na(bound_hit(ER))") %>%
+            "ER" = "bound_na(bound_hit(ER) )") %>%
         ungroup()
 
     lower_boundary_hit <-
@@ -277,8 +278,8 @@ plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
         theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank(),
             legend.title = element_blank() ) +
-        {if (nrow(final_point_boundary) > 0) geom_hline(yintercept = boundary, lty = 2)} +
-        {if (nrow(final_point_boundary) > 0) geom_hline(yintercept = 1 / boundary, lty = 2)} +
+        {if (nrow(upper_boundary_hit) > 0) geom_hline(yintercept = boundary, lty = 2)} +
+        {if (nrow(lower_boundary_hit) > 0) geom_hline(yintercept = 1 / boundary, lty = 2)} +
         xlab("Sample size") +
         ylab(expression(Evidence~ ~Ratio~ ~ (ER[10]) ) )
 
@@ -291,7 +292,7 @@ plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
             geom_histogram(
                 aes_string(y = "..count.."), na.rm = TRUE, binwidth = 1) +
             scale_x_continuous(
-                limits = c(NA, n_xlim[2]) ) +
+                limits = c(n_xlim[1], n_xlim[2]) ) +
             scale_y_continuous(
                     limits = c(NA, total) ) +
             theme_nothing()
@@ -310,7 +311,9 @@ plot.simER <- function(x, log = TRUE, hist = TRUE, ... ) {
             geom_histogram(
                 aes_string(y = "..count.."), na.rm = TRUE, binwidth = 0.05) +
             coord_flip() +
-            scale_x_log10(limits = c(1 / boundary, boundary) ) +
+            {if (nrow(lower_boundary_hit) > 0) scale_x_log10(limits = c(1 / boundary, boundary) )} +
+            {if (nrow(lower_boundary_hit) == 0) scale_x_log10(limits = c(NA, boundary) )} +
+            #scale_x_log10(limits = c(1 / boundary, boundary) ) +
             scale_y_continuous(
                 limits = c(NA, total) ) +
             theme_nothing()
