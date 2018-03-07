@@ -10,7 +10,7 @@
 #'
 #' @param sim A \code{simER} object.
 #' @param type Should we plot the likelihood or the posterior, or should we output a table ?
-#' @param threshold A logical test (see examples)
+#' @param threshold A logical statement (see examples)
 #' @param prior Defining the prior on effect sizes (by default uniform prior)
 #' @param palette Defining the color palette to be used for plots.
 #'
@@ -44,6 +44,19 @@
 #' # population effect size is equal to 0 and n = 113 (with uniform priors)
 #' bayes(sim, type = "table", threshold = ER > 10) %>%
 #' filter(n == 113 & true.ES == 0)
+#'
+#' # plotting the prior and posterior distributions on effect sizes
+#'
+#' bayes(sim, type = "table", threshold = ER > 10) %>%
+#' filter(n == 113) %>% # as an example
+#' gather(type, prob, likelihood:posterior) %>%
+#' filter(type %in% c("prior", "posterior") ) %>%
+#' ggplot(aes(x = true.ES, y = prob, fill = type) ) +
+#' geom_bar(stat = "identity", position = position_dodge() ) +
+#' theme_bw(base_size = 12) +
+#' scale_fill_grey(start = 0.25, end = 0.75) +
+#' xlab(expression(delta) ) +
+#' ylab("")
 #' }
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
@@ -89,10 +102,6 @@ bayes.simER <- function(
 
     }
 
-    ###################################################################
-    # Using Bayes theorem to compute p(d|ER>10,n)
-    #####################################################
-
     cond <- expr_text(threshold)
     nsims <- n_distinct(sim$id) %>% as.numeric
 
@@ -101,7 +110,6 @@ bayes.simER <- function(
         na.omit %>%
         group_by_("n", "true.ES") %>%
         dplyr::summarise_(
-            # computing the likelihood of being above a particular boundary
             "likelihood" = "sum(eval(parse(text = cond) ) ) / length(ER) ") %>%
         data.frame %>%
         # what do do with cases for which the likelihood is 0
@@ -122,15 +130,7 @@ bayes.simER <- function(
             "posterior" = "(likelihood * prior) / marginal") %>%
         data.frame
 
-    ##############################
-    # plotting
-    #####################
-
     if (type == "likelihood") {
-
-        ##################################################################
-        # plotting the likelihood p(ER>threshold|n,d)
-        ###################################################
 
         bayesER %>%
             mutate_(
@@ -144,46 +144,46 @@ bayes.simER <- function(
             scale_x_log10() +
             scale_fill_manual(
                 values = rev(colorRampPalette(brewer.pal(9,
-                    palette) )(n_distinct(sim$true.ES) ) ) ) +
+                    palette) )(n_distinct(sim$true.ES) ) ),
+                name = expression(delta) ) +
             scale_colour_manual(
                 values = rev(colorRampPalette(brewer.pal(9,
-                    palette) )(n_distinct(sim$true.ES) ) ) ) +
+                    palette) )(n_distinct(sim$true.ES) ) ),
+                name = expression(delta) ) +
             annotation_logticks(sides = "b") +
             theme_bw(base_size = 12) +
             xlab("Sample size") +
-            ylab("p(ER,n|d)")
+            ylab("p(ER > T | d, n)")
 
-    } else if (type == "posterior") {
+        } else if (type == "posterior") {
 
-        ##################################################################
-        # plotting posterior p(d|ER>threshold,n)
-        ###################################################
+            bayesER %>%
+                mutate_(
+                    "true.ES" = "factor(true.ES, levels = rev(levels(true.ES) ) )"
+                    ) %>%
+                ggplot(
+                    aes_string(
+                        x = "n", y = "posterior", colour = "true.ES", fill = "true.ES")
+                    ) +
+                geom_area(size = 1, na.rm = TRUE, position = "stack") +
+                scale_x_log10() +
+                scale_fill_manual(
+                    values = rev(colorRampPalette(brewer.pal(9,
+                        palette) )(n_distinct(sim$true.ES) ) ),
+                    name = expression(delta) ) +
+                scale_colour_manual(
+                    values = rev(colorRampPalette(brewer.pal(9,
+                        palette) )(n_distinct(sim$true.ES) ) ),
+                    name = expression(delta) ) +
+                annotation_logticks(sides = "b") +
+                theme_bw(base_size = 12) +
+                xlab("Sample size") +
+                ylab("p(d | ER > T, n)")
 
-        bayesER %>%
-            mutate_(
-                "true.ES" = "factor(true.ES, levels = rev(levels(true.ES) ) )"
-                ) %>%
-            ggplot(
-                aes_string(
-                    x = "n", y = "posterior", colour = "true.ES", fill = "true.ES")
-                ) +
-            geom_area(size = 1, na.rm = TRUE, position = "stack") +
-            scale_x_log10() +
-            scale_fill_manual(
-                values = rev(colorRampPalette(brewer.pal(9,
-                    palette) )(n_distinct(sim$true.ES) ) ) ) +
-            scale_colour_manual(
-                values = rev(colorRampPalette(brewer.pal(9,
-                    palette) )(n_distinct(sim$true.ES) ) ) ) +
-            annotation_logticks(sides = "b") +
-            theme_bw(base_size = 12) +
-            xlab("Sample size") +
-            ylab("p(d|ER,n)")
+            } else {
 
-    } else {
+                bayesER
 
-        bayesER
-
-    }
+            }
 
 }

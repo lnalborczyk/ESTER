@@ -1,7 +1,8 @@
-# ESTER version 0.3.0
+# sticer version 0.3.0 (old ESTER)
 
 ## Major updates
 
+* renaming the package
 * adding the bayes.R function
 * removing distER.R and seqERboot.R (both deprecated in the last release)
 

@@ -1,5 +1,5 @@
 ## ----echo = TRUE, eval = TRUE, message = FALSE, fig.align = "center", fig.height = 5, fig.width = 5----
-library(ESTER)
+library(sticer)
 
 sim <-
     simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,

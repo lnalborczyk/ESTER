@@ -15,7 +15,9 @@
 #' @param cores Number of parallel processes. If cores is set to 1, no parallel framework is used
 #' (default is two cores).
 #'
-#' @return An object of class \code{data.frame}, which contains...
+#' @return An object of class \code{data.frame}, which contains the unique id of the simulation,
+#' the population effect size, the threshold defined by the user, the sample size,
+#' and the evidence ratio (ER10).
 #'
 #' @importFrom cowplot ggdraw insert_xaxis_grob insert_yaxis_grob theme_nothing
 #' @importFrom parallel makeCluster stopCluster
@@ -137,7 +139,6 @@ simER <- function(
 
         } # end of %dopar%
 
-    #type <- as.character(match.call()$ic)
     res <- data.frame(sim, stringsAsFactors = FALSE)
 
     class(res) <- c("simER", "data.frame")

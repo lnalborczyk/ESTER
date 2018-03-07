@@ -1,7 +1,7 @@
-Package: ESTER
-Title: Efficient Sequential Testing with Evidence Ratios
+Package: sticer
+Title: Sequential Testing with Information Criteria and Evidence Ratios
 Version: 0.3.0
-Date: 2018-02-04
+Date: 2018-03-10
 Authors@R: person("Ladislas", "Nalborczyk", email = "ladislas.nalborczyk@gmail.com",
   role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7419-9855"))
 Description: An implementation of sequential testing that uses evidence ratios
@@ -28,7 +28,7 @@ Imports:
     cowplot,
     RColorBrewer,
     lazyeval
-URL: https://github.com/lnalborczyk/ESTER
-BugReports: https://github.com/lnalborczyk/ESTER/issues
+URL: https://github.com/lnalborczyk/sticer
+BugReports: https://github.com/lnalborczyk/sticer/issues
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr

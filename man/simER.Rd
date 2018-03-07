@@ -25,7 +25,9 @@ the run is stopped as well}
 (default is two cores).}
 }
 \value{
-An object of class \code{data.frame}, which contains...
+An object of class \code{data.frame}, which contains the unique id of the simulation,
+the population effect size, the threshold defined by the user, the sample size,
+and the evidence ratio (ER10).
 }
 \description{
 Simulates one or many sequential testing with evidence ratios from independent two-groups

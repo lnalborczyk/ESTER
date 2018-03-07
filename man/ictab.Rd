@@ -33,7 +33,7 @@ or \code{merMod} models, as well as the computation of pseudo-BMA weights,
 computed from the WAIC or LOOIC of \code{brmsfit} models.
 }
 \examples{
-library(ESTER)
+library(sticer)
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + vs, mtcars)

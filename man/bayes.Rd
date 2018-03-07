@@ -12,7 +12,7 @@ bayes(sim, type = "posterior", threshold, prior = NULL, palette = "PuBu")
 
 \item{type}{Should we plot the likelihood or the posterior, or should we output a table ?}
 
-\item{threshold}{A logical test (see examples)}
+\item{threshold}{A logical statement (see examples)}
 
 \item{prior}{Defining the prior on effect sizes (by default uniform prior)}
 
@@ -50,6 +50,19 @@ bayes(sim, type = "posterior", threshold = ER > 10, prior = pr)
 # population effect size is equal to 0 and n = 113 (with uniform priors)
 bayes(sim, type = "table", threshold = ER > 10) \%>\%
 filter(n == 113 & true.ES == 0)
+
+# plotting the prior and posterior distributions on effect sizes
+
+bayes(sim, type = "table", threshold = ER > 10) \%>\%
+filter(n == 113) \%>\% # as an example
+gather(type, prob, likelihood:posterior) \%>\%
+filter(type \%in\% c("prior", "posterior") ) \%>\%
+ggplot(aes(x = true.ES, y = prob, fill = type) ) +
+geom_bar(stat = "identity", position = position_dodge() ) +
+theme_bw(base_size = 12) +
+scale_fill_grey(start = 0.25, end = 0.75) +
+xlab(expression(delta) ) +
+ylab("")
 }
 
 }

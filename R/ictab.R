@@ -26,7 +26,7 @@
 #' @importFrom brms WAIC LOO
 #'
 #' @examples
-#' library(ESTER)
+#' library(sticer)
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + vs, mtcars)
@@ -75,7 +75,7 @@ ictab <- function(mods, ic, ... ) {
 
     if (identical(ic, aic) | identical(ic, bic) ) {
 
-        res$ic <- unlist(lapply(mods, function(x) ic(x)[1]) )
+        res$ic <- unlist(lapply(mods, function(x) ic(x, ...)[1]) )
         res$k <- unlist(lapply(mods, function(x) attr(logLik(x), "df") ) )
         res$delta_ic <- res$ic - min(res$ic)
         res$mod_lik <- exp(-0.5 * res$delta_ic)
