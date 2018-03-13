@@ -2,7 +2,8 @@
 library(sticer)
 
 sim <-
-    simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
+    simER(
+        cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
         nsims = 100, ic = bic, cores = 2)
 
 plot(sim, log = TRUE, hist = TRUE)

@@ -4,7 +4,7 @@
 \alias{seqER}
 \title{Computes sequential evidence ratios}
 \usage{
-seqER(ic = bic, mod1, mod2, nmin = 10, id = NULL, boundary = Inf,
+seqER(ic = aic, mod1, mod2, nmin = 10, id = NULL, boundary = Inf,
   blind = FALSE, nsims = NULL)
 }
 \arguments{

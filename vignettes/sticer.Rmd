@@ -15,7 +15,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Theoretic background
+# Theoretical background
 
 ## Model comparison
 
@@ -41,7 +41,9 @@ $$\text{AIC} = -2\log(\mathcal{L}(\hat{\theta}|\text{data}))+2K$$
 
 where $\theta$ is the set of model parameters, $\mathcal{L}(\hat{\theta}|\text{data})$ is the likelihood of the candidate model given the data when evaluated at the maximum likelihood estimate of $\theta$, and $K$ is the number of estimated parameters in the candidate model. The first component, $-2log(\mathcal{L}(\hat{\theta}|\text{data}))$ is known as the **deviance** of the candidate model.
 
-Basically, we can see that the AIC then accounts for the goodness-of-fit of a model (i.e., the strength of evidence for this model), but penalizes it for having too much parameters, that is for not being parcimonious. Clearly, the smaller AIC, the better.
+Basically, we can see that the AIC then accounts for the goodness-of-fit of a model (i.e., the strength of evidence for this model), but penalizes it for having too much parameters, that is for not being parsimonious. Clearly, the smaller AIC, the better.
+
+The AIC is also justified as an approximation to the **out-of-sample** deviance, that is, of the deviance computed on a future datased issued from the same data generation process (the same  population).
 
 It is important to acknowledge that when $n/K$ is superior to about 40, the "small sample AIC" (second-order bias correction), called AICc, should be used (Burnham & Anderson, 2004).
 
@@ -53,33 +55,37 @@ The Bayesian Information Criterion (BIC), was introduced by Schwarz (1978) as a 
 
 $$\text{BIC}=-2\log(\mathcal{L}(\hat{\theta}|\text{data}))+K\log(n)$$
 
-We can see that AIC and BIC measure the same goodness-of-fit but the penalty term of BIC is more stringent than the penalty term of AIC (for $n>8$, $k\cdot\log$ exceeds $2k$). Consequently, BIC tends to favor smaller models than AIC.
+We can see that AIC and BIC measure the same goodness-of-fit but the penalty term of BIC is more stringent than the penalty term of AIC (for $n>8$, $k\cdot\log$ exceeds $2k$).
 
 ## Toward Akaike weights and evidence ratios
 
-The individual AIC, AICc, or BIC values are not interpretable in absolute terms as they contain arbitrary constants and are much affected by sample size. Then it is imperative to rescale these criteria. Usually, this is done by substracting to the IC of each model the IC of the model with the minimum one:
+The individual AIC, AICc, or BIC values are not interpretable in absolute terms as they contain arbitrary constants and are much affected by sample size. Then it is imperative to rescale these criteria. Usually, this is done by substracting to the AIC of each model the AIC of the model with the minimum one:
 
-$$\Delta_{IC}=IC_{i}-IC_{min}$$
+$$\Delta_{AIC} = AIC_{i} - AIC_{min}$$
 
-where $IC_{min}$ is the minimum of the $R$ different $IC_{i}$ values. This transformation forces the best model to have $\Delta_{IC}=0$, while the rest of the models have positive values.
+where $AIC_{min}$ is the minimum of the $R$ different $AIC_{i}$ values. This transformation forces the best model to have $\Delta_{AIC}=0$, while the rest of the models have positive values.
 
 For the AIC, the simple transformation $exp(−\Delta_{i}/2)$, for $i = 1, 2, ..., R$, provides the likelihood of the model given the data. This is a likelihood function over the model set in the sense that $\mathcal{L}(\theta|data, g_i)$ is the likelihood over the parameter space (for model $g_i$) of the parameter $\theta$, given the data ($x$) and the model ($g_i$).
 
-It is convenient to normalize the model likelihoods such that they sum to 1 and treat them as probabilities. Hence, we use:
+It is convenient to normalise the model likelihoods such that they sum to 1 and treat them as probabilities. Hence, we use:
 
 $$w_{i}=\dfrac{exp(-\Delta_{i}/2)}{\sum_{r=1}^{R}exp(-\Delta_{r}/2)}.$$
 
-The $w_i$, called **Akaike weights**, are useful as the *weight of evidence* in favor of model $g_i(\cdot |\theta)$ as being the actual Kullback-Leibler best model in the set. The ratios $w_i/w_j$ are identical to the original likelihood ratios, $\mathcal{L}(g_i|data)/\mathcal{L}(g_j|data)$, and so they are invariant to the model set, but the $w_i$ values depend on the full model set because they sum to 1.
+The $w_i$, called **Akaike weights**, are useful as the *weight of evidence* in favor of model $g_i(\cdot |\theta)$ as being the actual Kullback-Leibler best model in the set. The ratios $w_i/w_j$ are identical to the original likelihood ratios, $\mathcal{L}(g_i|data)/\mathcal{L}(g_j|data)$, and so they are invariant to the model set, but the $w_i$ values depend on the full model set (because they sum to 1).
 
-Evidence can be judged by the relative likelihood of model pairs as $\mathcal{L}(g_i|x)/\mathcal{L}(g_j|x)$ or, equivalently, the ratio of Akaike weights $w_i/w_j$. Such ratios are called **evidence ratios** and represend the evidence about fitted models as to which is better in a Kullback-Leibler information sense.
+Evidence can be judged by the relative likelihood of model pairs as $\mathcal{L}(g_i|x)/\mathcal{L}(g_j|x)$ or, equivalently, the ratio of Akaike weights $w_i/w_j$. Such ratios are called **evidence ratios** and represent the evidence about fitted models as to which is better in a Kullback-Leibler information sense.
 
 # Sequential testing
 
 The term *sequential analysis* simply refers to the process by which one collects data until to reach a predefined level of evidence. Implementations of this idea are known as the *Probability Ratio Test* (Wald & Wolfowitz, 1948), or the *group sequential designs* in the NHST framework (for an overview, see Lakens, 2014). More recently, Schönbrodt et al. (2017) and Schönbrodt & Wagenmakers (2017) have (re)introduced sequential testing procedures using Bayes Factors, in order to avoid the pitfalls of sequential testing in the NHST framework.
 
+The *Sequential Bayes Factor* (SBF) procedure discussed above is useful in adressing the question of whether we have accumulated enough evidence for a model (relatively to another model), given the data we observed and the prior predictions of each model. When using information criteria (e.g., AIC, WAIC) for sequential testing, we try to answer a different question. The question is not anymore when do I have enough evidence for this hypothesis over this other hypothesis (the more complex model is always better, if enough data).
+
+Instead, the question is when do I have "enough data” to support the more complex model ? In other words, *when does the augmented (the more complex) model becomes parsimonious* (where parsimonious refers to the "right" balance between goodness of fit and complexity) ?
+
 # Sequential Testing with Information Criteria and Evidence Ratios
 
-`sticer` aims to address at least two different questions. On the first hand, it allows the exploration of the characteristics of the evidence ratios computed from the Akaike weights, when these are used in a sequential way. To this end, the `simER` function allows exploration of these characteristics for evidence ratios computed from the AIC (or AICc) and the BIC.
+The `sticer` package aims to address at least two different questions. On the first hand, it allows the exploration of the characteristics of the evidence ratios computed from the Akaike weights, when these are used in a sequential way. To this end, the `simER` function allows exploration of these characteristics for evidence ratios computed from the AIC (or AICc) and the BIC, in the simplest situation (a comparison of two-independent groups).
 
 On the other hand, `sticer` is also designed to run sequential analyses on observed data, which is implemented in the `seqER` function. To sum, two main questions are adressed.
 
@@ -95,13 +101,14 @@ This `simER` function runs a simulated study in which we compare two independant
 library(sticer)
 
 sim <-
-    simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
+    simER(
+        cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
         nsims = 100, ic = bic, cores = 2)
 
 plot(sim, log = TRUE, hist = TRUE)
 ```
 
-Under the hood, `simER` uses the `ictab` function, which allows to compare a set of models fitted to the same data. This function returns either the AIC or the BIC of each model, along with the number of parameters $k$ and the Akaike weights^[Bonus: `ictab` can also be used to compare `brmsfit` models with pseudo-BMA weights, based on the `brms::WAIC` and `brms::LOO` functions.].
+Under the hood, `simER` uses the `ictab` function, which allows to compare a set of models fitted to the same data. This function returns either the AIC or the BIC of each model, along with the number of parameters $k$ and the Akaike weights. The `ictab` function can also be used to compare `brmsfit` models with pseudo-BMA weights, based on the `brms::WAIC` and `brms::LOO` functions (see Yao et al., 2017).
 
 ```{r echo = TRUE, eval = TRUE}
 data(mtcars)
@@ -129,13 +136,13 @@ mod2 <- lm(mpg ~ cyl + disp, mtcars)
 plot(seqER(ic = bic, mod1, mod2, nmin = 10) )
 ```
 
-In addition, `seqER` allows you to study the behavior of sequential ERs computed on your own data, along with sequential ERs computed on permutation samples. This feature might be useful to study to what extent the evolution of evidence ratios you observed on the original sample was dependant to the order of the observations.
+In addition, `seqER` allows studying the behavior of sequential ERs computed on your own data, along with sequential ERs computed on permutation samples. This feature might be useful to study to what extent the evolution of evidence ratios you observed on the original sample is dependant to the order of incoming observations.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
 plot(seqER(ic = bic, mod1, mod2, nmin = 10, nsims = 10) )
 ```
 
-When data involve repeated measures (and so multiple lines by subject), it is important to help `sticer` to figure out how the data is structured by indicating in which column are stored subject or observations numbers. For instance, below we use data from `lme4`, and indicate that the subject number is stored in the `"Subject"` column of the dataframe, by passing it to the `id` argument of `seqER`.
+When data involve repeated measures (and so multiple lines by subject), you should help `sticer` to figure out how the data is structured by indicating in which column are stored subject or observations numbers. For instance, below we use data from `lme4`, and indicate that the subject number is stored in the `"Subject"` column of the dataframe, by passing it to the `id` argument of `seqER`.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
 library(lme4)
@@ -178,3 +185,5 @@ Schwarz, G. (1978). Estimating the dimension of a model. *Annals of Statistics, 
 Wagenmakers, E.-J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin & Review, 11*(1), 192–196.
 
 Wald, A., & Wolfowitz, J. (1948). Optimum character of the sequential probability ratio test. *The Annals of Mathematical Statistics, 19*, 326– 339.
+
+Yao, Y., Simpson, D., & Gelman, A. (2017). Using stacking to average Bayesian predictive distributions. Retrieved from https://arxiv.org/abs/1704.02030v3

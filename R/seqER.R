@@ -68,7 +68,7 @@
 
 seqER <-
     function(
-        ic = bic, mod1, mod2, nmin = 10, id = NULL, boundary = Inf,
+        ic = aic, mod1, mod2, nmin = 10, id = NULL, boundary = Inf,
         blind = FALSE, nsims = NULL) {
 
     if (!class(mod1) == class(mod2) ) {
