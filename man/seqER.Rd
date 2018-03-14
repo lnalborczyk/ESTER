@@ -39,28 +39,28 @@ that there is only one observation (i.e., one line) per subject.
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-seqER(ic = bic, mod1, mod2, nmin = 10)
+seqER(ic = aic, mod1, mod2, nmin = 10)
 
-# Example with ten permutation samples
+# Example with 10 permutation samples
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-seqER(ic = bic, mod1, mod2, nmin = 10, nsims = 10)
+seqER(ic = aic, mod1, mod2, nmin = 10, nsims = 10)
 
 # Example with blinding
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
-seqER(ic = bic, mod1, mod2, nmin = 10, boundary = 10, blind = TRUE)
+seqER(ic = aic, mod1, mod2, nmin = 10, boundary = 10, blind = TRUE)
 
 # Example with repeated measures
 library(lme4)
 data(sleepstudy)
 mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
 mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
-seqER(ic = bic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
+seqER(ic = aic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
 
-# Example with brmsfit models
+# Example with brmsfit models and permutation samples
 library(brms)
 mod1 <- brm(Reaction ~ Days + (1|Subject), sleepstudy)
 mod2 <- brm(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)

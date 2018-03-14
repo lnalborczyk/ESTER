@@ -7,6 +7,7 @@
 #' trajectories that did not hit none of the boundaries.
 #'
 #' @param sim A \code{simER} or a \code{compER} object.
+#' @param threshold A threshold, to override the one already stated in the sim object (NULL by default)
 #'
 #' @return An object of class \code{data.frame}, which contains the average
 #' sample number (ASN) at which the boundary is attained (either the lower or
@@ -20,8 +21,11 @@
 #' @examples
 #' \dontrun{
 #' library(ESTER)
-#' sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic)
+#' sim <- simER(cohensd = 0.7, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = aic)
 #' analysER(sim)
+#'
+#' load(url("https://github.com/lnalborczyk/shiny/blob/master/sims.RData?raw=true") )
+#' analysER(sim, threshold = exp(1) )
 #' }
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
@@ -30,7 +34,7 @@
 #'
 #' @export
 
-analysER <- function(sim) {
+analysER <- function(sim, threshold = NULL) {
 
     UseMethod("analysER")
 
@@ -38,13 +42,15 @@ analysER <- function(sim) {
 
 #' @export
 
-analysER.simER <- function(sim) {
+analysER.simER <- function(sim, threshold = NULL) {
 
     if (!any(class(sim) == "simER") ) {
 
         stop("sim should be a simER object")
 
     }
+
+    if (!is.null(threshold) ) sim$boundary <- threshold
 
     sim <- na.omit(sim)
 
@@ -105,7 +111,7 @@ analysER.simER <- function(sim) {
     sim2 <-
         sim %>%
         group_by_("id", "true.ES", "boundary") %>%
-        mutate_("ER" = "bound_na(bound_hit(ER, boundary), boundary )" ) %>%
+        mutate_("ER" = "suppressWarnings(bound_na(bound_hit(ER, boundary), boundary) )" ) %>%
         ungroup()
 
     nmax.hit <-
@@ -127,9 +133,9 @@ analysER.simER <- function(sim) {
     endpoint <- bind_rows(nmax.hit, boundary.hit)
     total <- length(unique(sim$id) ) * length(unique(sim$true.ES) ) * length(unique(sim$boundary) )
 
-    if(!total == nrow(endpoint) ) {
+    if (!total == nrow(endpoint) ) {
 
-        stop("number of detected endpoints is not equal to number of trajectories...")
+        stop ("number of detected endpoints is not equal to number of trajectories...")
 
     }
 

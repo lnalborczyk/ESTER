@@ -10,6 +10,8 @@
 
 * doc updates
 * remove verbose argument in simER.R
+* minor (compatibility) updates in seqER.R
+* minor updates in analysER to remove superfluous messages
 * adding the "correction" argument to aic.R for second-order bias correction
 
 # ESTER version 0.2.0

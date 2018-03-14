@@ -4,10 +4,12 @@
 \alias{analysER}
 \title{Analysing the results of simulations ran with \code{simER}}
 \usage{
-analysER(sim)
+analysER(sim, threshold = NULL)
 }
 \arguments{
 \item{sim}{A \code{simER} or a \code{compER} object.}
+
+\item{threshold}{A threshold, to override the one already stated in the sim object (NULL by default)}
 }
 \value{
 An object of class \code{data.frame}, which contains the average
@@ -26,8 +28,11 @@ trajectories that did not hit none of the boundaries.
 \examples{
 \dontrun{
 library(ESTER)
-sim <- simER(cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = bic)
+sim <- simER(cohensd = 0.7, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = aic)
 analysER(sim)
+
+load(url("https://github.com/lnalborczyk/shiny/blob/master/sims.RData?raw=true") )
+analysER(sim, threshold = exp(1) )
 }
 
 }

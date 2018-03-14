@@ -32,28 +32,28 @@
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seqER(ic = bic, mod1, mod2, nmin = 10)
+#' seqER(ic = aic, mod1, mod2, nmin = 10)
 #'
-#' # Example with ten permutation samples
+#' # Example with 10 permutation samples
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seqER(ic = bic, mod1, mod2, nmin = 10, nsims = 10)
+#' seqER(ic = aic, mod1, mod2, nmin = 10, nsims = 10)
 #'
 #' # Example with blinding
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seqER(ic = bic, mod1, mod2, nmin = 10, boundary = 10, blind = TRUE)
+#' seqER(ic = aic, mod1, mod2, nmin = 10, boundary = 10, blind = TRUE)
 #'
 #' # Example with repeated measures
 #' library(lme4)
 #' data(sleepstudy)
 #' mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
 #' mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
-#' seqER(ic = bic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
+#' seqER(ic = aic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
 #'
-#' # Example with brmsfit models
+#' # Example with brmsfit models and permutation samples
 #' library(brms)
 #' mod1 <- brm(Reaction ~ Days + (1|Subject), sleepstudy)
 #' mod2 <- brm(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
@@ -97,7 +97,7 @@ seqER <-
 
     if (class(mod1) == "brmsfit") {
 
-        data <- data.frame(eval(mod1$data, envir = parent.frame() ) )
+        data <- get(mod1$data.name)
 
     }
 
@@ -109,21 +109,15 @@ seqER <-
 
     } else {
 
-        # count frequencies
         count <- data.frame(table(data[, id]) )
-
-        # count number of observations by subject
         nobs <- max(count$Freq)
-
-        # identify subjects with less than nobs
         a <- as.vector(count$Var1[count$Freq < nobs])
 
-        data$ppt <-
-            rep(seq(1, length (unique(data[, id]) ), 1), each = nobs)
+        data <- data[order(data[, id]), ]
+        data$ppt <- rep(seq(1, length(unique(data[, id]) ), 1), each = nobs)
 
         if (length(a) > 0) {
 
-            # if needed, remove subjects with less than nobs
             for (i in 1:length(a) ) {
 
                 data <- data[!data[, id] == as.numeric(a[i]), ]
@@ -167,16 +161,23 @@ seqER <-
         if ( (class(mod1) == "lm") ) {
 
             mod1 <- lm(formula(mod1), data[1:maxrow, ])
-
             mod2 <- lm(formula(mod2), data[1:maxrow, ])
 
         }
 
         if ( (class(mod1) == "brmsfit") ) {
 
-            mod1 <- update(mod1, newdata = data[1:maxrow, ])
+            mod1 <-
+                update(
+                    mod1, newdata = data[1:maxrow, ],
+                    recompile = FALSE, refresh = 0
+                    )
 
-            mod2 <- update(mod2, newdata = data[1:maxrow, ])
+            mod2 <-
+                update(
+                    mod2, newdata = data[1:maxrow, ],
+                    recompile = FALSE, refresh = 0
+                    )
 
         }
 
@@ -259,16 +260,23 @@ seqER <-
                 if ( (class(mod1) == "lm") ) {
 
                     mod1 <- lm(formula(mod1), data_temp[1:maxrow, ])
-
                     mod2 <- lm(formula(mod2), data_temp[1:maxrow, ])
 
                 }
 
                 if ( (class(mod1) == "brmsfit") ) {
 
-                    mod1 <- update(mod1, newdata = data_temp[1:maxrow, ])
+                    mod1 <-
+                        update(
+                            mod1, newdata = data_temp[1:maxrow, ],
+                            recompile = FALSE, refresh = 0
+                            )
 
-                    mod2 <- update(mod2, newdata = data_temp[1:maxrow, ])
+                    mod2 <-
+                        update(
+                            mod2, newdata = data_temp[1:maxrow, ],
+                            recompile = FALSE, refresh = 0
+                            )
 
                 }
 
