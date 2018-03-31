@@ -53,11 +53,11 @@
 #' mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
 #' seqER(ic = aic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
 #'
-#' # Example with brmsfit models and permutation samples
+#' # Example with brmsfit models
 #' library(brms)
 #' mod1 <- brm(Reaction ~ Days + (1|Subject), sleepstudy)
 #' mod2 <- brm(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
-#' seqER(ic = WAIC, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
+#' seqER(ic = WAIC, mod1, mod2, nmin = 10, id = "Subject")
 #' }
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
