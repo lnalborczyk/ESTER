@@ -1,4 +1,4 @@
-#' Computes Akaike weights or pseudo-BMA weights for a set of models
+#' Computes Akaike weights or pseudo-BMA weights of a set of models
 #'
 #' Returns a table with weights of a set of models, based on various
 #' information criteria. Currently, \code{ictab} supports the computation of
@@ -26,7 +26,6 @@
 #' @importFrom brms WAIC LOO
 #'
 #' @examples
-#' library(sticer)
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + vs, mtcars)

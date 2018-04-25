@@ -1,18 +1,20 @@
-# sticer version 0.3.0 (old ESTER)
+# ESTER version 0.2.1
+
+## TO-DO...
+
+* adding tests
+* updating README and vignette
 
 ## Major updates
 
-* renaming the package
-* adding the bayes.R function
+* deprecating simER and analysER (will be removed in the next release)
 * removing distER.R and seqERboot.R (both deprecated in the last release)
 
 ## Minor updates
 
 * doc updates
-* remove verbose argument in simER.R
-* minor (compatibility) updates in seqER.R
-* minor updates in analysER to remove superfluous messages
-* adding the "correction" argument to aic.R for second-order bias correction
+* resolving minor (compatibility) updates in seqER.R
+* adding the "correction" argument (default to TRUE) to aic.R for second-order bias correction
 
 # ESTER version 0.2.0
 

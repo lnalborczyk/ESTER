@@ -69,7 +69,7 @@ seqER(ic = WAIC, mod1, mod2, nmin = 10, id = "Subject")
 
 }
 \seealso{
-\code{\link{simER}}
+\code{\link{ictab}}
 }
 \author{
 Ladislas Nalborczyk <\email{ladislas.nalborczyk@gmail.com}>

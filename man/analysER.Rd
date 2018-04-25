@@ -27,7 +27,6 @@ trajectories that did not hit none of the boundaries.
 }
 \examples{
 \dontrun{
-library(ESTER)
 sim <- simER(cohensd = 0.7, nmin = 20, nmax = 100, boundary = 10, nsims = 100, ic = aic)
 analysER(sim)
 

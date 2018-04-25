@@ -62,7 +62,7 @@
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
-#' @seealso \code{\link{simER}}
+#' @seealso \code{\link{ictab}}
 #'
 #' @export
 

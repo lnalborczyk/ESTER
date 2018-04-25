@@ -1,5 +1,5 @@
 ---
-title: "Sequential Testing with Information Criteria and Evidence Ratios"
+title: "Efficient Sequential Testing with Evidence Ratios"
 author: "Ladislas Nalborczyk"
 date: "`r Sys.Date()`"
 output:
@@ -85,9 +85,9 @@ Instead, the question is when do I have "enough data” to support the more comp
 
 # Sequential Testing with Information Criteria and Evidence Ratios
 
-The `sticer` package aims to address at least two different questions. On the first hand, it allows the exploration of the characteristics of the evidence ratios computed from the Akaike weights, when these are used in a sequential way. To this end, the `simER` function allows exploration of these characteristics for evidence ratios computed from the AIC (or AICc) and the BIC, in the simplest situation (a comparison of two-independent groups).
+The `ESTER` package aims to address at least two different questions. On the first hand, it allows the exploration of the characteristics of the evidence ratios computed from the Akaike weights, when these are used in a sequential way. To this end, the `simER` function allows exploration of these characteristics for evidence ratios computed from the AIC (or AICc) and the BIC, in the simplest situation (a comparison of two-independent groups).
 
-On the other hand, `sticer` is also designed to run sequential analyses on observed data, which is implemented in the `seqER` function. To sum, two main questions are adressed.
+On the other hand, `ESTER` is also designed to run sequential analyses on observed data, which is implemented in the `seqER` function. To sum, two main questions are adressed.
 
 * **Simulation**. Given an effect size and a sample size, what should I reasonnably expect ?
 
@@ -98,7 +98,7 @@ On the other hand, `sticer` is also designed to run sequential analyses on obser
 This `simER` function runs a simulated study in which we compare two independant groups, for various effect size (`cohensd`) and sample size (`nmax`). The `nmin` argument serves to specify from which participant we want to start doing sequential testing (we usually recommend to avoid `nmin` < 10). We can define a `boundary` at which we would like to stop the sequential testing, as well as how many simulations we want to evaluate (`nsims`).
 
 ```{r echo = TRUE, eval = TRUE, message = FALSE, fig.align = "center", fig.height = 5, fig.width = 5}
-library(sticer)
+library(ESTER)
 
 sim <-
     simER(
@@ -121,11 +121,11 @@ mods <- list(m1 = mod1, m2 = mod2, m3 = mod3)
 ictab(mods, bic)
 ```
 
-Note that in these two functions, the information criterion has to be passed in lowercase, as `aic` and `bic` refer to functions from `sticer`.
+Note that in these two functions, the information criterion has to be passed in lowercase, as `aic` and `bic` refer to functions from `ESTER`.
 
 ## Observed data
 
-On the other hand, `sticer` can be used to do sequential testing on your own data. You can study the evolution of sequential ERs using the `seqER` function.
+On the other hand, `ESTER` can be used to do sequential testing on your own data. You can study the evolution of sequential ERs using the `seqER` function.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
 data(mtcars)
@@ -142,7 +142,7 @@ In addition, `seqER` allows studying the behavior of sequential ERs computed on 
 plot(seqER(ic = bic, mod1, mod2, nmin = 10, nsims = 10) )
 ```
 
-When data involve repeated measures (and so multiple lines by subject), you should help `sticer` to figure out how the data is structured by indicating in which column are stored subject or observations numbers. For instance, below we use data from `lme4`, and indicate that the subject number is stored in the `"Subject"` column of the dataframe, by passing it to the `id` argument of `seqER`.
+When data involve repeated measures (and so multiple lines by subject), you should help `ESTER` to figure out how the data is structured by indicating in which column are stored subject or observations numbers. For instance, below we use data from `lme4`, and indicate that the subject number is stored in the `"Subject"` column of the dataframe, by passing it to the `id` argument of `seqER`.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
 library(lme4)
@@ -160,7 +160,7 @@ If no information is passed to the `id` argument, `seqER` will suppose that ther
 
 Note that this package is mainly intended to be used as a toolbox for exploring the possibilites offered by sequential testing with evidence ratios computed from the Akaike weights of a set of models. We do not provide neither guidelines nor long-term error rates as others did using Bayes Factors (e.g., see Schönbrodt, Wagenmakers, Zehetleitner & Perugini, 2017).
 
-The characteristics of sequential evidence ratios computed from information criteria should be studied properly (preferably using `sticer`), but this study is outside the scope of this package.
+The characteristics of sequential evidence ratios computed from information criteria should be studied properly (preferably using `ESTER`), but this study is outside the scope of this package.
 
 # References
 

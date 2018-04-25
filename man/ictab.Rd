@@ -2,7 +2,7 @@
 % Please edit documentation in R/ictab.R
 \name{ictab}
 \alias{ictab}
-\title{Computes Akaike weights or pseudo-BMA weights for a set of models}
+\title{Computes Akaike weights or pseudo-BMA weights of a set of models}
 \usage{
 ictab(mods, ic, ...)
 }
@@ -33,7 +33,6 @@ or \code{merMod} models, as well as the computation of pseudo-BMA weights,
 computed from the WAIC or LOOIC of \code{brmsfit} models.
 }
 \examples{
-library(sticer)
 data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + vs, mtcars)

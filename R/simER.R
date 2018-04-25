@@ -46,6 +46,8 @@ simER <- function(
     cohensd = 0, nmin = 20, nmax = 200, boundary = 10,
     nsims = 20, ic = aic, cores = 2) {
 
+    .Deprecated()
+
     if (nmin == 0) {
 
         stop("nmin should be a positive integer")

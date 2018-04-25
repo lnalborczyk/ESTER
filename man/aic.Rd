@@ -4,7 +4,7 @@
 \alias{aic}
 \title{Computes the Akaike Information Criterion}
 \usage{
-aic(mod, correction = FALSE)
+aic(mod, correction = TRUE)
 }
 \arguments{
 \item{mod}{A fitted model of class \code{lm} or \code{merMod}.}
