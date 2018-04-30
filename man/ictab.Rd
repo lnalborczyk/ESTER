@@ -15,8 +15,7 @@ information criteria include \code{aic} and \code{bic} for \code{lm} and
 \code{merMod} models, as well as \code{WAIC} and \code{LOO} for
 \code{brmsfit} models.}
 
-\item{...}{Additional parameters to be passed to \code{brms::WAIC} or
-\code{brms::LOO} functions.}
+\item{...}{Additional parameters to be passed to the \code{ic} function.}
 }
 \value{
 An object of class \code{data.frame}, which contains the value of the
@@ -39,7 +38,6 @@ mod2 <- lm(mpg ~ cyl + vs, mtcars)
 mod3 <- lm(mpg ~ cyl * vs, mtcars)
 mods <- list(mod1 = mod1, mod2 = mod2, mod3 = mod3)
 ictab(mods, aic)
-ictab(mods, bic)
 
 \dontrun{
 library(brms)

@@ -10,7 +10,7 @@
 #' @author Ladislas Nalborczyk \cr
 #' Maintainer: Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
 #'
-#' @seealso \code{\link{ictab}}, \code{\link{seqER}}
+#' @seealso \code{\link{ictab}}, \code{\link{seqtest}}
 #'
 #' @docType package
 #' @name ESTER

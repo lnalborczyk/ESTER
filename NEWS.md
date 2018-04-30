@@ -7,14 +7,14 @@
 
 ## Major updates
 
-* deprecating simER and analysER (will be removed in the next release)
+* removing simER and analysER
 * removing distER.R and seqERboot.R (both deprecated in the last release)
 
 ## Minor updates
 
 * doc updates
 * resolving minor (compatibility) updates in seqER.R
-* adding the "correction" argument (default to TRUE) to aic.R for second-order bias correction
+* adding the "correction" argument (default to TRUE) to aic.R
 
 # ESTER version 0.2.0
 

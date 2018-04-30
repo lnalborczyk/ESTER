@@ -1,10 +1,10 @@
-#' Computes sequential evidence ratios
+#' Sequential testing with evidence ratios
 #'
-#' Computes sequential evidence ratios, either based on the AIC or the BIC.
+#' Computes sequential evidence ratios, either based on the AIC, BIC, WAIC, or LOOIC.
 #' Supported models currently include \code{lm}, \code{merMod}, or \code{brmsfit} models.
 #' When data involve repeated measures (and so multiple lines per subject),
 #' a column indicating the subject "id" should be provided to the \code{id} argument.
-#' If nothing is passed to the \code{id} argument, \code{seqER} will suppose
+#' If nothing is passed to the \code{id} argument, \code{seqtest} will suppose
 #' that there is only one observation (i.e., one line) per subject.
 #'
 #' @param ic Indicates whether to use the aic or the bic.
@@ -19,45 +19,43 @@
 #' @param nsims Number of permutation samples to evaluate (is ignored if blind = TRUE)
 #'
 #' @importFrom stats family formula lm update
+#' @importFrom magrittr %>% set_names
 #' @importFrom lme4 lmer glmer
-#' @importFrom magrittr %>%
 #' @importFrom rlang f_lhs
-#' @importFrom dplyr n_distinct
 #' @import ggplot2
+#' @import dplyr
 #' @import utils
 #' @import brms
 #'
 #' @examples
 #' \dontrun{
+#' # A first simple example
 #' data(mtcars)
 #' mod1 <- lm(mpg ~ cyl, mtcars)
 #' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seqER(ic = aic, mod1, mod2, nmin = 10)
+#' seqtest(ic = aic, mod1, mod2, nmin = 10)
+#'
+#' # Plotting the results
+#' seqtest(ic = aic, mod1, mod2, nmin = 10) %>% plot
 #'
 #' # Example with 10 permutation samples
-#' data(mtcars)
-#' mod1 <- lm(mpg ~ cyl, mtcars)
-#' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seqER(ic = aic, mod1, mod2, nmin = 10, nsims = 10)
+#' seqtest(ic = aic, mod1, mod2, nmin = 10, nsims = 10)
 #'
 #' # Example with blinding
-#' data(mtcars)
-#' mod1 <- lm(mpg ~ cyl, mtcars)
-#' mod2 <- lm(mpg ~ cyl + disp, mtcars)
-#' seqER(ic = aic, mod1, mod2, nmin = 10, boundary = 10, blind = TRUE)
+#' seqtest(ic = aic, mod1, mod2, nmin = 10, boundary = 10, blind = TRUE)
 #'
 #' # Example with repeated measures
 #' library(lme4)
 #' data(sleepstudy)
 #' mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
 #' mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
-#' seqER(ic = aic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
+#' seqtest(ic = aic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10)
 #'
 #' # Example with brmsfit models
 #' library(brms)
 #' mod1 <- brm(Reaction ~ Days + (1|Subject), sleepstudy)
 #' mod2 <- brm(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
-#' seqER(ic = WAIC, mod1, mod2, nmin = 10, id = "Subject")
+#' seqtest(ic = WAIC, mod1, mod2, nmin = 10, id = "Subject")
 #' }
 #'
 #' @author Ladislas Nalborczyk <\email{ladislas.nalborczyk@@gmail.com}>
@@ -66,7 +64,7 @@
 #'
 #' @export
 
-seqER <-
+seqtest <-
     function(
         ic = aic, mod1, mod2, nmin = 10, id = NULL, boundary = Inf,
         blind = FALSE, nsims = NULL) {
@@ -317,14 +315,14 @@ seqER <-
 
     }
 
-    class(erb) <- c("seqER", "data.frame")
+    class(erb) <- c("seqtest", "data.frame")
     return(erb)
 
 }
 
 #' @export
 
-plot.seqER <- function(x, ... ) {
+plot.seqtest <- function(x, ... ) {
 
     aes_lines <- sqrt(0.75 / n_distinct(x$ERi) )
 

@@ -85,47 +85,26 @@ Instead, the question is when do I have "enough data” to support the more comp
 
 # Sequential Testing with Information Criteria and Evidence Ratios
 
-The `ESTER` package aims to address at least two different questions. On the first hand, it allows the exploration of the characteristics of the evidence ratios computed from the Akaike weights, when these are used in a sequential way. To this end, the `simER` function allows exploration of these characteristics for evidence ratios computed from the AIC (or AICc) and the BIC, in the simplest situation (a comparison of two-independent groups).
-
-On the other hand, `ESTER` is also designed to run sequential analyses on observed data, which is implemented in the `seqER` function. To sum, two main questions are adressed.
-
-* **Simulation**. Given an effect size and a sample size, what should I reasonnably expect ?
-
-* **Observed data**. When to stop recruiting participants ?
-
-## Simulation
-
-This `simER` function runs a simulated study in which we compare two independant groups, for various effect size (`cohensd`) and sample size (`nmax`). The `nmin` argument serves to specify from which participant we want to start doing sequential testing (we usually recommend to avoid `nmin` < 10). We can define a `boundary` at which we would like to stop the sequential testing, as well as how many simulations we want to evaluate (`nsims`).
-
-```{r echo = TRUE, eval = TRUE, message = FALSE, fig.align = "center", fig.height = 5, fig.width = 5}
-library(ESTER)
-
-sim <-
-    simER(
-        cohensd = 0.8, nmin = 20, nmax = 100, boundary = 10,
-        nsims = 100, ic = bic, cores = 2)
-
-plot(sim, log = TRUE, hist = TRUE)
-```
-
-Under the hood, `simER` uses the `ictab` function, which allows to compare a set of models fitted to the same data. This function returns either the AIC or the BIC of each model, along with the number of parameters $k$ and the Akaike weights. The `ictab` function can also be used to compare `brmsfit` models with pseudo-BMA weights, based on the `brms::WAIC` and `brms::LOO` functions (see Yao et al., 2017).
+The `ictab` function allows to compare a set of models fitted to the same data. This function returns either the AIC or the BIC of each model, along with the number of parameters $k$ and the Akaike weights. The `ictab` function can also be used to compare `brmsfit` models with pseudo-BMA weights, based on the `brms::WAIC` and `brms::LOO` functions (see Yao et al., 2017).
 
 ```{r echo = TRUE, eval = TRUE}
+library(ESTER)
 data(mtcars)
 
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
 mod3 <- lm(mpg ~ cyl * disp, mtcars)
+
 mods <- list(m1 = mod1, m2 = mod2, m3 = mod3)
 
-ictab(mods, bic)
+ictab(mods, aic)
 ```
 
 Note that in these two functions, the information criterion has to be passed in lowercase, as `aic` and `bic` refer to functions from `ESTER`.
 
 ## Observed data
 
-On the other hand, `ESTER` can be used to do sequential testing on your own data. You can study the evolution of sequential ERs using the `seqER` function.
+On the other hand, `ESTER` can be used to do sequential testing on your own data. You can study the evolution of sequential ERs using the `seqtest` function.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
 data(mtcars)
@@ -133,16 +112,16 @@ data(mtcars)
 mod1 <- lm(mpg ~ cyl, mtcars)
 mod2 <- lm(mpg ~ cyl + disp, mtcars)
 
-plot(seqER(ic = bic, mod1, mod2, nmin = 10) )
+plot(seqtest(ic = aic, mod1, mod2, nmin = 10) )
 ```
 
-In addition, `seqER` allows studying the behavior of sequential ERs computed on your own data, along with sequential ERs computed on permutation samples. This feature might be useful to study to what extent the evolution of evidence ratios you observed on the original sample is dependant to the order of incoming observations.
+In addition, `seqtest` allows studying the behavior of sequential ERs computed on your own data, along with sequential ERs computed on permutation samples. This feature might be useful to study to what extent the evolution of evidence ratios you observed on the original sample is dependant to the order of incoming observations.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
-plot(seqER(ic = bic, mod1, mod2, nmin = 10, nsims = 10) )
+plot(seqtest(ic = aic, mod1, mod2, nmin = 10, nsims = 10) )
 ```
 
-When data involve repeated measures (and so multiple lines by subject), you should help `ESTER` to figure out how the data is structured by indicating in which column are stored subject or observations numbers. For instance, below we use data from `lme4`, and indicate that the subject number is stored in the `"Subject"` column of the dataframe, by passing it to the `id` argument of `seqER`.
+When data involve repeated measures (and so multiple lines by subject), you should help `ESTER` to figure out how the data is structured by indicating in which column are stored subject or observations numbers. For instance, below we use data from `lme4`, and indicate that the subject number is stored in the `"Subject"` column of the dataframe, by passing it to the `id` argument of `seqtest`.
 
 ```{r echo = TRUE, eval = TRUE, fig.align = "center", fig.height = 5, fig.width = 5, warning = FALSE, results = "hide"}
 library(lme4)
@@ -151,10 +130,10 @@ data(sleepstudy)
 mod1 <- lmer(Reaction ~ Days + (1|Subject), sleepstudy)
 mod2 <- lmer(Reaction ~ Days + I(Days^2) + (1|Subject), sleepstudy)
 
-plot(seqER(ic = bic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10) )
+plot(seqtest(ic = aic, mod1, mod2, nmin = 10, id = "Subject", nsims = 10) )
 ```
 
-If no information is passed to the `id` argument, `seqER` will suppose that there is only one observation (i.e., one line) per subject.
+If no information is passed to the `id` argument, `seqtest` will suppose that there is only one observation (i.e., one line) per subject.
 
 # Author note
 
