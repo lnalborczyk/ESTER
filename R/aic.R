@@ -5,7 +5,7 @@
 #' Burnham & Anderson (2002, 2004).
 #'
 #' @param mod A fitted model of class \code{lm} or \code{merMod}.
-#' @param correction Should we apply the second-order correction ?
+#' @param correction Should we apply the second-order correction (default to TRUE) ?
 #'
 #' @importFrom stats logLik nobs
 #'

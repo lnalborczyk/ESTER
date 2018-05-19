@@ -3,7 +3,6 @@
 ## TO-DO...
 
 * adding tests
-* updating README and vignette
 
 ## Major updates
 

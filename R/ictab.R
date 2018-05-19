@@ -31,7 +31,7 @@
 #' mod3 <- lm(mpg ~ cyl * vs, mtcars)
 #' mods <- list(mod1 = mod1, mod2 = mod2, mod3 = mod3)
 #' ictab(mods, aic)
-#'
+    #'
 #' \dontrun{
 #' library(brms)
 #' mod1 <- brm(mpg ~ cyl, mtcars)

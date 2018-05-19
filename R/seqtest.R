@@ -331,7 +331,8 @@ plot.seqtest <- function(x, ... ) {
         geom_line(alpha = aes_lines, size = aes_lines) +
         geom_line(
             aes_string(x = "ppt", y = "ER", group = NULL),
-            data = x[x$ERi == "er", ], size = 0.75) +
+            data = x[x$ERi == "er", ], size = 0.75
+            ) +
         theme_bw(base_size = 12) +
         xlab("Sample size") +
         ylab(expression(Evidence~ ~Ratio~ ~ (ER[10]) ) )

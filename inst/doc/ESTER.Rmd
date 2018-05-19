@@ -27,39 +27,33 @@ We can outline three general principles guiding model-based inference in science
 
 * **Strength of evidence**. Providing quantitative information to judge the *strength of evidence* is central to science (e.g., see Royall, 1997).
 
-Steps of the model selection approach consist in establishing a set of $R$ relevant models, then, based on data, ranking models (and attributing them weights), then, choosing the best model among the set, and finally making inferences from this best model. To rank models, we need tools that account for the basic principles that makes a model a good model.
+Steps of the model selection approach consist in establishing a set of $R$ relevant models, then, based on data, ranking models, choosing the best model, and making inferences from this best model. To rank models, we need tools that account for the basic principles that makes a model a good model.
 
 ## Information criteria
 
 ### Akaike Information Criterion
 
-In 1951, Kullback and Leibler published a now-famous paper that quantified the meaning of *information* as related to Fisher’s concept of sufficient statistics (Kullback & Leibler, 1951). They developped the Kullback-Leibler divergence (or *K-L information*) that measures the information that is lost when approximating a distribution with another distribution. K-L information can also be conceptualized as the *distance* between the *full reality* and a specific model (Burnham & Anderson, 2004).
+In 1951, Kullback and Leibler published a now-famous paper that quantified the meaning of *information* as related to Fisher’s concept of sufficient statistics (Kullback & Leibler, 1951). They developped the Kullback-Leibler divergence (or *K-L information*) that measures the information that is lost when approximating a distribution with another distribution.
 
-Two decades later, Akaike (1973) showed that this distance can be estimated by finding the parameters values that maximizes the probability of the data given the model. He used this relationship to derive a criterion known as the Akaike information criterion (AIC), that is:
+This divergence can be used to quantifie the distance between our statistical models and the *full reality* (i.e., the process that generated the data) (Burnham & Anderson, 2004).
+
+Akaike (1973) showed that this distance can be estimated by finding the parameters values that maximises the probability of the data given the model. He used this relationship to derive a criterion known as the Akaike information criterion (AIC):
 
 $$\text{AIC} = -2\log(\mathcal{L}(\hat{\theta}|\text{data}))+2K$$
 
 where $\theta$ is the set of model parameters, $\mathcal{L}(\hat{\theta}|\text{data})$ is the likelihood of the candidate model given the data when evaluated at the maximum likelihood estimate of $\theta$, and $K$ is the number of estimated parameters in the candidate model. The first component, $-2log(\mathcal{L}(\hat{\theta}|\text{data}))$ is known as the **deviance** of the candidate model.
 
-Basically, we can see that the AIC then accounts for the goodness-of-fit of a model (i.e., the strength of evidence for this model), but penalizes it for having too much parameters, that is for not being parsimonious. Clearly, the smaller AIC, the better.
+Basically, we can see that the AIC then accounts for the goodness-of-fit of a model (i.e., the strength of evidence for this model), but penalises it for having too much parameters, that is for not being parsimonious. Clearly, the smaller AIC, the better.
 
-The AIC is also justified as an approximation to the **out-of-sample** deviance, that is, of the deviance computed on a future datased issued from the same data generation process (the same  population).
+The AIC can also be seen as an approximation to the **out-of-sample** deviance, that is, of the deviance computed on a future datased issued from the same data generation process (the same population).
 
 It is important to acknowledge that when $n/K$ is superior to about 40, the "small sample AIC" (second-order bias correction), called AICc, should be used (Burnham & Anderson, 2004).
 
 $$\text{AICc} = \text{AIC}+\dfrac{2K(K+1)}{n-K-1}$$
 
-### Bayesian Information Criterion
+## Akaike weights and evidence ratios
 
-The Bayesian Information Criterion (BIC), was introduced by Schwarz (1978) as a competitor to the AIC. Schwarz derived the BIC to serve as an asymptotic approximation to a transformation of the Bayesian posterior probability of a candidate model. The computation of BIC is based on the empirical log-likelihood and does not require the specification of priors.
-
-$$\text{BIC}=-2\log(\mathcal{L}(\hat{\theta}|\text{data}))+K\log(n)$$
-
-We can see that AIC and BIC measure the same goodness-of-fit but the penalty term of BIC is more stringent than the penalty term of AIC (for $n>8$, $k\cdot\log$ exceeds $2k$).
-
-## Toward Akaike weights and evidence ratios
-
-The individual AIC, AICc, or BIC values are not interpretable in absolute terms as they contain arbitrary constants and are much affected by sample size. Then it is imperative to rescale these criteria. Usually, this is done by substracting to the AIC of each model the AIC of the model with the minimum one:
+The individual AIC values are not interpretable in absolute terms as they contain arbitrary constants and are much affected by sample size. Then it is imperative to rescale these criteria. Usually, this is done by substracting to the AIC of each model the AIC of the model with the minimum one:
 
 $$\Delta_{AIC} = AIC_{i} - AIC_{min}$$
 
@@ -73,15 +67,21 @@ $$w_{i}=\dfrac{exp(-\Delta_{i}/2)}{\sum_{r=1}^{R}exp(-\Delta_{r}/2)}.$$
 
 The $w_i$, called **Akaike weights**, are useful as the *weight of evidence* in favor of model $g_i(\cdot |\theta)$ as being the actual Kullback-Leibler best model in the set. The ratios $w_i/w_j$ are identical to the original likelihood ratios, $\mathcal{L}(g_i|data)/\mathcal{L}(g_j|data)$, and so they are invariant to the model set, but the $w_i$ values depend on the full model set (because they sum to 1).
 
-Evidence can be judged by the relative likelihood of model pairs as $\mathcal{L}(g_i|x)/\mathcal{L}(g_j|x)$ or, equivalently, the ratio of Akaike weights $w_i/w_j$. Such ratios are called **evidence ratios** and represent the evidence about fitted models as to which is better in a Kullback-Leibler information sense.
+Evidence can be judged by the relative likelihood of model pairs as $\mathcal{L}(g_i|x)/\mathcal{L}(g_j|x)$ or, equivalently, the ratio of Akaike weights $w_i/w_j$. Such ratios are called **evidence ratios** and represent the evidence about fitted models as to which is better in a Kullback-Leibler information sense (i.e., the best predictive model).
 
 # Sequential testing
 
 The term *sequential analysis* simply refers to the process by which one collects data until to reach a predefined level of evidence. Implementations of this idea are known as the *Probability Ratio Test* (Wald & Wolfowitz, 1948), or the *group sequential designs* in the NHST framework (for an overview, see Lakens, 2014). More recently, Schönbrodt et al. (2017) and Schönbrodt & Wagenmakers (2017) have (re)introduced sequential testing procedures using Bayes Factors, in order to avoid the pitfalls of sequential testing in the NHST framework.
 
-The *Sequential Bayes Factor* (SBF) procedure discussed above is useful in adressing the question of whether we have accumulated enough evidence for a model (relatively to another model), given the data we observed and the prior predictions of each model. When using information criteria (e.g., AIC, WAIC) for sequential testing, we try to answer a different question. The question is not anymore when do I have enough evidence for this hypothesis over this other hypothesis (the more complex model is always better, if enough data).
+## Consistency versus Efficiency (true versus best model)
 
-Instead, the question is when do I have "enough data” to support the more complex model ? In other words, *when does the augmented (the more complex) model becomes parsimonious* (where parsimonious refers to the "right" balance between goodness of fit and complexity) ?
+The *Sequential Bayes Factor* (SBF) procedure discussed above is useful in addressing the question of whether we have accumulated enough evidence for a model (relatively to another model), given the data we observed and the prior predictions of each model. Moreover, the SBF is a **consistent procedure for model identification**. In other words, if the *true* model is in the set of models, the Bayes Factor (or equivalently, the BIC) will select it when the sample size increases.
+
+However, one could question whether it is sensible to assume a true model (an oxymoron) in "real life" (i.e., except in simulations), especially in the social sciences (e.g., Burnham & Anderson, 2002; 2004). As Findley (1985) notes: "[...] consistency can be an undesirable property in the context of selecting a model". In other words, the goal of identifying the true model works fine... when there is a true model to be identified.
+
+The AIC is not consistent for model identification, but it is an **efficient estimator of the expected K-L information loss**.
+
+As a consequence, when using information criteria (e.g., AIC, WAIC) for sequential testing, we try to answer a different question. The question is not anymore when do I have enough evidence for this model over this other model being the *true* model. Instead, the question is: when do I have enough evidence for this model being the *best* model ?
 
 # Sequential Testing with Information Criteria and Evidence Ratios
 
@@ -139,7 +139,7 @@ If no information is passed to the `id` argument, `seqtest` will suppose that th
 
 Note that this package is mainly intended to be used as a toolbox for exploring the possibilites offered by sequential testing with evidence ratios computed from the Akaike weights of a set of models. We do not provide neither guidelines nor long-term error rates as others did using Bayes Factors (e.g., see Schönbrodt, Wagenmakers, Zehetleitner & Perugini, 2017).
 
-The characteristics of sequential evidence ratios computed from information criteria should be studied properly (preferably using `ESTER`), but this study is outside the scope of this package.
+The characteristics of sequential evidence ratios computed from information criteria should be studied properly (preferably using `ESTER`), but this study is currently outside the scope of this package.
 
 # References
 
@@ -150,6 +150,11 @@ Burnham, K. P., & Anderson, D. R. (2002). Model Selection and Multimodel Inferen
 Burnham, K. P., & Anderson, D. R. (2004). Multimodel Inference: Understanding AIC and BIC in Model Selection. *Sociological Methods & Research, 33*(2), 261–304.
 
 Burnham, K. P., Anderson, D. R., & Huyvaert, K. P. (2011). AIC model selection and multimodel inference in behavioral ecology: Some background, observations, and comparisons. *Behavioral Ecology and Sociobiology, 65*(1), 23–35.
+
+Chamberlin, T. (1890). The Method of Multiple Working Hypotheses. *Science* 148:754-9.
+
+Findley, D.F. (1985). On the unbiasedness property of AIC for exact or approximating linear
+stochastic time series models. *Journal of Time Series Analysis 6*, 229–252.
 
 Lakens, D. (2014). Performing high-powered studies efficiently with sequential analyses. *European Journal of Social Psychology, 44*, 701–710.
 

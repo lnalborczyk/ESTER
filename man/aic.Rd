@@ -9,7 +9,7 @@ aic(mod, correction = TRUE)
 \arguments{
 \item{mod}{A fitted model of class \code{lm} or \code{merMod}.}
 
-\item{correction}{Should we apply the second-order correction ?}
+\item{correction}{Should we apply the second-order correction (default to TRUE) ?}
 }
 \description{
 Computes the Akaike Information Criterion (AIC) of a model, or the second-order
